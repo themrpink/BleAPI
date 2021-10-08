@@ -18,10 +18,20 @@ namespace CosmedBleConsole
         static void Main(String[] args)
         {
             CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher();
-            int count = 0;
+
             scan.startPassiveScanning();
-            Thread.Sleep(3000);
+            Thread.Sleep(5000);
+
+            scan.startActiveScanning();
+            Thread.Sleep(5000);
+
             scan.stopScanning();
+
+            Console.WriteLine("premere invio per chiudere");
+            Console.ReadLine();
+
+
+
             /*while (true)
             {
                 //  Console.WriteLine("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<passive");
@@ -43,18 +53,7 @@ namespace CosmedBleConsole
                 count += 1;
                 Console.WriteLine( count);
             }*/
-
+        }
     }
 }
 
-/*
- * algo per aggiornare lista di device:
-    posso semplicemente sovrascrivere
- * quindi ogni volta blocco accesso a struttura e scrivo/sovrascrivo. Posso anche usare un campo che ha il numero di elementi
- * quando leggo anche blocco la scrittura, che si metterá in attesa se possibile. questo va verificato.
- * la struttura dovrá anche avere un metodo di accesso protetto.
- * Come proteggere quindi una struttura? la lettura deve essere fatta dopo una scrittura, per evitare incongruenze (tipo uno stesso
- * device compare 2 volte nella lista)
- * 
- * 
- */
