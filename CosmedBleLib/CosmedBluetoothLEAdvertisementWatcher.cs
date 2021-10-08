@@ -160,32 +160,36 @@ namespace CosmedBleLib
        
         public BluetoothLEAdvertisementWatcherStatus getWatcherStatus => watcher.Status;
       
-
+        /// <summary>
+        /// Evento che salva gli advertisement nel dizionario
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
         {
-           /* if (scanON == false)
+            //per evitare che venga invocato l'evento, su un nuovo thread, dopo la richiesta di
+            //stop della scansione ma prima del suo effettivo annullamento
+            if (scanON == false)
             {
-                //Console.WriteLine("####################################scanON, elimina " + Thread.CurrentThread.Name);
                 Thread.CurrentThread.Abort();
-            }
-              
+            }           
             else if ( sender.ScanningMode != watcher.ScanningMode)
             {
-                //Console.WriteLine("####################################ci sono due advertisers, elimina " + Thread.CurrentThread.Name);
                 Thread.CurrentThread.Abort();
-            }*/
+            }
 
             if (Thread.CurrentThread.Name==null)
-                Thread.CurrentThread.Name = "OnAdvReceived "+ sender.ScanningMode.ToString();
-            Console.WriteLine("trovato device " + Thread.CurrentThread.Name + " " + sender.ScanningMode + " " + watcher.ScanningMode);
-            //Console.WriteLine(watcher.ScanningMode.ToString());
+                Thread.CurrentThread.Name = "OnAdvReceived ";
+
+            Console.WriteLine("trovato device " + Thread.CurrentThread.Name + " " + sender.ScanningMode);
             Console.WriteLine(args.BluetoothAddress);
+
             lock (ThreadLock)
             {
                 DiscoveredDevices[args.BluetoothAddress] = new CosmedBleDevice(args.BluetoothAddress, args.Timestamp, args.IsConnectable, args.Advertisement, args.AdvertisementType);
             }
            
-            //Console.WriteLine("--------------");
+
 
             
         }
