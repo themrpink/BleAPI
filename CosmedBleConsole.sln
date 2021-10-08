@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleConsole", "CosmedBleConsole\CosmedBleConsole.csproj", "{5DE360C3-EE39-4FD2-B9F5-3B542064FC30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleLib", "CosmedBleLib\CosmedBleLib.csproj", "{ACB73DF1-1A52-40B3-A9FA-1238D8CD6A19}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5DE360C3-EE39-4FD2-B9F5-3B542064FC30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DE360C3-EE39-4FD2-B9F5-3B542064FC30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DE360C3-EE39-4FD2-B9F5-3B542064FC30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DE360C3-EE39-4FD2-B9F5-3B542064FC30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACB73DF1-1A52-40B3-A9FA-1238D8CD6A19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACB73DF1-1A52-40B3-A9FA-1238D8CD6A19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACB73DF1-1A52-40B3-A9FA-1238D8CD6A19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACB73DF1-1A52-40B3-A9FA-1238D8CD6A19}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {25772315-7785-41C5-93BE-1F8F715946EF}
+	EndGlobalSection
+EndGlobal
