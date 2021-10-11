@@ -8,4 +8,4 @@ Se necessario, aggiungere i seguenti riferimenti in CosmedBleLib
 
 diagrammi di stato, il primo generico, il secondo un po´ piú  dettagliato
 
-![alt text](https://github.com/themrpink/BleAPI/blob/master/img/State_Machine_Diagram2.png?raw=true)
+![alt text](https://github.com/themrpink/BleAPI/blob/master/img/State Machine Diagram2.png?raw=true)
