@@ -1,0 +1,10 @@
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\bin\Debug\CosmedBleLib.dll
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\bin\Debug\CosmedBleLib.pdb
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\bin\Debug\System.Runtime.WindowsRuntime.dll
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\bin\Debug\Windows.winmd
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\bin\Debug\System.Runtime.WindowsRuntime.xml
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\obj\Debug\CosmedBleLib.csproj.AssemblyReference.cache
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\obj\Debug\CosmedBleLib.csproj.CoreCompileInputs.cache
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\obj\Debug\CosmedBleLib.csproj.CopyComplete
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\obj\Debug\CosmedBleLib.dll
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleLib\obj\Debug\CosmedBleLib.pdb

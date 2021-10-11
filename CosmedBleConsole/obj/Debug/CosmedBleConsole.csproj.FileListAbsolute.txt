@@ -1,0 +1,12 @@
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\bin\Debug\CosmedBleConsole.exe.config
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\bin\Debug\CosmedBleConsole.exe
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\bin\Debug\CosmedBleConsole.pdb
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\bin\Debug\System.Runtime.WindowsRuntime.dll
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\bin\Debug\System.Runtime.WindowsRuntime.xml
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\obj\Debug\CosmedBleConsole.csproj.CoreCompileInputs.cache
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\obj\Debug\CosmedBleConsole.csproj.CopyComplete
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\obj\Debug\CosmedBleConsole.exe
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\obj\Debug\CosmedBleConsole.pdb
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\obj\Debug\CosmedBleConsole.csproj.AssemblyReference.cache
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\bin\Debug\CosmedBleLib.dll
+C:\Users\themr\source\repos\CosmedBleConsole\CosmedBleConsole\bin\Debug\CosmedBleLib.pdb
