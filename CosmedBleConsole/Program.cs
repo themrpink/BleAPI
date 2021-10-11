@@ -9,7 +9,6 @@ using CosmedBleLib;
 namespace CosmedBleConsole
 {
 
-
     /// <summary>
     /// Wraps and makes use of <see cref="BluetoothLEAdvertisementWatcher"/>
     /// </summary>
@@ -41,11 +40,12 @@ namespace CosmedBleConsole
 
             scan.newDeviceDiscovered += (device) => { Console.WriteLine(device.ToString() + "++++++++++++++++++++++++++++++++"); };
             // scan.OnScanStopped += (sender, args) => { };
+           // var dev2 = scan.allDiscoveredDevicesUpdate;
+            
+            scan.devicesCollectionUpdated += (updatedDevices) => { dev = updatedDevices; };
+            dev = scan.getDiscoveredDevicesUpdated();
 
-            dev = scan.getDiscoveredDevicesUpdated(5000);
-            scan.devicesCollectionUpdated += (udatedDevices) => { dev = udatedDevices; };
-
-                  scan.startPassiveScanning();
+            scan.startPassiveScanning();
             Thread t = new Thread(checkUpdate);
             t.Start();
             Thread.Sleep(15000);
@@ -62,7 +62,7 @@ namespace CosmedBleConsole
             {
                 Console.WriteLine(device.Advertisement.LocalName);
                 foreach(var l in device.Advertisement.ManufacturerData)
-                    Console.WriteLine(l);
+                    Console.WriteLine(l.ToString());
                 Console.WriteLine(device.DeviceAddress);
                 Console.WriteLine(device.Advertisement.ServiceUuids);
                 Console.WriteLine(device.AdvertisementType.ToString());
