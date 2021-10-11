@@ -29,8 +29,6 @@ namespace CosmedBleConsole
                 foreach(var device in dev)
                     Console.WriteLine("found: " + device.DeviceAddress);
 
-                foreach (var device in CosmedBluetoothLEAdvertisementWatcher.allDiscoveredDevices2)
-                    Console.WriteLine("found2: " + device.DeviceAddress);
                 count += 1;
             }
         }
