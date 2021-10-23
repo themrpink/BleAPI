@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleConsole", "CosmedB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleLib", "CosmedBleLib\CosmedBleLib.csproj", "{ACB73DF1-1A52-40B3-A9FA-1238D8CD6A19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleLib.MSTest.UnitTest", "CosmedBleLib.Test\CosmedBleLib.MSTest.UnitTest.csproj", "{32FA3D26-4C2F-4935-AAD2-2B140B95682B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleLib.NUnit.UnitTest", "CosmedBleLib.NUnit.Test\CosmedBleLib.NUnit.UnitTest.csproj", "{29D12850-7130-4C7D-9B7A-FAEB899FD727}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{ACB73DF1-1A52-40B3-A9FA-1238D8CD6A19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACB73DF1-1A52-40B3-A9FA-1238D8CD6A19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACB73DF1-1A52-40B3-A9FA-1238D8CD6A19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32FA3D26-4C2F-4935-AAD2-2B140B95682B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32FA3D26-4C2F-4935-AAD2-2B140B95682B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32FA3D26-4C2F-4935-AAD2-2B140B95682B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32FA3D26-4C2F-4935-AAD2-2B140B95682B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29D12850-7130-4C7D-9B7A-FAEB899FD727}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29D12850-7130-4C7D-9B7A-FAEB899FD727}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29D12850-7130-4C7D-9B7A-FAEB899FD727}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29D12850-7130-4C7D-9B7A-FAEB899FD727}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

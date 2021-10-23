@@ -7,44 +7,66 @@ using System.Threading.Tasks;
 
 namespace CosmedBleLib
 {
-    class AutoUpdateDiscoveredDevicesCollection
+    public class AutoUpdateDiscoveredDevicesCollection : IAdvertisedDevicesCollection
     {
-        private bool isCollectingDevices = false;
-        private IReadOnlyCollection<CosmedBleDevice> allDiscoveredDevices = null;
-        private static int UpdateTime;
+        // private bool isCollectingDevices = false;
+        private readonly object ThreadLock = new object();
 
-        public AutoUpdateDiscoveredDevicesCollection(CosmedBluetoothLEAdvertisementWatcher watcher)
+        private IReadOnlyCollection<CosmedBleAdvertisedDevice> lastDiscoveredDevices;
+
+        public AutoUpdateDiscoveredDevicesCollection()
         {
-            watcher.devicesCollectionUpdated += (devices) => { allDiscoveredDevices =  devices; };
-            //watcher.stoppedListening += () => { stopUpdating(); };
+            this.lastDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
         }
 
-        /*
-        public IReadOnlyCollection<CosmedBleDevice> getDiscoveredDevicesUpdated(int ms)
-        {
-            if (isCollectingDevices)
-                return allDiscoveredDevices;
 
-            isCollectingDevices = true;
-            UpdateTime = ms;
-            Thread update = new Thread(this.sendUpdateDiscoveredDevices);
-            update.Start();
-            return allDiscoveredDevices;
-        }
-
-        private void sendUpdateDiscoveredDevices()
+        public IReadOnlyCollection<CosmedBleAdvertisedDevice> allDiscoveredDevices { get; private set; } = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
+        public IReadOnlyCollection<CosmedBleAdvertisedDevice> recentDiscoveredDevices { get; private set; } = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
+        public IReadOnlyCollection<CosmedBleAdvertisedDevice> getLastDiscoveredDevices()
         {
-            while (isCollectingDevices)
+            lock (ThreadLock)
             {
-                Thread.Sleep(UpdateTime);
-                allDiscoveredDevices = watcher.allDiscoveredDevices;
+                IReadOnlyCollection<CosmedBleAdvertisedDevice> lastDiscoveredDevicesTemp = lastDiscoveredDevices.ToList().AsReadOnly();
+                lastDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
+                return lastDiscoveredDevicesTemp;
             }
-
+        }
+        
+        public void onRecentDevicesUpdated(IReadOnlyCollection<CosmedBleAdvertisedDevice> devices)
+        {
+            recentDiscoveredDevices = devices;
         }
 
-        private void stopUpdating()
+        public void onNewDeviceDiscovered(CosmedBleAdvertisedDevice device)
         {
-            isCollectingDevices = false;
-        }*/
+            lock (ThreadLock)
+            {
+                //lastDiscoveredDevices.Where(dev => dev.DeviceAddress == device.DeviceAddress).ToList().ForEach(dev =>
+                //dev.setAdvertisement(device.advertisementContent.Advertisement, device.advertisementContent.AdvertisementType, device.timestamp));
+                
+                List<CosmedBleAdvertisedDevice> temp = lastDiscoveredDevices.Where(dev => dev.DeviceAddress != device.DeviceAddress).ToList();
+                temp.Add(device);
+                lastDiscoveredDevices = temp.AsReadOnly();
+            }
+        }
+
+        public void onAllDevicesUpdated(IReadOnlyCollection<CosmedBleAdvertisedDevice> devices)
+        {
+            allDiscoveredDevices = devices;
+        }
+
+        public void ClearCollections()
+        {
+            allDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
+            recentDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
+            lastDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
+        }
+
+        public void Dispose()
+        {      
+            allDiscoveredDevices = null;
+            recentDiscoveredDevices = null;
+            lastDiscoveredDevices = null;
+        }
     }
 }
