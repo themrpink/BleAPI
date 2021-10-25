@@ -44,9 +44,11 @@ namespace CosmedBleConsole
 
 
             CosmedBluetoothLEAdvertisementFilter filter = new CosmedBluetoothLEAdvertisementFilter();
-            //CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher(filter);
+            filter//.setFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode | BluetoothLEAdvertisementFlags.ClassicNotSupported)
+                .SetCompanyID("4D");
+            CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher(filter);
 
-            CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher();
+            //CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher();
 
         
 
@@ -75,9 +77,9 @@ namespace CosmedBleConsole
                         device.printScanResponses();                       
                     }
                 }
-                Devices = scan.getUpdatedDiscoveredDevices();
-                scan.stopScanning();
-                Devices = scan.getUpdatedDiscoveredDevices();
+               // Devices = scan.getUpdatedDiscoveredDevices();
+               // scan.stopScanning();
+               // Devices = scan.getUpdatedDiscoveredDevices();
                 count++; ;
             }
             

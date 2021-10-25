@@ -11,8 +11,7 @@ namespace CosmedBleLib
 
     public static class CosmedBluetoothLEAdapter
     {
-        private static BluetoothAdapter adapter;
-        
+        private static BluetoothAdapter adapter;     
         public static bool IsLowEnergySupported { get; private set; }
         public static ulong DecimalAddress { get; private set; }
         public static string HexAddress { get; private set; }
@@ -23,8 +22,8 @@ namespace CosmedBleLib
             SetAdapter();
         }
         public static async void SetAdapter()
-        {  
-            adapter = await BluetoothAdapter.GetDefaultAsync();
+        {
+            BluetoothAdapter adapter =  await BluetoothAdapter.GetDefaultAsync();
             IsLowEnergySupported = adapter.IsLowEnergySupported;
             DecimalAddress = adapter.BluetoothAddress;
             IsExtendedAdvertisingSupported = adapter.IsExtendedAdvertisingSupported;

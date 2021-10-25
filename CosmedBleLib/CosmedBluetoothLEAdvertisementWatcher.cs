@@ -146,10 +146,7 @@ namespace CosmedBleLib
         /// <param name="advertisementFilter"></param>
         public CosmedBluetoothLEAdvertisementWatcher(CosmedBluetoothLEAdvertisementFilter filter) : this()
         {
-            this.filter = filter;
-            //watcher = new BluetoothLEAdvertisementWatcher(this.filter.AdvertisementFilter);
-            //watcher.AdvertisementFilter = filter.AdvertisementFilter;
-            watcher.SignalStrengthFilter = filter.SignalStrengthFilter;
+            SetFilter(filter);
         }
 
         #endregion
@@ -158,7 +155,7 @@ namespace CosmedBleLib
         //#else
         //#endif
 
-        #region Class methods
+        #region Scanning methods
         /// <summary>
         /// Initialize and Start passive scanning. 
         /// </summary>
@@ -311,6 +308,29 @@ namespace CosmedBleLib
 
         #endregion
 
+        #region Filter methods
+        public void SetFilter(CosmedBluetoothLEAdvertisementFilter filter)
+        {
+            this.filter = filter;
+            if (filter.AdvertisementFilter != null)
+            {
+                watcher.AdvertisementFilter = filter.AdvertisementFilter;
+            }
+            if (filter.SignalStrengthFilter != null)
+            {
+                watcher.SignalStrengthFilter = filter.SignalStrengthFilter;
+            }
+        }
+
+        public CosmedBluetoothLEAdvertisementFilter RemoveFilter()
+        {
+            watcher.AdvertisementFilter = null;
+            watcher.SignalStrengthFilter = null;
+            CosmedBluetoothLEAdvertisementFilter filterTemp = filter;
+            filter = null;
+            return filterTemp;
+        }
+        #endregion
 
         #region Helper methods
 

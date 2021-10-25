@@ -37,8 +37,11 @@ namespace CosmedBleLib
 
         public async void SetBleDevice()
         {
-            if(isConnectable)
+            if (isConnectable)
+            {
                 device = await BluetoothLEDevice.FromBluetoothAddressAsync(DeviceAddress);
+            }
+                
          }
         
      

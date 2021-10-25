@@ -58,7 +58,22 @@ namespace CosmedBleLib
             0xFF : { name: "Manufacturer Specific Data", resolve: null },
          }*/
 
+        /*
+         public enum BluetoothLEAdvertisementFlags : uint
+            None = 0,
+            LimitedDiscoverableMode = 1,
+            GeneralDiscoverableMode = 2,
+            ClassicNotSupported = 4,
+            DualModeControllerCapable = 8,
+            DualModeHostCapable = 16
 
+            0     =  0
+            1     =  1
+            10    =  2
+            100   =  4
+            1000  =  8
+            10000 = 16
+         */
 
     }
 }
