@@ -55,14 +55,14 @@ namespace CosmedBleConsole
             // scan.OnScanStopped += (sender, args) => { };
             // var dev2 = scan.allDiscoveredDevicesUpdate;
             IAdvertisedDevicesCollection Devices = scan.getUpdatedDiscoveredDevices();
-            scan.startPassiveScanning();
+            scan.startActiveScanning();
             int count = 0;
             while (true)
             {
+                scan.startActiveScanning();
                 Thread.Sleep(5000);
                 foreach (var device in Devices.getLastDiscoveredDevices())
                 {
-
                     Console.WriteLine("----------------------normal response-----------------");
                
                     //printAdvertisement(device);
@@ -72,10 +72,12 @@ namespace CosmedBleConsole
                     {
                         Console.WriteLine("++++++++++++++++scan response+++++++++++++");
                         //printScanResponses(device);
-                        device.printScanResponses();
-                        
+                        device.printScanResponses();                       
                     }
                 }
+                Devices = scan.getUpdatedDiscoveredDevices();
+                scan.stopScanning();
+                Devices = scan.getUpdatedDiscoveredDevices();
                 count++; ;
             }
             
@@ -184,6 +186,7 @@ namespace CosmedBleConsole
 
         }
         
+
         public static void DeviceEnumeration()
         {
             DeviceWatcher dw = DeviceInformation.CreateWatcher();

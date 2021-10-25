@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
+using Windows.Storage.Streams;
 
 namespace CosmedBleLib
 {
@@ -12,6 +14,63 @@ namespace CosmedBleLib
         public CosmedBluetoothLEAdvertisementFilter()
         {
             AdvertisementFilter = new BluetoothLEAdvertisementFilter();
+
+
+            //advertisement data sections elements: una lista di sezioni, ognuna
+            IList<BluetoothLEAdvertisementDataSection> dataSections = AdvertisementFilter.Advertisement.DataSections;
+            BluetoothLEAdvertisementDataSection dataSec = dataSections.GetEnumerator().Current;
+            byte dataType = dataSec.DataType;
+            IBuffer data = dataSec.Data;
+            uint capacity = data.Capacity;
+            uint length = data.Length;
+
+            //advertisement service UUID elements: 
+            IList<Guid> serviceUUID = AdvertisementFilter.Advertisement.ServiceUuids;
+            Guid g = serviceUUID[0];
+            string uuid = g.ToString();
+
+
+            //advertisement flags: indicano il tipo di discoverability
+            BluetoothLEAdvertisementFlags? flags = AdvertisementFilter.Advertisement.Flags;
+            /*
+             None = 0,
+             LimitedDiscoverableMode = 1,
+             GeneralDiscoverableMode = 2,
+             ClassicNotSupported = 4,
+             DualModeControllerCapable = 8,
+             DualModeHostCapable = 16
+            */
+            /*
+             #define BLE_GAP_ADV_FLAG_LE_LIMITED_DISC_MODE         (0x01)   //< LE Limited Discoverable Mode. 
+             #define BLE_GAP_ADV_FLAG_LE_GENERAL_DISC_MODE         (0x02)   //< LE General Discoverable Mode. 
+             #define BLE_GAP_ADV_FLAG_BR_EDR_NOT_SUPPORTED         (0x04)   //< BR/EDR not supported. 
+             #define BLE_GAP_ADV_FLAG_LE_BR_EDR_CONTROLLER         (0x08)   //< Simultaneous LE and BR/EDR, Controller. 
+             #define BLE_GAP_ADV_FLAG_LE_BR_EDR_HOST               (0x10)   //< Simultaneous LE and BR/EDR, Host.
+             #define BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE   (BLE_GAP_ADV_FLAG_LE_LIMITED_DISC_MODE | BLE_GAP_ADV_FLAG_BR_EDR_NOT_SUPPORTED)   /**< LE Limited Discoverable Mode, BR/EDR not supported. (05)
+             #define BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE   (BLE_GAP_ADV_FLAG_LE_GENERAL_DISC_MODE | BLE_GAP_ADV_FLAG_BR_EDR_NOT_SUPPORTED)   /**< LE General Discoverable Mode, BR/EDR not supported. (06)
+             */
+
+            //local name, già offerto come stringa 
+            string localName = AdvertisementFilter.Advertisement.LocalName;
+
+            //advertisement ManufacturerData list
+            IReadOnlyList<BluetoothLEManufacturerData> dataByCompanyID = AdvertisementFilter.Advertisement.GetManufacturerDataByCompanyId(76);
+            BluetoothLEManufacturerData manData = dataByCompanyID?[0];
+            ushort companyID = manData.CompanyId;
+            IBuffer manBuffer = manData.Data;
+            uint manBufCapacity = manBuffer.Capacity;
+            uint manBufLen = manBuffer.Length;
+
+            //per il data section, vedi sopra
+            //qua ci va un ADType, espresso con un byte
+            byte ADType = Convert.ToByte(4);
+            IReadOnlyList<BluetoothLEAdvertisementDataSection> sectionByType = AdvertisementFilter.Advertisement.GetSectionsByType(ADType);
+            
+            
+            /*
+             * esempio per inserire i manufacturer data
+             */
+                
             // First, let create a manufacturer data section we wanted to match for. These are the same as the one 
             // created in Scenario 2 and 4.
             var manufacturerData = new BluetoothLEManufacturerData();
@@ -50,7 +109,16 @@ namespace CosmedBleLib
 
         public CosmedBluetoothLEAdvertisementFilter(ushort CompanyId, ushort ManufacturerData, short InRangeThresholdInDBm, short OutOfRangeThresholdInDBm, TimeSpan OutOfRangeTimeout)
         {
-            AdvertisementFilter = new BluetoothLEAdvertisementFilter();
+            AdvertisementFilter = new BluetoothLEAdvertisementFilter
+            {
+                Advertisement = new BluetoothLEAdvertisement
+                {
+                    LocalName = "",
+                    Flags = BluetoothLEAdvertisementFlags.GeneralDiscoverableMode
+                }
+            };
+
+            
             // First, let create a manufacturer data section we wanted to match for. These are the same as the one 
             // created in Scenario 2 and 4.
             var manufacturerData = new BluetoothLEManufacturerData();

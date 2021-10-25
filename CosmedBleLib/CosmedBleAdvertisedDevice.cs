@@ -94,8 +94,7 @@ namespace CosmedBleLib
             Console.WriteLine("found: " + DeviceAddress);
             Console.WriteLine("mac: " + getDeviceAddress());
             Console.WriteLine("scan type: " + advertisementContent.AdvertisementType.ToString());
-            Console.WriteLine("local name: " + advertisementContent.Advertisement.LocalName);
-            
+
             printNameFlagsGuid(advertisementContent);
             printManufacturerData(advertisementContent);
             printDataSections(advertisementContent);
@@ -180,12 +179,15 @@ namespace CosmedBleLib
                     string dataContent = BitConverter.ToString(data); ;
                     Console.WriteLine(advType + " manufacturer buffer: " + dataContent);
 
-                    string utfString = Encoding.UTF8.GetString(data, 0, data.Length);
-                    Console.WriteLine(advType + "utfString: " + utfString);
+                    string result = System.Text.Encoding.UTF8.GetString(data);
+                    Console.WriteLine(advType + " manufacturer buffer UTF8: " + result);
 
-                    // ASCII conversion - string from bytes  
-                    string asciiString = Encoding.ASCII.GetString(data, 0, data.Length);
-                    Console.WriteLine(advType + "asciiString: " + asciiString);
+                    string result2 = System.Text.Encoding.ASCII.GetString(data);
+                    Console.WriteLine(advType + " manufacturer buffer ASCII: " + result2);
+
+                    System.Text.UnicodeEncoding unicode = new System.Text.UnicodeEncoding();
+                    String decodedString = unicode.GetString(data);
+                    Console.WriteLine(advType + " manufacturer buffer UTF16: " + decodedString);
                 }
             }
             
@@ -210,6 +212,15 @@ namespace CosmedBleLib
                     }
                     string dataContent = BitConverter.ToString(data);
                     Console.WriteLine(advType + "data buffer with bit converter: " + string.Format("0x: {0}", dataContent));
+                    string result = System.Text.Encoding.UTF8.GetString(data);
+                    Console.WriteLine(advType + " manufacturer buffer UTF8: " + result);
+
+                    string result2 = System.Text.Encoding.ASCII.GetString(data);
+                    Console.WriteLine(advType + " manufacturer buffer ASCII: " + result2);
+
+                    System.Text.UnicodeEncoding unicode = new System.Text.UnicodeEncoding();
+                    String decodedString = unicode.GetString(data);
+                    Console.WriteLine(advType + " manufacturer buffer UTF16: " + decodedString);
                 }
             }
             
