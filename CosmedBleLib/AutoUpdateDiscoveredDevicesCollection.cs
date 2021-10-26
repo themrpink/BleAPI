@@ -19,7 +19,7 @@ namespace CosmedBleLib
             this.lastDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
         }
 
-
+        public double timeout { get; set; } = 10;
         public IReadOnlyCollection<CosmedBleAdvertisedDevice> allDiscoveredDevices { get; private set; } = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
         public IReadOnlyCollection<CosmedBleAdvertisedDevice> recentDiscoveredDevices { get; private set; } = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
         public IReadOnlyCollection<CosmedBleAdvertisedDevice> getLastDiscoveredDevices()
@@ -32,10 +32,12 @@ namespace CosmedBleLib
             }
         }
         
+
         public void onRecentDevicesUpdated(IReadOnlyCollection<CosmedBleAdvertisedDevice> devices)
         {
             recentDiscoveredDevices = devices;
         }
+
 
         public void onNewDeviceDiscovered(CosmedBleAdvertisedDevice device)
         {
@@ -50,10 +52,12 @@ namespace CosmedBleLib
             }
         }
 
+
         public void onAllDevicesUpdated(IReadOnlyCollection<CosmedBleAdvertisedDevice> devices)
         {
             allDiscoveredDevices = devices;
         }
+
 
         public void ClearCollections()
         {
@@ -61,6 +65,7 @@ namespace CosmedBleLib
             recentDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
             lastDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
         }
+
 
         public void Dispose()
         {      

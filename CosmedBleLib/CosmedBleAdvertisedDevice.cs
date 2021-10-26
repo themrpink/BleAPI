@@ -10,34 +10,45 @@ using Windows.Storage.Streams;
 
 namespace CosmedBleLib
 {
-    public class CosmedBleAdvertisedDevice
+    public class CosmedBleAdvertisedDevice : IAdvertisedDevice<CosmedBleAdvertisedDevice>
     {
+        private AdvertisementContent scanResponseAdvertisementContent;// { get; private set; }
+        private AdvertisementContent advertisementContent;// { get; private set; }
 
-        public AdvertisementContent scanResponseAdvertisementContent { get; private set; }
-        public AdvertisementContent advertisementContent { get; private set; }
-        public ulong DeviceAddress { get; private set; }
-        public DateTimeOffset timestamp { get; private set; }
-        public bool isConnectable { get; private set; }
-        public bool hasAScanResponse { get; private set; }
-        public BluetoothLEDevice device { get; set; } 
+        public bool HasScanResponse { get; private set; }
+        public BluetoothLEDevice device { get; private set; }
+        public ulong DeviceAddress { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
+        public bool IsConnectable { get; private set; }
+        public short RawSignalStrengthInDBm { get; private set; }
+        public BluetoothAddressType BluetoothAddressType { get; private set; }
+        public bool IsAnonymous { get; private set; }        
+        public bool IsDirected { get; private set; }
+        public bool IsScanResponse { get; private set; }
+        public bool IsScannable { get; private set; }
+        public short? TransmitPowerLevelInDBm { get; private set; }
 
-        public CosmedBleAdvertisedDevice(ulong address, DateTimeOffset timestamp, bool isConnectable, BluetoothLEAdvertisement adv,  BluetoothLEAdvertisementType advType)
+
+        public CosmedBleAdvertisedDevice()
+        {
+            this.advertisementContent = new AdvertisementContent();
+            this.scanResponseAdvertisementContent = new AdvertisementContent();
+            this.HasScanResponse = false;
+        }
+
+        public CosmedBleAdvertisedDevice(ulong address, DateTimeOffset timestamp, bool isConnectable, BluetoothLEAdvertisement adv,  BluetoothLEAdvertisementType advType) : this()
         {
             if (adv == null)
                 throw new ArgumentNullException();
-
             DeviceAddress = address;
-            this.timestamp = timestamp;
-            this.isConnectable = isConnectable;
-            this.hasAScanResponse = false;
-            this.advertisementContent = new AdvertisementContent();
-            this.scanResponseAdvertisementContent = new AdvertisementContent();
-            setAdvertisement(adv, advType, timestamp);           
+            this.Timestamp = timestamp;
+            this.IsConnectable = isConnectable;          
         }
+
 
         public async void SetBleDevice()
         {
-            if (isConnectable)
+            if (IsConnectable)
             {
                 device = await BluetoothLEDevice.FromBluetoothAddressAsync(DeviceAddress);
             }
@@ -56,34 +67,46 @@ namespace CosmedBleLib
             return DeviceAddress.ToString();
         }
 
-        public void setAdvertisement(BluetoothLEAdvertisement adv, BluetoothLEAdvertisementType advType, DateTimeOffset timestamp)
+
+        public CosmedBleAdvertisedDevice SetAdvertisement(BluetoothLEAdvertisementReceivedEventArgs args)
         {
-            if(advType == BluetoothLEAdvertisementType.ScanResponse)
+            DeviceAddress = args.BluetoothAddress;
+            Timestamp = args.Timestamp;
+            IsConnectable = args.IsConnectable;
+            RawSignalStrengthInDBm = args.RawSignalStrengthInDBm;
+            BluetoothAddressType = args.BluetoothAddressType;
+            IsAnonymous = args.IsAnonymous;
+            IsDirected = args.IsDirected;
+            IsScanResponse = args.IsScanResponse;
+            IsScannable = args.IsScannable;
+            TransmitPowerLevelInDBm = args.TransmitPowerLevelInDBm;
+
+            if (args.AdvertisementType == BluetoothLEAdvertisementType.ScanResponse)
             {
-                scanResponseAdvertisementContent.Advertisement = adv;
-                scanResponseAdvertisementContent.AdvertisementType = advType;
-                hasAScanResponse = true;
-                this.timestamp = timestamp;   
+                scanResponseAdvertisementContent.Advertisement = args.Advertisement;
+                scanResponseAdvertisementContent.AdvertisementType = args.AdvertisementType;
+                HasScanResponse = true;  
             }
             else
             {
-                advertisementContent.Advertisement = adv;
-                advertisementContent.AdvertisementType = advType;
-                this.timestamp = timestamp;
+                advertisementContent.Advertisement = args.Advertisement;
+                advertisementContent.AdvertisementType = args.AdvertisementType;
             }
+            return this;
         }
+
 
         public void updateAll(ulong address, DateTimeOffset timestamp, bool isConnectable, BluetoothLEAdvertisement adv, BluetoothLEAdvertisementType advType)
         {
             DeviceAddress = address;
-            this.timestamp = timestamp;
-            this.isConnectable = isConnectable;
+            this.Timestamp = timestamp;
+            this.IsConnectable = isConnectable;
 
             if (advType == BluetoothLEAdvertisementType.ScanResponse)
             {
                 scanResponseAdvertisementContent.Advertisement = adv;
                 scanResponseAdvertisementContent.AdvertisementType = advType;
-                hasAScanResponse = true;
+                HasScanResponse = true;
             }
             else
             {
@@ -92,11 +115,27 @@ namespace CosmedBleLib
             }
         }
 
-        public void printAdvertisement()
+
+        public void PrintAdvertisement()
         {
             Console.WriteLine("found: " + DeviceAddress);
             Console.WriteLine("mac: " + getDeviceAddress());
             Console.WriteLine("scan type: " + advertisementContent.AdvertisementType.ToString());
+            Console.WriteLine("found: " + DeviceAddress);
+            Console.WriteLine("mac: " + getDeviceAddress());
+            Console.WriteLine("scan type: " + advertisementContent.AdvertisementType.ToString());
+
+            Console.WriteLine("has scan response: " + HasScanResponse);
+            Console.WriteLine("device address: " + DeviceAddress);
+            Console.WriteLine("timestamp: " + Timestamp.ToString());
+            Console.WriteLine("is connectable: " + IsConnectable);
+            Console.WriteLine("raw signal strenght: " + RawSignalStrengthInDBm);
+            Console.WriteLine("ble address type: " + this.BluetoothAddressType.ToString());
+            Console.WriteLine("is anonymous: " + IsAnonymous); 
+            Console.WriteLine("is directed: " + IsDirected); 
+            Console.WriteLine("is scan response: " + IsScanResponse); 
+            Console.WriteLine("is scannable: " + IsScannable); 
+            Console.WriteLine("transmit powr level: " + TransmitPowerLevelInDBm);
 
             printNameFlagsGuid(advertisementContent);
             printManufacturerData(advertisementContent);
@@ -104,7 +143,7 @@ namespace CosmedBleLib
         }
 
 
-        public void printScanResponses()
+        public void PrintScanResponses()
         {
             if (scanResponseAdvertisementContent != null)
             {
@@ -148,6 +187,7 @@ namespace CosmedBleLib
             }
         }
 
+
         private void printNameFlagsGuid(AdvertisementContent devAdv, string advType = "")
         {
             if (devAdv.Advertisement != null)
@@ -156,9 +196,13 @@ namespace CosmedBleLib
                 Console.WriteLine(advType + " flags: " + devAdv.Advertisement.Flags.ToString());
                 Console.WriteLine(advType + " guid numb: " + devAdv.Advertisement.ServiceUuids.Count);
                 foreach (Guid g in devAdv.Advertisement.ServiceUuids)
+                {
                     Console.WriteLine(advType + " guid: " + g.ToString());
+                }
+                    
             }
         }
+
 
         private void printManufacturerData(AdvertisementContent adv, string advType = "")
         {
@@ -192,9 +236,10 @@ namespace CosmedBleLib
                     String decodedString = unicode.GetString(data);
                     Console.WriteLine(advType + " manufacturer buffer UTF16: " + decodedString);
                 }
-            }
-            
+            }            
         }
+
+
         private void printDataSections(AdvertisementContent adv, string advType = "")
         {
             if(adv.Advertisement != null)
@@ -203,10 +248,10 @@ namespace CosmedBleLib
                 Console.WriteLine(advType + " data numb: " + dataSections.Count);
                 foreach (BluetoothLEAdvertisementDataSection ds in dataSections)
                 {
-                    Console.WriteLine(advType + "data type (data section): " + ds.DataType);
-                    Console.WriteLine(advType + "data type in hex (data section): " + ds.DataType.ToString("X"));
-                    Console.WriteLine(advType + "data length: " + ds.Data.Length);
-                    Console.WriteLine(advType + "data capacity: " + ds.Data.Capacity);
+                    Console.WriteLine(advType + " data type (data section): " + ds.DataType);
+                    Console.WriteLine(advType + " data type in hex (data section): " + ds.DataType.ToString("X"));
+                    Console.WriteLine(advType + " data length: " + ds.Data.Length);
+                    Console.WriteLine(advType + " data capacity: " + ds.Data.Capacity);
 
                     var data = new byte[ds.Data.Length];
                     using (var reader = DataReader.FromBuffer(ds.Data))
@@ -214,16 +259,16 @@ namespace CosmedBleLib
                         reader.ReadBytes(data);
                     }
                     string dataContent = BitConverter.ToString(data);
-                    Console.WriteLine(advType + "data buffer with bit converter: " + string.Format("0x: {0}", dataContent));
+                    Console.WriteLine(advType + " data buffer with bit converter: " + string.Format("0x: {0}", dataContent));
                     string result = System.Text.Encoding.UTF8.GetString(data);
-                    Console.WriteLine(advType + " manufacturer buffer UTF8: " + result);
+                    Console.WriteLine(advType + " data buffer UTF8: " + result);
 
                     string result2 = System.Text.Encoding.ASCII.GetString(data);
-                    Console.WriteLine(advType + " manufacturer buffer ASCII: " + result2);
+                    Console.WriteLine(advType + " data buffer ASCII: " + result2);
 
                     System.Text.UnicodeEncoding unicode = new System.Text.UnicodeEncoding();
                     String decodedString = unicode.GetString(data);
-                    Console.WriteLine(advType + " manufacturer buffer UTF16: " + decodedString);
+                    Console.WriteLine(advType + " data buffer UTF16: " + decodedString);
                 }
             }
             

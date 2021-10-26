@@ -20,11 +20,14 @@ namespace CosmedBleLib
     {
         private ObservableCollection<CosmedBleAdvertisedDevice> KnownDevices = new ObservableCollection<CosmedBleAdvertisedDevice>();
         private List<DeviceInformation> UnknownDevices = new List<DeviceInformation>();
+
+
         #region Private fields
         private BluetoothLEAdvertisementWatcher watcher;
+        private BluetoothLEAdvertisementWatcherStatus status;
 
         //the structure where the discovered devices are saved
-        private readonly Dictionary<ulong, CosmedBleAdvertisedDevice> discoveredDevices;
+        private Dictionary<ulong, CosmedBleAdvertisedDevice> discoveredDevices;
 
         //filter to apply to the discovered devices
         private CosmedBluetoothLEAdvertisementFilter filter;
@@ -44,22 +47,23 @@ namespace CosmedBleLib
         //tells if the devices is actually collecting updated device collections and sending them
         private bool isCollectingDevices = false;
 
-        //questo dovrebbe servire a limitare il numero di devices scoperti in caso di scan molto lunghi
-        //potrebbe essere usato per svuotare il dizionario ogni volta questo valore raggiunto
-        //oppure per sostituire i nuovi trovati (se non presenti quindi nel dizionario) con quello trovato meno recentemente (confrontare i timestamps)
-        //quindi al momento del controllo quando viene ricevuto un advertisement, se il numero MAX di elementi nel dizionario
-        //è stato raggiunto, applicare le operazioni appena definite
-        private readonly int defualtMaxScanResults = 256;
+        //max number of discoverable devices before auto-cleaning of the dictionary
+        private int MaxScanResults = 128;
+
+
+
 
         //questi servono per i test sulle performance
         private Stopwatch stopwatchAdvertisement = new Stopwatch();
         private int countAdvertisement = 0;
         private List<long> timeElapsed = new List<long>();
 
+
+
         #endregion
 
 
-        #region Delegates
+        #region public Delegates
 
         //public events
         public event Action<CosmedBluetoothLEAdvertisementWatcher, BluetoothLEScanningMode> StartedListening;
@@ -71,12 +75,12 @@ namespace CosmedBleLib
         /// </summary>
         public event Action<CosmedBleAdvertisedDevice> NewDeviceDiscovered;
 
-
+        /////questo potrebbe non servire
         /// <summary>
         /// Subscribe to this event to get the discovered devices collection regulary updated
         /// </summary>
-        public event Action<IReadOnlyCollection<CosmedBleAdvertisedDevice>> AllDevicesCollectionUpdated;
-        public event Action<IReadOnlyCollection<CosmedBleAdvertisedDevice>> RecentDevicesCollectionUpdated;
+        private event Action<IReadOnlyCollection<CosmedBleAdvertisedDevice>> AllDevicesCollectionUpdated;
+        private event Action<IReadOnlyCollection<CosmedBleAdvertisedDevice>> RecentDevicesCollectionUpdated;
         #endregion
 
 
@@ -95,32 +99,35 @@ namespace CosmedBleLib
             get
             {
                 lock (ThreadLock)
-                {                  
+                {
                     return discoveredDevices.Values.ToList().AsReadOnly();
                 }
             }
         }
 
-        public IReadOnlyCollection<CosmedBleAdvertisedDevice> recentlyDiscoveredDevices
+
+        /////questo potrebbe non servire
+        private IReadOnlyCollection<CosmedBleAdvertisedDevice> recentlyDiscoveredDevices
         {
             get
             {
                 lock (ThreadLock)
                 {
                     return discoveredDevices.Values.Where
-                        ( (device) =>
+                        ((device) =>
+                        {
+                            if (timeout > 0)
                             {
-                                if (timeout > 0)
-                                {
-                                    var diff = DateTime.UtcNow - TimeSpan.FromSeconds(timeout);
-                                    return device.timestamp >= diff;
-                                }
-                                return true;
+                                var diff = DateTime.UtcNow - TimeSpan.FromSeconds(timeout);
+                                return device.Timestamp >= diff;
                             }
+                            return true;
+                        }
                         ).ToList().AsReadOnly();
                 }
             }
         }
+
 
         #endregion
 
@@ -133,6 +140,7 @@ namespace CosmedBleLib
         public CosmedBluetoothLEAdvertisementWatcher()
         {
             watcher = new BluetoothLEAdvertisementWatcher();
+            status = watcher.Status;
             discoveredDevices = new Dictionary<ulong, CosmedBleAdvertisedDevice>();
             AutoUpdatedDevices = new AutoUpdateDiscoveredDevicesCollection();
             RecentDevicesCollectionUpdated += AutoUpdatedDevices.onRecentDevicesUpdated;
@@ -146,64 +154,64 @@ namespace CosmedBleLib
         /// <param name="advertisementFilter"></param>
         public CosmedBluetoothLEAdvertisementWatcher(CosmedBluetoothLEAdvertisementFilter filter) : this()
         {
-            SetFilter(filter);
+            
+            SetFilter(filter ?? throw new ArgumentNullException(nameof(filter)));
         }
 
         #endregion
 
-        //#if DEBUG
-        //#else
-        //#endif
 
         #region Scanning methods
+
+
         /// <summary>
         /// Initialize and Start passive scanning. 
         /// </summary>
-        public void startPassiveScanning()
+        public void StartPassiveScanning()
         {
-            CheckBLEAdapter();
+            checkBLEAdapter();
             clearDiscoveredDevices();
             
             //if a passive scan is already running, do nothing
-            if (isScanningStarted && isScanningPassive)
+            if (IsScanningStarted && IsScanningPassive)
                 return;
 
             //if a not passive scanning is already active stop it
-            else if (isScanningStarted && !isScanningPassive)
+            else if (IsScanningStarted && !IsScanningPassive)
             {
-                stopScanning();
+                StopScanning();
                 ScanModeChanged?.Invoke();
             }
             scanInit();
 
             //set the passive scan and start a new scanning thread 
             watcher.ScanningMode = BluetoothLEScanningMode.Passive;            
-            Scan();            
+            scan();            
         }
 
 
         /// <summary>
         /// Initialize and start Active scanning
         /// </summary>
-        public void startActiveScanning()
+        public void StartActiveScanning()
         {
-            CheckBLEAdapter();
+            checkBLEAdapter();
             clearDiscoveredDevices();
             //if an active scan is already running, do nothing
-            if (isScanningStarted && isScanningActive)
+            if (IsScanningStarted && IsScanningActive)
                 return;
             
             //if a not active scanning is already active stop it
-            else if (isScanningStarted && !isScanningActive)
+            else if (IsScanningStarted && !IsScanningActive)
             {
-                stopScanning();
+                StopScanning();
                 ScanModeChanged?.Invoke();
             }
             scanInit();
             //set the active scan and start a new scanning thread 
             watcher.ScanningMode = BluetoothLEScanningMode.Active;
 
-            Scan();
+            scan();
         }
 
 
@@ -221,11 +229,12 @@ namespace CosmedBleLib
         }
 
 
-        private void Scan()
+        private void scan()
         {
             try
             { 
                 watcher.Start();
+                status = BluetoothLEAdvertisementWatcherStatus.Started;
                 StartedListening?.Invoke(this, watcher.ScanningMode);
             }
             catch (System.Exception e)
@@ -237,9 +246,9 @@ namespace CosmedBleLib
         }
 
 
-        public void stopScanning()
+        public void StopScanning()
         {
-            if(watcher != null)
+            if(watcher != null && IsScanningStarted)
             {
                 watcher.Received -= this.OnAdvertisementReceived;        
                 watcher.Stop();  
@@ -248,14 +257,48 @@ namespace CosmedBleLib
                 {
                     isCollectingDevices = false;
                 }
-                watcher = null;               
+                watcher = null;
             }
-
+            status = BluetoothLEAdvertisementWatcherStatus.Stopped;
+            
+            
         }
 
 
+        #endregion
+
+
+        #region Filter methods
+        public void SetFilter(CosmedBluetoothLEAdvertisementFilter filter)
+        {
+
+            this.filter = filter ?? throw new ArgumentNullException(nameof(filter));
+
+            watcher.AdvertisementFilter = filter.AdvertisementFilter;
+            watcher.SignalStrengthFilter = filter.SignalStrengthFilter;
+        }
+
+
+        //attenzione che il filtro potrebbe essere già null, e quindi restituire null
+        //gestire questa cosa
+        public CosmedBluetoothLEAdvertisementFilter RemoveFilter()
+        {
+            watcher.AdvertisementFilter = null;
+            watcher.SignalStrengthFilter = null;
+            CosmedBluetoothLEAdvertisementFilter filterTemp = filter;
+            filter = null;
+
+            return filterTemp;
+        }
+        #endregion
+
+
+        #region AutoUpadate methods
+
+
+        /////questo potrebbe non servire
         /// <summary>
-        /// avvia l´aggiornamento automatico della lista di devices
+        /// start automatic update of devices collections. Reading an instance of the collections will result in a regularly self-updated content.
         /// </summary>
         /// <param name="ms"></param>
         /// <returns></returns>
@@ -267,17 +310,39 @@ namespace CosmedBleLib
                 {
                     isCollectingDevices = true;
 
-                    if (updateThread is null)
+                    if (updateThread == null)
                     {
                         updateThread = new Thread(() => sendUpdatedDevicesService(ms));
                         updateThread.Start();
                     }
-                }          
+                }
             }
             return AutoUpdatedDevices;
         }
 
 
+        /////questo potrebbe non servire
+        //update the devices
+        private void sendUpdatedDevicesService(int ms)
+        {
+            while (true)
+            {
+                lock (LockUpdateDevices)
+                {
+                    if (!isCollectingDevices)
+                    {
+                        updateThread = null;
+                        return;
+                    }
+                    RecentDevicesCollectionUpdated?.Invoke(recentlyDiscoveredDevices);
+                    AllDevicesCollectionUpdated?.Invoke(allDiscoveredDevices);
+                }
+                Thread.Sleep(ms);
+            }
+        }
+
+
+        //stop update
         public IAdvertisedDevicesCollection StopUpdateDevices()
         {
             lock (LockUpdateDevices)
@@ -287,58 +352,41 @@ namespace CosmedBleLib
             return AutoUpdatedDevices;
         }
 
-        //update the devices
-        private void sendUpdatedDevicesService(int ms)
-        {
-            while (true)
-            {
-                lock (LockUpdateDevices)
-                {
-                    if(!isCollectingDevices)
-                    {
-                        updateThread = null;
-                        return;
-                    }
-                     RecentDevicesCollectionUpdated?.Invoke(recentlyDiscoveredDevices);
-                     AllDevicesCollectionUpdated?.Invoke(allDiscoveredDevices);
-                }
-                Thread.Sleep(ms);
-            }
-        }
-
         #endregion
 
-        #region Filter methods
-        public void SetFilter(CosmedBluetoothLEAdvertisementFilter filter)
-        {
-            this.filter = filter;
-            if (filter.AdvertisementFilter != null)
-            {
-                watcher.AdvertisementFilter = filter.AdvertisementFilter;
-            }
-            if (filter.SignalStrengthFilter != null)
-            {
-                watcher.SignalStrengthFilter = filter.SignalStrengthFilter;
-            }
-        }
-
-        public CosmedBluetoothLEAdvertisementFilter RemoveFilter()
-        {
-            watcher.AdvertisementFilter = null;
-            watcher.SignalStrengthFilter = null;
-            CosmedBluetoothLEAdvertisementFilter filterTemp = filter;
-            filter = null;
-            return filterTemp;
-        }
-        #endregion
 
         #region Helper methods
 
-        public BluetoothLEAdvertisementWatcherStatus getWatcherStatus => watcher!=null ? watcher.Status : BluetoothLEAdvertisementWatcherStatus.Stopped;
-        public bool isScanningStarted => watcher?.Status == BluetoothLEAdvertisementWatcherStatus.Started;
-        public bool isScanningPassive => watcher?.ScanningMode == BluetoothLEScanningMode.Passive;
-        public bool isScanningActive => watcher?.ScanningMode == BluetoothLEScanningMode.Active;
+        public BluetoothLEAdvertisementWatcherStatus getWatcherStatus => watcher!=null ? watcher.Status : status;
+        public bool IsScanningStarted => watcher?.Status == BluetoothLEAdvertisementWatcherStatus.Started;
+        public bool IsScanningPassive => watcher?.ScanningMode == BluetoothLEScanningMode.Passive;
+        public bool IsScanningActive => watcher?.ScanningMode == BluetoothLEScanningMode.Active;
+        public bool IsAutoUpdateActive => isCollectingDevices;
+        public bool IsUpdatingThreadAlive => updateThread.IsAlive;
+        public int GetUpdatingThreadID => updateThread.ManagedThreadId;
+        public System.Threading.ThreadState GetUpdatingThreadState => updateThread.ThreadState;
 
+
+        public IReadOnlyCollection<CosmedBleAdvertisedDevice> GetRecentlyAdvertisedDevices(int seconds = 30) 
+        {                          
+            lock (ThreadLock)
+            {
+                return discoveredDevices.Values.Where
+                    ((device) =>
+                    {
+                         if (timeout > 0)
+                         {
+                            var diff = DateTime.UtcNow - TimeSpan.FromSeconds(seconds);
+                            return device.Timestamp >= diff;
+                         }
+                         return true;
+                    }
+                    ).ToList().AsReadOnly();
+            }
+        }
+
+
+ 
 
         /// <summary>
         /// 
@@ -353,29 +401,17 @@ namespace CosmedBleLib
         }
 
 
-
-        public void addDiscoveredDevices(CosmedBleAdvertisedDevice device)
-        {            
-            lock (ThreadLock)
+        private void CleanOlderDiscoveredDevices()
+        {
+            int numberOfLeftDevices = 10;
+            if( discoveredDevices.Count > 10)
             {
-                bool oldDevice = discoveredDevices.ContainsKey(device.DeviceAddress);
-                if (oldDevice)
-                {
-                    discoveredDevices[device.DeviceAddress].setAdvertisement    (
-                                                                                device.advertisementContent.Advertisement, 
-                                                                                device.advertisementContent.AdvertisementType, 
-                                                                                device.timestamp
-                                                                                );
-                }
-                else
-                {
-                    discoveredDevices[device.DeviceAddress] = device;
-                    NewDeviceDiscovered?.Invoke(device);
-                }
+                discoveredDevices = discoveredDevices.Values.OrderBy(d => d.Timestamp).Where(p => --numberOfLeftDevices >= 0).ToDictionary(d => d.DeviceAddress);
             }
         }
 
-        private void CheckBLEAdapter()
+
+        private void checkBLEAdapter()
         {
             string str = CosmedBluetoothLEAdapter.HexAddress;
             Console.WriteLine(str);
@@ -385,9 +421,41 @@ namespace CosmedBleLib
             if (!CosmedBluetoothLEAdapter.IsCentralRoleSupported)
                 throw new InvalidOperationException("Your adapter does not support Central Role");
         }
-#endregion
-       
-        
+        #endregion
+
+
+        #region test helper
+
+        public void addDiscoveredDevices(CosmedBleAdvertisedDevice device)
+        {
+            lock (ThreadLock)
+            {
+                discoveredDevices[device.DeviceAddress] = device;
+                NewDeviceDiscovered?.Invoke(discoveredDevices[device.DeviceAddress]);      
+            }
+        }
+
+
+        private void deleteOldAdvertisedDevice()
+        {
+            DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+            ulong oldKey = 0;
+            foreach (var deviceKey in discoveredDevices.Keys)
+            {
+                DateTimeOffset deviceTimestamp = discoveredDevices[deviceKey].Timestamp;
+                if (deviceTimestamp < timestamp)
+                {
+                    timestamp = deviceTimestamp;
+                    oldKey = deviceKey;
+                }
+            }
+            if (oldKey != 0)
+                discoveredDevices.Remove(oldKey);
+        }
+
+        #endregion
+
+
         #region Callbacks
 
 
@@ -396,43 +464,32 @@ namespace CosmedBleLib
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
-        {        
-            /*
-            var device = await BluetoothLEDevice.FromBluetoothAddressAsync(args.BluetoothAddress);
-            if(device != null)
-                Console.WriteLine($"BLEWATCHER Found: {device.Name}" + "@@@@@@@@@@@@@@@@@@@@@@");*/
-            countAdvertisement += 1;
-            stopwatchAdvertisement.Start();
-
+        private async void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
+        {
+           
+            CosmedBleAdvertisedDevice device;
             lock (ThreadLock)
             {
-                if (sender == watcher) 
+                if (sender == watcher && args != null)
                 {
                     bool newDevice = !discoveredDevices.ContainsKey(args.BluetoothAddress);
                     if (newDevice)
                     {
-                        discoveredDevices[args.BluetoothAddress] = new CosmedBleAdvertisedDevice(args.BluetoothAddress, args.Timestamp, args.IsConnectable, args.Advertisement, args.AdvertisementType);
-                        KnownDevices.Add(discoveredDevices[args.BluetoothAddress]);
+                        if (discoveredDevices.Count >= MaxScanResults)
+                        {
+                            CleanOlderDiscoveredDevices();
+                        }
+                        device = new CosmedBleAdvertisedDevice().SetAdvertisement(args);
+                        discoveredDevices[args.BluetoothAddress] = device;
                     }
                     else
                     {
-                        try
-                        {
-                            discoveredDevices[args.BluetoothAddress].setAdvertisement(args.Advertisement, args.AdvertisementType, args.Timestamp);
-                        }
-                        catch (KeyNotFoundException e)
-                        {
-                            Console.WriteLine(e.Message);
-                        }
-                    }
-                    NewDeviceDiscovered?.Invoke(discoveredDevices[args.BluetoothAddress]);
-                }                                                           
-            }   
-            
-            stopwatchAdvertisement.Stop();
-            timeElapsed.Add(stopwatchAdvertisement.ElapsedMilliseconds);
-            
+                        discoveredDevices[args.BluetoothAddress].SetAdvertisement(args);
+                    }                  
+                }
+                device = discoveredDevices[args.BluetoothAddress];
+            }
+            await Task.Run(() => { NewDeviceDiscovered?.Invoke(device); });        
         }
 
         //evento in caso di scansione interrotta
@@ -451,28 +508,13 @@ namespace CosmedBleLib
         }
 
         #endregion
+    
+    
     }
 
 
+    //#if DEBUG
+    //#else
+    //#endif
 
 }
-
-
-
-/*
- * TODO:
- * aggiungere gli eventi al watcher e all updateCollection, in modo da avere:
- * tutti i device
- * quelli recenti
- * solo quelli aggiunti (i new discovered vanno in una lista che svuoto ogni volta che viene richiesta)
- * 
- * 
- * come fare con lo active scan? devo creare per i device una struttura in modo da avere i dati aggiornati
- * certo che se lo sovrascrivo poi i dati non sono piú ordinati
- * 
- * ecco come:
- * ogni device ha i suoi dati, devo metterli sotto scanResponse e advertisment
- * per fare questo wrappo gli BleAdvertisement (ci metto anche BleAdvertisementType) in ScanResponse e Advertisemet (forse basta che li estendano?
- * tipo con ScanResponseAdvertisement e ScanResponseAdvertisementType)
- * 
- */

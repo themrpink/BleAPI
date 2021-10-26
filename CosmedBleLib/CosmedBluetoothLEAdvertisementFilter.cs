@@ -13,30 +13,27 @@ namespace CosmedBleLib
         public BluetoothSignalStrengthFilter SignalStrengthFilter { get; private set; }
 
 
-        private void checkAdvertisementFilter()
+        public CosmedBluetoothLEAdvertisementFilter()
         {
-            if(AdvertisementFilter == null)
-            {
-                AdvertisementFilter = new BluetoothLEAdvertisementFilter();
-            }
+            AdvertisementFilter = new BluetoothLEAdvertisementFilter();
+            SignalStrengthFilter = new BluetoothSignalStrengthFilter();
         }
+
+
         //set Signal Strength Filter
         public CosmedBluetoothLEAdvertisementFilter SetSignalStrengthFilter(short InRangeThresholdInDBm, short OutOfRangeThresholdInDBm, TimeSpan OutOfRangeTimeout)
         {
-            SignalStrengthFilter = new BluetoothSignalStrengthFilter
-            {
-                //Set the in-range threshold to -70dBm. This means advertisements with RSSI >= -70dBm 
-                //will start to be considered "in-range"
-                InRangeThresholdInDBm = InRangeThresholdInDBm,
+            //Set the in-range threshold to -70dBm. This means advertisements with RSSI >= -70dBm 
+            //will start to be considered "in-range"
+            SignalStrengthFilter.InRangeThresholdInDBm = InRangeThresholdInDBm;
 
-                // Set the out-of-range threshold to -75dBm (give some buffer). Used in conjunction with OutOfRangeTimeout
-                // to determine when an advertisement is no longer considered "in-range"
-                OutOfRangeThresholdInDBm = OutOfRangeThresholdInDBm,
+            // Set the out-of-range threshold to -75dBm (give some buffer). Used in conjunction with OutOfRangeTimeout
+            // to determine when an advertisement is no longer considered "in-range"
+            SignalStrengthFilter.OutOfRangeThresholdInDBm = OutOfRangeThresholdInDBm;
 
-                // Set the out-of-range timeout to be 2 seconds. Used in conjunction with OutOfRangeThresholdInDBm
-                // to determine when an advertisement is no longer considered "in-range"
-                OutOfRangeTimeout = OutOfRangeTimeout
-            };
+            // Set the out-of-range timeout to be 2 seconds. Used in conjunction with OutOfRangeThresholdInDBm
+            // to determine when an advertisement is no longer considered "in-range"
+            SignalStrengthFilter.OutOfRangeTimeout = OutOfRangeTimeout;
 
             return this;
         }
@@ -45,7 +42,7 @@ namespace CosmedBleLib
         //add advertisement service UUID element: 
         public CosmedBluetoothLEAdvertisementFilter setServiceUUID(Guid ServiceUUID)
         {
-            checkAdvertisementFilter();
+            //checkAdvertisementFilter();
             AdvertisementFilter.Advertisement.ServiceUuids.Add(ServiceUUID);
             return this;
         }
@@ -78,7 +75,7 @@ namespace CosmedBleLib
          */
         public CosmedBluetoothLEAdvertisementFilter setFlags(BluetoothLEAdvertisementFlags flag)
         {
-            checkAdvertisementFilter();
+            //checkAdvertisementFilter();
             AdvertisementFilter.Advertisement.Flags = flag;
             return this;
         }
@@ -91,7 +88,6 @@ namespace CosmedBleLib
                 throw new ArgumentNullException();
                 //or LocalName = "";
             }
-            checkAdvertisementFilter();
             AdvertisementFilter.Advertisement.LocalName = LocalName;
             return this;
         }
@@ -114,7 +110,7 @@ namespace CosmedBleLib
 
         public CosmedBluetoothLEAdvertisementFilter SetCompanyID(ushort CompanyId)
         {
-            checkAdvertisementFilter();
+            //checkAdvertisementFilter();
             var manufacturerData = new BluetoothLEManufacturerData();
             // Then, set the company ID for the manufacturer data. Here we picked an unused value: 0xFFFE
             manufacturerData.CompanyId = CompanyId;
@@ -124,7 +120,7 @@ namespace CosmedBleLib
 
         public CosmedBluetoothLEAdvertisementFilter SetCompanyID(string CompanyIdHexString)
         {
-            checkAdvertisementFilter();
+            //checkAdvertisementFilter();
             ushort companyID = Convert.ToUInt16(CompanyIdHexString, 16);
             var manufacturerData = new BluetoothLEManufacturerData();
             // Then, set the company ID for the manufacturer data. Here we picked an unused value: 0xFFFE
@@ -135,7 +131,7 @@ namespace CosmedBleLib
 
         public CosmedBluetoothLEAdvertisementFilter AddManufacturerData(ushort CompanyId, ushort ManufacturerData)
         {
-            checkAdvertisementFilter();
+            //checkAdvertisementFilter();
             // First, let create a manufacturer data section we wanted to match for. These are the same as the one 
             // created in Scenario 2 and 4.
             var manufacturerData = new BluetoothLEManufacturerData();
@@ -178,7 +174,6 @@ namespace CosmedBleLib
         */
         public CosmedBluetoothLEAdvertisementFilter setDataBuffer(byte dataType, ushort data)
         {
-            checkAdvertisementFilter();
             BluetoothLEAdvertisementDataSection dataSection = new BluetoothLEAdvertisementDataSection();
             dataSection.DataType = dataType;
             var writer = new Windows.Storage.Streams.DataWriter();
@@ -190,37 +185,37 @@ namespace CosmedBleLib
 
         public CosmedBluetoothLEAdvertisementFilter setDataBuffer(uint dataType, ushort data)
         {
-            checkAdvertisementFilter();
+            //checkAdvertisementFilter();
             BluetoothLEAdvertisementDataSection dataSection = new BluetoothLEAdvertisementDataSection();
-            byte ADType = Convert.ToByte(dataType);
-            dataSection.DataType = ADType;
-            var writer = new Windows.Storage.Streams.DataWriter();
-            writer.WriteUInt16(data);
-            dataSection.Data = writer.DetachBuffer();
+            try
+            {
+                byte ADType = Convert.ToByte(dataType);
+                dataSection.DataType = ADType;
+                var writer = new Windows.Storage.Streams.DataWriter();
+                writer.WriteUInt16(data);
+                dataSection.Data = writer.DetachBuffer();
+            }
+            catch(OverflowException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
             return this;
         }
 
         public CosmedBluetoothLEAdvertisementFilter ResetAdvertismentFilter()
         {
-            AdvertisementFilter = null;
+            AdvertisementFilter = new BluetoothLEAdvertisementFilter(); ;
             return this;
         }
 
         public CosmedBluetoothLEAdvertisementFilter ResetSignalStrengthFilter()
         {
-            SignalStrengthFilter = null;
+            SignalStrengthFilter = new BluetoothSignalStrengthFilter();
             return this;
         }
     }
 
-
-    public enum DataType
-    {
-        UINT8,
-        UINT16,
-        STRING,
-        GUID
-    }
 }
 
 
