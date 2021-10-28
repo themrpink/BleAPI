@@ -9,7 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleLib", "CosmedBleLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleLib.MSTest.UnitTest", "CosmedBleLib.Test\CosmedBleLib.MSTest.UnitTest.csproj", "{32FA3D26-4C2F-4935-AAD2-2B140B95682B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleLib.NUnit.UnitTest", "CosmedBleLib.NUnit.Test\CosmedBleLib.NUnit.UnitTest.csproj", "{29D12850-7130-4C7D-9B7A-FAEB899FD727}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CosmedBleLib.NUnit.UnitTest", "CosmedBleLib.NUnit.Test\CosmedBleLib.NUnit.UnitTest.csproj", "{29D12850-7130-4C7D-9B7A-FAEB899FD727}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmedBleScannerInterface.WPF", "CosmedBleScannerInterface.WPF\CosmedBleScannerInterface.WPF.csproj", "{DC5CC323-6DC0-4105-82F1-CCC2F963B171}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{29D12850-7130-4C7D-9B7A-FAEB899FD727}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29D12850-7130-4C7D-9B7A-FAEB899FD727}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29D12850-7130-4C7D-9B7A-FAEB899FD727}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC5CC323-6DC0-4105-82F1-CCC2F963B171}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC5CC323-6DC0-4105-82F1-CCC2F963B171}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC5CC323-6DC0-4105-82F1-CCC2F963B171}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC5CC323-6DC0-4105-82F1-CCC2F963B171}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

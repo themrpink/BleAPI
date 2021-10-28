@@ -17,7 +17,6 @@ namespace CosmedBleLib
         bool IsAnonymous { get; }
         bool IsConnectable { get; }
         bool IsDirected { get; }
-        bool IsScanResponse { get; }
         bool IsScannable { get; }
         short? TransmitPowerLevelInDBm { get; }
 

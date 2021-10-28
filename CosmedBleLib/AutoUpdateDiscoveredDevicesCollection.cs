@@ -7,27 +7,66 @@ using System.Threading.Tasks;
 
 namespace CosmedBleLib
 {
+
+
+
+    public class AutoUpdateDiscoveredDevicesCollection2 : IAdvertisedDevicesCollection2
+    { 
+
+        private readonly object ThreadLock = new object();
+        private List<CosmedBleAdvertisedDevice> lastDiscoveredDevices;
+
+        public AutoUpdateDiscoveredDevicesCollection2()
+        {
+            this.lastDiscoveredDevices = new List<CosmedBleAdvertisedDevice>();
+        }
+
+        public IReadOnlyCollection<CosmedBleAdvertisedDevice> getLastDiscoveredDevices()
+        {
+            lock (ThreadLock)
+            {
+                IReadOnlyList<CosmedBleAdvertisedDevice> lastDiscoveredDevicesTemp = lastDiscoveredDevices.AsReadOnly();
+                lastDiscoveredDevices = new List<CosmedBleAdvertisedDevice>();
+                return lastDiscoveredDevicesTemp;
+            }
+        }
+
+        public void NewDiscoveredDeviceHandler(CosmedBleAdvertisedDevice device)
+        {
+            lock (ThreadLock)
+            {
+                //aggiungo quelli già inseriti in una lista a parte, tranne quello nuovo(che potrebbe essere già presente ma non aggiornato)
+                List<CosmedBleAdvertisedDevice> temp = lastDiscoveredDevices.Where(dev => dev.DeviceAddress != device.DeviceAddress).ToList();
+                //aggiungo alla copia della lista quello nuovo
+                temp.Add(device);
+                //ricreo la lista readOnly aggiornata
+                lastDiscoveredDevices = temp;
+            }
+        } 
+    }
+
+
     public class AutoUpdateDiscoveredDevicesCollection : IAdvertisedDevicesCollection
     {
         // private bool isCollectingDevices = false;
         private readonly object ThreadLock = new object();
 
-        private IReadOnlyCollection<CosmedBleAdvertisedDevice> lastDiscoveredDevices;
+        private List<CosmedBleAdvertisedDevice> lastDiscoveredDevices;
 
         public AutoUpdateDiscoveredDevicesCollection()
         {
-            this.lastDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
+            this.lastDiscoveredDevices = new List<CosmedBleAdvertisedDevice>();
         }
 
-        public double timeout { get; set; } = 10;
+
         public IReadOnlyCollection<CosmedBleAdvertisedDevice> allDiscoveredDevices { get; private set; } = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
         public IReadOnlyCollection<CosmedBleAdvertisedDevice> recentDiscoveredDevices { get; private set; } = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
         public IReadOnlyCollection<CosmedBleAdvertisedDevice> getLastDiscoveredDevices()
         {
             lock (ThreadLock)
             {
-                IReadOnlyCollection<CosmedBleAdvertisedDevice> lastDiscoveredDevicesTemp = lastDiscoveredDevices.ToList().AsReadOnly();
-                lastDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
+                IReadOnlyList<CosmedBleAdvertisedDevice> lastDiscoveredDevicesTemp = lastDiscoveredDevices.AsReadOnly();
+                lastDiscoveredDevices = new List<CosmedBleAdvertisedDevice>();
                 return lastDiscoveredDevicesTemp;
             }
         }
@@ -43,12 +82,12 @@ namespace CosmedBleLib
         {
             lock (ThreadLock)
             {
-                //lastDiscoveredDevices.Where(dev => dev.DeviceAddress == device.DeviceAddress).ToList().ForEach(dev =>
-                //dev.setAdvertisement(device.advertisementContent.Advertisement, device.advertisementContent.AdvertisementType, device.timestamp));
-                
+                //aggiungo quelli già inseriti in una lista a parte, tranne quello nuovo(che potrebbe essere già presente ma non aggiornato)
                 List<CosmedBleAdvertisedDevice> temp = lastDiscoveredDevices.Where(dev => dev.DeviceAddress != device.DeviceAddress).ToList();
+                //aggiungo alla copia della lista quello nuovo
                 temp.Add(device);
-                lastDiscoveredDevices = temp.AsReadOnly();
+                //ricreo la lista readOnly aggiornata
+                lastDiscoveredDevices = temp;
             }
         }
 
@@ -63,7 +102,7 @@ namespace CosmedBleLib
         {
             allDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
             recentDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
-            lastDiscoveredDevices = Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly();
+            lastDiscoveredDevices = new List<CosmedBleAdvertisedDevice>();
         }
 
 
@@ -74,4 +113,5 @@ namespace CosmedBleLib
             lastDiscoveredDevices = null;
         }
     }
+
 }

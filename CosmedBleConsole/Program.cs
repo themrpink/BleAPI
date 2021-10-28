@@ -26,55 +26,61 @@ namespace CosmedBleConsole
         public static async Task Main(String[] args)
         {
 
+            //to use the other implementation option
             //DeviceEnumeration();
 
-
+            //create a filter
             CosmedBluetoothLEAdvertisementFilter filter = new CosmedBluetoothLEAdvertisementFilter();
-            //filter//.setFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode | BluetoothLEAdvertisementFlags.ClassicNotSupported)
-              //  .SetCompanyID("4D");
+            //set the filter
+            filter.setFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode | BluetoothLEAdvertisementFlags.ClassicNotSupported).SetCompanyID("4D");
+            //scan with filter
             //CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher(filter);
 
             CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher();
-           //s scan.NewDeviceDiscovered += (device) => { Console.WriteLine("waiting"); Thread.Sleep(5000); };
 
             Console.WriteLine("_______________________scanning____________________");
-          //  scan.NewDeviceDiscovered += (device) => { Console.WriteLine(device.ToString() + "+++++++++++++++new device+++++++++++++++"); };
+
+
+            //  scan.NewDeviceDiscovered += (device) => { Console.WriteLine(device.ToString() + "+++++++++++++++new device+++++++++++++++"); };
             // scan.OnScanStopped += (sender, args) => { };
-            // var dev2 = scan.allDiscoveredDevicesUpdate;
-            IAdvertisedDevicesCollection Devices = scan.getUpdatedDiscoveredDevices();
+
+            //start the auto update collection
+            IAdvertisedDevicesCollection Devices = scan.GetUpdatedDiscoveredDevices();
+
+            //start scanning
             scan.StartActiveScanning();
+            //scan.StartPassiveScanning();
+            //print the results and connect
             while (true)
             {
-                //scan.StartActiveScanning();
-                foreach (var device in scan.allDiscoveredDevices)
+                foreach (var device in scan.GetRecentlyAdvertisedDevices())
                 {
-                    
-
-                    //printAdvertisement(device);
-                    if (device.DeviceName.Equals("myname"))
+                   // if (device.DeviceName.Equals("myname") && device.IsConnectable && device.HasScanResponse)
                     {
                         Console.WriteLine("----------------------normal response-----------------");
+
                         device.PrintAdvertisement();
-                        ReadDevice(device);
+
                         if (device.HasScanResponse)
                         {
                             Console.WriteLine("++++++++++++++++scan response+++++++++++++");
-                            //printScanResponses(device);
                             device.PrintScanResponses();
                         }
-
-                        if (device.IsConnectable && device.HasScanResponse)
+                        
+                        if (device.IsConnectable)
                         {
                             CosmedBleConnection connection = new CosmedBleConnection(device);
                             Console.WriteLine("connected with:" + device.getDeviceAddress());
                             Console.WriteLine("scan status: " + scan.GetWatcherStatus.ToString());
                             await connection.startConnectionAsync();
-
+                            await connection.Pair();
                         }
+                        
                     }
 
                 }
-                Thread.Sleep(500);
+                Thread.Sleep(5000);
+
                 // Devices = scan.GetUpdatedDiscoveredDevices();
                 // scan.StopScanning();
                 // Devices = scan.GetUpdatedDiscoveredDevices();

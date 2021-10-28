@@ -14,33 +14,54 @@ namespace CosmedBleLib
 
     public static class DeviceFactory
     {
-        public static CosmedBleAdvertisedDevice CreateAdvertisingDevice(BluetoothLEAdvertisementReceivedEventArgs args)
+        public static CosmedBleAdvertisedDevice CreateAdvertisedDevice(BluetoothLEAdvertisementReceivedEventArgs args)
         {
-            var device = new CosmedBleAdvertisedDevice(args);
-            return device;
+            return new CosmedBleAdvertisedDevice(args);
         }
     }
-    /*
-     *   rinominare AdvertisingDevice 
-     */
+
     public class CosmedBleAdvertisedDevice : IAdvertisedDevice<CosmedBleAdvertisedDevice>
     {
         private AdvertisementContent scanResponseAdvertisementContent;// { get; private set; }
         private AdvertisementContent advertisementContent;// { get; private set; }
 
+
+        #region Device Properties
+
+        //the name of the device
         public string DeviceName { get; private set; }
+
+        //true is a scan response has been received
         public bool HasScanResponse { get; private set; }
-        //public BluetoothLEDevice AdevertisingDevice { get; private set; }
+       
+        //the address value
         public ulong DeviceAddress { get; set; }
-        public DateTimeOffset Timestamp { get; set; }
-        public bool IsConnectable { get; private set; }
-        public short RawSignalStrengthInDBm { get; private set; }
+
+        //the type of address (public - random)
         public BluetoothAddressType BluetoothAddressType { get; private set; }
+
+        //Timestamp of the last received advertising
+        public DateTimeOffset Timestamp { get; set; }
+
+        //Whether the Bluetooth LE device is currently advertising a connectable advertisement.
+        public bool IsConnectable { get; private set; }
+
+        //signal strength
+        public short RawSignalStrengthInDBm { get; private set; }
+
         public bool IsAnonymous { get; private set; }        
         public bool IsDirected { get; private set; }
-        public bool IsScanResponse { get; private set; }
         public bool IsScannable { get; private set; }
         public short? TransmitPowerLevelInDBm { get; private set; }
+
+        #endregion
+
+
+        #region Delegate
+
+        public event Action<CosmedBleAdvertisedDevice> ScanResponseReceived;
+
+        #endregion
 
 
         public CosmedBleAdvertisedDevice()
@@ -71,22 +92,22 @@ namespace CosmedBleLib
                 {
                     device = await BluetoothLEDevice.FromBluetoothAddressAsync(DeviceAddress);
                 }
-                catch(ArgumentNullException e)
+                catch(Exception e)
                 {
-                    throw new ArgumentNullException(nameof(DeviceAddress));
+                    //throw new ArgumentNullException(nameof(DeviceAddress));
                 }
             }
+
+
                 
          }
 
-        public async Task<CosmedBleConnection> GetBleDevice()
-            // public async Task<CosmedBleConnection> GetBleDevice()
+        public async Task<CosmedBleConnection> ConnectDevice()
         {           
             await SetBleDevice();
             var connection = new CosmedBleConnection(device);
             CosmedBluetoothLEAdvertisementWatcher.StopScan();
             return connection;
-            //return new CosmedBleConnection(device);
         }*/
 
         public string getDeviceAddress()
@@ -102,30 +123,10 @@ namespace CosmedBleLib
 
         public CosmedBleAdvertisedDevice (BluetoothLEAdvertisementReceivedEventArgs args) : this()
         {
-            DeviceName = args.Advertisement.LocalName;
-            DeviceAddress = args.BluetoothAddress;
-            Timestamp = args.Timestamp;
-            IsConnectable = args.IsConnectable;
-            RawSignalStrengthInDBm = args.RawSignalStrengthInDBm;
-            BluetoothAddressType = args.BluetoothAddressType;
-            IsAnonymous = args.IsAnonymous;
-            IsDirected = args.IsDirected;
-            IsScanResponse = args.IsScanResponse;
-            IsScannable = args.IsScannable;
-            TransmitPowerLevelInDBm = args.TransmitPowerLevelInDBm;
-
-            if (args.AdvertisementType == BluetoothLEAdvertisementType.ScanResponse)
-            {
-                scanResponseAdvertisementContent.Advertisement = args.Advertisement;
-                scanResponseAdvertisementContent.AdvertisementType = args.AdvertisementType;
-                HasScanResponse = true;
-            }
-            else
-            {
-                advertisementContent.Advertisement = args.Advertisement;
-                advertisementContent.AdvertisementType = args.AdvertisementType;
-            }
+            _ = SetAdvertisement(args);
         }
+
+
         public CosmedBleAdvertisedDevice SetAdvertisement(BluetoothLEAdvertisementReceivedEventArgs args)
         {
             DeviceName = args.Advertisement.LocalName;
@@ -136,7 +137,6 @@ namespace CosmedBleLib
             BluetoothAddressType = args.BluetoothAddressType;
             IsAnonymous = args.IsAnonymous;
             IsDirected = args.IsDirected;
-            IsScanResponse = args.IsScanResponse;
             IsScannable = args.IsScannable;
             TransmitPowerLevelInDBm = args.TransmitPowerLevelInDBm;
 
@@ -144,7 +144,8 @@ namespace CosmedBleLib
             {
                 scanResponseAdvertisementContent.Advertisement = args.Advertisement;
                 scanResponseAdvertisementContent.AdvertisementType = args.AdvertisementType;
-                HasScanResponse = true;  
+                HasScanResponse = true;
+                ScanResponseReceived?.Invoke(this);
             }
             else
             {
@@ -170,7 +171,6 @@ namespace CosmedBleLib
             Console.WriteLine("ble address type: " + this.BluetoothAddressType.ToString());
             Console.WriteLine("is anonymous: " + IsAnonymous); 
             Console.WriteLine("is directed: " + IsDirected); 
-            Console.WriteLine("is scan response: " + IsScanResponse); 
             Console.WriteLine("is scannable: " + IsScannable); 
             Console.WriteLine("transmit powr level: " + TransmitPowerLevelInDBm);
 
@@ -186,7 +186,6 @@ namespace CosmedBleLib
             {
                 Console.WriteLine("found: " + DeviceAddress);
                 Console.WriteLine("mac: " + getDeviceAddress());
-
            
                     Console.WriteLine("sr local name: " + scanResponseAdvertisementContent.Advertisement.LocalName);
                     Console.WriteLine("sr scan type: " + scanResponseAdvertisementContent.AdvertisementType.ToString());
@@ -210,9 +209,7 @@ namespace CosmedBleLib
                  //   else
                     {
                         Console.WriteLine("sr: data section is null");
-                    }
-                
-                  
+                    }               
             }
             else
             {
@@ -308,6 +305,8 @@ namespace CosmedBleLib
         }
     }
 
+
+    //meglio una classe??
     public struct AdvertisementContent
     {
         public BluetoothLEAdvertisement Advertisement { get; set; }

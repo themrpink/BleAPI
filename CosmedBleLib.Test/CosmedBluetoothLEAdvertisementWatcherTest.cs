@@ -19,7 +19,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         private IReadOnlyCollection<CosmedBleAdvertisedDevice> collectionRecent;
         private IReadOnlyCollection<CosmedBleAdvertisedDevice> collectionLast;
         private IAdvertisedDevicesCollection autoUpdatedCollections;
-
+        private IAdvertisedDevicesCollection2 autoUpdatedCollections2;
         [TestInitialize]
         public void Setup()
         {

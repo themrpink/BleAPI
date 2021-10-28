@@ -12,9 +12,19 @@ namespace CosmedBleLib
         IReadOnlyCollection<CosmedBleAdvertisedDevice> recentDiscoveredDevices { get; }
 
         IReadOnlyCollection<CosmedBleAdvertisedDevice> getLastDiscoveredDevices();
-        void AllDevicesUpdatedHandler(IReadOnlyCollection<CosmedBleAdvertisedDevice> updatedDevices);
+
+        void AllDevicesUpdatedHandler(IReadOnlyCollection<CosmedBleAdvertisedDevice> allDevices);
         void NewDiscoveredDeviceHandler(CosmedBleAdvertisedDevice newDevice);
-        void RecentlyUpdatedDevicesHandler(IReadOnlyCollection<CosmedBleAdvertisedDevice> updatedDevices);
+        void RecentlyUpdatedDevicesHandler(IReadOnlyCollection<CosmedBleAdvertisedDevice> recentlyUpdatedDevices);
 
     }
+
+    public interface IAdvertisedDevicesCollection2
+    {
+        IReadOnlyCollection<CosmedBleAdvertisedDevice> getLastDiscoveredDevices();
+
+        void NewDiscoveredDeviceHandler(CosmedBleAdvertisedDevice newDevice);
+
+    }
+
 }
