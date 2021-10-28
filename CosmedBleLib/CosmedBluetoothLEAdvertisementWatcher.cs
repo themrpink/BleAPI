@@ -23,7 +23,7 @@ namespace CosmedBleLib
 
 
         #region Private fields
-        private BluetoothLEAdvertisementWatcher watcher;
+        private static BluetoothLEAdvertisementWatcher watcher;
         private BluetoothLEAdvertisementWatcherStatus status;
 
         //the structure where the discovered devices are saved
@@ -63,7 +63,7 @@ namespace CosmedBleLib
         #endregion
 
 
-        #region public Delegates
+        #region Delegates
 
         //public events
         public event Action<CosmedBluetoothLEAdvertisementWatcher, BluetoothLEScanningMode> StartedListening;
@@ -74,7 +74,9 @@ namespace CosmedBleLib
         ///Fired when a new device is discovered
         /// </summary>
         public event Action<CosmedBleAdvertisedDevice> NewDeviceDiscovered;
-
+        public event Action<CosmedAdvertisementEventArgs> NewDeviceDiscovered2;
+        public event TypedEventHandler<BluetoothLEAdvertisementWatcher, BluetoothLEAdvertisementReceivedEventArgs> NewDeviceDiscovered3;
+        public event TypedEventHandler<BluetoothLEAdvertisementWatcher, BluetoothLEAdvertisementReceivedEventArgs> DeviceNameChanged;
         /////questo potrebbe non servire
         /// <summary>
         /// Subscribe to this event to get the discovered devices collection regulary updated
@@ -90,6 +92,8 @@ namespace CosmedBleLib
         //in seconds
         public double timeout { get; set; } = 10;
 
+
+        public bool IsFilteringActive { get; private set; } = false;
         /// <summary>
         /// this structure is created at every user request from the devices dictionary. The multithreaded access is
         /// protected by a lock
@@ -143,9 +147,10 @@ namespace CosmedBleLib
             status = watcher.Status;
             discoveredDevices = new Dictionary<ulong, CosmedBleAdvertisedDevice>();
             AutoUpdatedDevices = new AutoUpdateDiscoveredDevicesCollection();
-            RecentDevicesCollectionUpdated += AutoUpdatedDevices.onRecentDevicesUpdated;
-            AllDevicesCollectionUpdated += AutoUpdatedDevices.onAllDevicesUpdated;
-            NewDeviceDiscovered += AutoUpdatedDevices.onNewDeviceDiscovered;
+            RecentDevicesCollectionUpdated += AutoUpdatedDevices.RecentlyUpdatedDevicesHandler;
+            AllDevicesCollectionUpdated += AutoUpdatedDevices.AllDevicesUpdatedHandler;
+            NewDeviceDiscovered += AutoUpdatedDevices.NewDiscoveredDeviceHandler;
+            DeviceNameChanged += OnDeviceNameChanged;
         }
 
         /// <summary>
@@ -153,9 +158,9 @@ namespace CosmedBleLib
         /// </summary>
         /// <param name="advertisementFilter"></param>
         public CosmedBluetoothLEAdvertisementWatcher(CosmedBluetoothLEAdvertisementFilter filter) : this()
-        {
-            
+        {            
             SetFilter(filter ?? throw new ArgumentNullException(nameof(filter)));
+            IsFilteringActive = true;
         }
 
         #endregion
@@ -224,7 +229,7 @@ namespace CosmedBleLib
                 
             bool isExtendedAdvertisementSupported = CosmedBluetoothLEAdapter.IsExtendedAdvertisingSupported;
             watcher.AllowExtendedAdvertisements = isExtendedAdvertisementSupported;
-            watcher.Received += this.OnAdvertisementReceived;
+            watcher.Received += this.OnAdvertisementReceivedAsync;
             watcher.Stopped += this.OnScanStopped;            
         }
 
@@ -240,17 +245,21 @@ namespace CosmedBleLib
             catch (System.Exception e)
             {
                 isCollectingDevices = false;
-                watcher.Received -= this.OnAdvertisementReceived;
+                watcher.Received -= this.OnAdvertisementReceivedAsync;
                 throw e;
             }
         }
 
+        public static void StopScan()
+        {
+            watcher.Stop();
+        }
 
         public void StopScanning()
         {
             if(watcher != null && IsScanningStarted)
             {
-                watcher.Received -= this.OnAdvertisementReceived;        
+                watcher.Received -= this.OnAdvertisementReceivedAsync;        
                 watcher.Stop();  
                 watcher.Stopped -= this.OnScanStopped;                           
                 lock (LockUpdateDevices)
@@ -276,6 +285,7 @@ namespace CosmedBleLib
 
             watcher.AdvertisementFilter = filter.AdvertisementFilter;
             watcher.SignalStrengthFilter = filter.SignalStrengthFilter;
+            IsFilteringActive = true;
         }
 
 
@@ -287,6 +297,7 @@ namespace CosmedBleLib
             watcher.SignalStrengthFilter = null;
             CosmedBluetoothLEAdvertisementFilter filterTemp = filter;
             filter = null;
+            IsFilteringActive = false;
 
             return filterTemp;
         }
@@ -304,6 +315,7 @@ namespace CosmedBleLib
         /// <returns></returns>
         public IAdvertisedDevicesCollection getUpdatedDiscoveredDevices(int ms = 5000)
         {
+           
             lock (LockUpdateDevices)
             {
                 if (!isCollectingDevices)
@@ -312,7 +324,7 @@ namespace CosmedBleLib
 
                     if (updateThread == null)
                     {
-                        updateThread = new Thread(() => sendUpdatedDevicesService(ms));
+                        updateThread = new Thread(() => onSendUpdatedDevicesService(ms));
                         updateThread.Start();
                     }
                 }
@@ -323,7 +335,7 @@ namespace CosmedBleLib
 
         /////questo potrebbe non servire
         //update the devices
-        private void sendUpdatedDevicesService(int ms)
+        private void onSendUpdatedDevicesService(int ms)
         {
             while (true)
             {
@@ -357,7 +369,7 @@ namespace CosmedBleLib
 
         #region Helper methods
 
-        public BluetoothLEAdvertisementWatcherStatus getWatcherStatus => watcher!=null ? watcher.Status : status;
+        public BluetoothLEAdvertisementWatcherStatus GetWatcherStatus =>  watcher!=null ? watcher.Status : status; 
         public bool IsScanningStarted => watcher?.Status == BluetoothLEAdvertisementWatcherStatus.Started;
         public bool IsScanningPassive => watcher?.ScanningMode == BluetoothLEScanningMode.Passive;
         public bool IsScanningActive => watcher?.ScanningMode == BluetoothLEScanningMode.Active;
@@ -371,17 +383,16 @@ namespace CosmedBleLib
         {                          
             lock (ThreadLock)
             {
-                return discoveredDevices.Values.Where
-                    ((device) =>
-                    {
-                         if (timeout > 0)
-                         {
-                            var diff = DateTime.UtcNow - TimeSpan.FromSeconds(seconds);
-                            return device.Timestamp >= diff;
-                         }
-                         return true;
-                    }
-                    ).ToList().AsReadOnly();
+                return discoveredDevices.Values.Where((device) =>
+                {
+                     if (seconds > 0)
+                     {
+                         var diff = DateTime.UtcNow - TimeSpan.FromSeconds(seconds);
+                         return device.Timestamp >= diff;
+                     }
+                     return true;
+
+                }).ToList().AsReadOnly();
             }
         }
 
@@ -464,7 +475,7 @@ namespace CosmedBleLib
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        private async void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
+        private async void OnAdvertisementReceivedAsync(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
         {
            
             CosmedBleAdvertisedDevice device;
@@ -479,17 +490,26 @@ namespace CosmedBleLib
                         {
                             CleanOlderDiscoveredDevices();
                         }
-                        device = new CosmedBleAdvertisedDevice().SetAdvertisement(args);
+                        device = DeviceFactory.CreateAdvertisingDevice(args);
                         discoveredDevices[args.BluetoothAddress] = device;
                     }
                     else
                     {
+                        string name = discoveredDevices[args.BluetoothAddress].DeviceName;
+                        if(!name.Equals(args.Advertisement.LocalName))
+                        {
+                            DeviceNameChanged?.Invoke(sender, args);
+                        }
+                        
                         discoveredDevices[args.BluetoothAddress].SetAdvertisement(args);
                     }                  
                 }
                 device = discoveredDevices[args.BluetoothAddress];
             }
-            await Task.Run(() => { NewDeviceDiscovered?.Invoke(device); });        
+            await Task.Run(() => { NewDeviceDiscovered?.Invoke(device); });
+            
+            //CosmedAdvertisementEventArgs deviceArgs = new CosmedAdvertisementEventArgs(sender, args);
+            //NewDeviceDiscovered2?.Invoke(deviceArgs);
         }
 
         //evento in caso di scansione interrotta
@@ -507,9 +527,25 @@ namespace CosmedBleLib
 
         }
 
+
+        private void OnDeviceNameChanged(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
+        {
+            Console.WriteLine("___________________device name changed: " + args.Advertisement.LocalName + " isConnectable: " + args.IsConnectable + " address: " + args.BluetoothAddress + " isscanresponse " + args.IsScanResponse);
+            if (args.Advertisement.LocalName.Equals("myname"))
+            {
+
+                    bool newDevice = !discoveredDevices.ContainsKey(0);
+                    if (newDevice)
+                        discoveredDevices[0] = DeviceFactory.CreateAdvertisingDevice(args);
+                    else
+                        discoveredDevices[0] = discoveredDevices[0].SetAdvertisement(args);
+            }
+            
+        }
+
         #endregion
-    
-    
+
+
     }
 
 

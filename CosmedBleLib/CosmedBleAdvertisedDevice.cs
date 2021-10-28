@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Foundation;
@@ -10,13 +11,26 @@ using Windows.Storage.Streams;
 
 namespace CosmedBleLib
 {
+
+    public static class DeviceFactory
+    {
+        public static CosmedBleAdvertisedDevice CreateAdvertisingDevice(BluetoothLEAdvertisementReceivedEventArgs args)
+        {
+            var device = new CosmedBleAdvertisedDevice(args);
+            return device;
+        }
+    }
+    /*
+     *   rinominare AdvertisingDevice 
+     */
     public class CosmedBleAdvertisedDevice : IAdvertisedDevice<CosmedBleAdvertisedDevice>
     {
         private AdvertisementContent scanResponseAdvertisementContent;// { get; private set; }
         private AdvertisementContent advertisementContent;// { get; private set; }
 
+        public string DeviceName { get; private set; }
         public bool HasScanResponse { get; private set; }
-        public BluetoothLEDevice device { get; private set; }
+        //public BluetoothLEDevice AdevertisingDevice { get; private set; }
         public ulong DeviceAddress { get; set; }
         public DateTimeOffset Timestamp { get; set; }
         public bool IsConnectable { get; private set; }
@@ -40,22 +54,41 @@ namespace CosmedBleLib
         {
             if (adv == null)
                 throw new ArgumentNullException();
+            DeviceName = adv.LocalName;
             DeviceAddress = address;
             this.Timestamp = timestamp;
             this.IsConnectable = isConnectable;          
         }
 
 
-        public async void SetBleDevice()
+
+        /*
+        private async Task SetBleDevice()
         {
             if (IsConnectable)
             {
-                device = await BluetoothLEDevice.FromBluetoothAddressAsync(DeviceAddress);
+                try
+                {
+                    device = await BluetoothLEDevice.FromBluetoothAddressAsync(DeviceAddress);
+                }
+                catch(ArgumentNullException e)
+                {
+                    throw new ArgumentNullException(nameof(DeviceAddress));
+                }
             }
                 
          }
-        
-     
+
+        public async Task<CosmedBleConnection> GetBleDevice()
+            // public async Task<CosmedBleConnection> GetBleDevice()
+        {           
+            await SetBleDevice();
+            var connection = new CosmedBleConnection(device);
+            CosmedBluetoothLEAdvertisementWatcher.StopScan();
+            return connection;
+            //return new CosmedBleConnection(device);
+        }*/
+
         public string getDeviceAddress()
         {            
             return string.Format("0x{0:X}", DeviceAddress);
@@ -67,9 +100,35 @@ namespace CosmedBleLib
             return DeviceAddress.ToString();
         }
 
+        public CosmedBleAdvertisedDevice (BluetoothLEAdvertisementReceivedEventArgs args) : this()
+        {
+            DeviceName = args.Advertisement.LocalName;
+            DeviceAddress = args.BluetoothAddress;
+            Timestamp = args.Timestamp;
+            IsConnectable = args.IsConnectable;
+            RawSignalStrengthInDBm = args.RawSignalStrengthInDBm;
+            BluetoothAddressType = args.BluetoothAddressType;
+            IsAnonymous = args.IsAnonymous;
+            IsDirected = args.IsDirected;
+            IsScanResponse = args.IsScanResponse;
+            IsScannable = args.IsScannable;
+            TransmitPowerLevelInDBm = args.TransmitPowerLevelInDBm;
 
+            if (args.AdvertisementType == BluetoothLEAdvertisementType.ScanResponse)
+            {
+                scanResponseAdvertisementContent.Advertisement = args.Advertisement;
+                scanResponseAdvertisementContent.AdvertisementType = args.AdvertisementType;
+                HasScanResponse = true;
+            }
+            else
+            {
+                advertisementContent.Advertisement = args.Advertisement;
+                advertisementContent.AdvertisementType = args.AdvertisementType;
+            }
+        }
         public CosmedBleAdvertisedDevice SetAdvertisement(BluetoothLEAdvertisementReceivedEventArgs args)
         {
+            DeviceName = args.Advertisement.LocalName;
             DeviceAddress = args.BluetoothAddress;
             Timestamp = args.Timestamp;
             IsConnectable = args.IsConnectable;
@@ -96,37 +155,15 @@ namespace CosmedBleLib
         }
 
 
-        public void updateAll(ulong address, DateTimeOffset timestamp, bool isConnectable, BluetoothLEAdvertisement adv, BluetoothLEAdvertisementType advType)
-        {
-            DeviceAddress = address;
-            this.Timestamp = timestamp;
-            this.IsConnectable = isConnectable;
-
-            if (advType == BluetoothLEAdvertisementType.ScanResponse)
-            {
-                scanResponseAdvertisementContent.Advertisement = adv;
-                scanResponseAdvertisementContent.AdvertisementType = advType;
-                HasScanResponse = true;
-            }
-            else
-            {
-                advertisementContent.Advertisement = adv;
-                advertisementContent.AdvertisementType = advType;
-            }
-        }
-
-
         public void PrintAdvertisement()
         {
+
             Console.WriteLine("found: " + DeviceAddress);
             Console.WriteLine("mac: " + getDeviceAddress());
-            Console.WriteLine("scan type: " + advertisementContent.AdvertisementType.ToString());
-            Console.WriteLine("found: " + DeviceAddress);
-            Console.WriteLine("mac: " + getDeviceAddress());
+            Console.WriteLine("device name: " + DeviceName);
             Console.WriteLine("scan type: " + advertisementContent.AdvertisementType.ToString());
 
             Console.WriteLine("has scan response: " + HasScanResponse);
-            Console.WriteLine("device address: " + DeviceAddress);
             Console.WriteLine("timestamp: " + Timestamp.ToString());
             Console.WriteLine("is connectable: " + IsConnectable);
             Console.WriteLine("raw signal strenght: " + RawSignalStrengthInDBm);
@@ -145,45 +182,41 @@ namespace CosmedBleLib
 
         public void PrintScanResponses()
         {
-            if (scanResponseAdvertisementContent != null)
+            if (scanResponseAdvertisementContent.Advertisement != null && scanResponseAdvertisementContent.Advertisement != null)
             {
                 Console.WriteLine("found: " + DeviceAddress);
                 Console.WriteLine("mac: " + getDeviceAddress());
 
-                if (scanResponseAdvertisementContent.Advertisement != null)
-                {
+           
                     Console.WriteLine("sr local name: " + scanResponseAdvertisementContent.Advertisement.LocalName);
                     Console.WriteLine("sr scan type: " + scanResponseAdvertisementContent.AdvertisementType.ToString());
 
                     printNameFlagsGuid(scanResponseAdvertisementContent, "sr");
 
-                    if (scanResponseAdvertisementContent.Advertisement.DataSections != null)
+          //          if (scanResponseAdvertisementContent.Advertisement.DataSections != null)
                     {
                         Console.WriteLine("sr company numb: " + scanResponseAdvertisementContent.Advertisement.ManufacturerData.Count);
                         printManufacturerData(scanResponseAdvertisementContent, "sr");
                     }
-                    else
+               //     else
                     {
                         Console.WriteLine("sr: manufacturer data is null");
                     }
 
-                    if (scanResponseAdvertisementContent.Advertisement.DataSections != null)
+                //    if (scanResponseAdvertisementContent.Advertisement.DataSections != null)
                     {
                         printDataSections(scanResponseAdvertisementContent, "sr");
                     }
-                    else
+                 //   else
                     {
                         Console.WriteLine("sr: data section is null");
                     }
-                }
-                else
-                {
-                    Console.WriteLine("sr: advertisement is null");
-                }                  
+                
+                  
             }
             else
             {
-                Console.WriteLine("sr: qualcosa era null");
+                Console.WriteLine("sr: something is null");
             }
         }
 
@@ -275,7 +308,7 @@ namespace CosmedBleLib
         }
     }
 
-    public class AdvertisementContent
+    public struct AdvertisementContent
     {
         public BluetoothLEAdvertisement Advertisement { get; set; }
         public BluetoothLEAdvertisementType AdvertisementType { get; set; }

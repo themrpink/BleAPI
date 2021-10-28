@@ -23,28 +23,29 @@ namespace CosmedBleLib
 
         static CosmedBluetoothLEAdapter()
         {
-            SetAdapter();
+            _ = SetAdapterAsync();
         }
 
-        private static async void SetAdapter()
+        private static async Task SetAdapterAsync()
         {
             BluetoothAdapter adapter =  await BluetoothAdapter.GetDefaultAsync();
+
             IsLowEnergySupported = adapter.IsLowEnergySupported;
             DecimalAddress = adapter.BluetoothAddress;
             HexAddress = string.Format("{0:X}", DecimalAddress);
-            AreLowEnergySecureConnectionsSupported = adapter.IsExtendedAdvertisingSupported;
+            AreLowEnergySecureConnectionsSupported = adapter.AreLowEnergySecureConnectionsSupported;
             MaxAdvertisementDataLength = adapter.MaxAdvertisementDataLength;
             IsExtendedAdvertisingSupported = adapter.IsExtendedAdvertisingSupported;
             IsCentralRoleSupported = adapter.IsCentralRoleSupported;
             
-        }/*
+        }
 
-        public static BluetoothAdapter GetAdapter()
+        public static async Task<BluetoothAdapter> GetAdapterAsync()
         {
             if (adapter == null)
-                SetAdapter();
+                await SetAdapterAsync();
             return adapter;
-        }*/
+        }
     }
 
 

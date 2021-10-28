@@ -23,21 +23,7 @@ namespace CosmedBleConsole
         public static bool check = true;
         public static IReadOnlyCollection<CosmedBleAdvertisedDevice> dev;
 
-        static void checkUpdate()
-        {
-            int count = 0;
-            Thread.Sleep(500);
-            while (check)
-            {
-                Thread.Sleep(5000);
-                Console.WriteLine("lettura "+count);
-                foreach(var device in dev)
-                    Console.WriteLine("found: " + device.DeviceAddress);
-
-                count += 1;
-            }
-        }
-        static void Main(String[] args)
+        public static async Task Main(String[] args)
         {
 
             //DeviceEnumeration();
@@ -60,21 +46,35 @@ namespace CosmedBleConsole
             while (true)
             {
                 //scan.StartActiveScanning();
-                foreach (var device in Devices.getLastDiscoveredDevices())
+                foreach (var device in scan.allDiscoveredDevices)
                 {
-                    Console.WriteLine("----------------------normal response-----------------");
-               
+                    
+
                     //printAdvertisement(device);
-                    device.PrintAdvertisement();
-                    ReadDevice(device);
-                    if (device.HasScanResponse)
+                    if (device.DeviceName.Equals("myname"))
                     {
-                        Console.WriteLine("++++++++++++++++scan response+++++++++++++");
-                        //printScanResponses(device);
-                        device.PrintScanResponses();                       
+                        Console.WriteLine("----------------------normal response-----------------");
+                        device.PrintAdvertisement();
+                        ReadDevice(device);
+                        if (device.HasScanResponse)
+                        {
+                            Console.WriteLine("++++++++++++++++scan response+++++++++++++");
+                            //printScanResponses(device);
+                            device.PrintScanResponses();
+                        }
+
+                        if (device.IsConnectable && device.HasScanResponse)
+                        {
+                            CosmedBleConnection connection = new CosmedBleConnection(device);
+                            Console.WriteLine("connected with:" + device.getDeviceAddress());
+                            Console.WriteLine("scan status: " + scan.GetWatcherStatus.ToString());
+                            await connection.startConnectionAsync();
+
+                        }
                     }
+
                 }
-                Thread.Sleep(5000);
+                Thread.Sleep(500);
                 // Devices = scan.GetUpdatedDiscoveredDevices();
                 // scan.StopScanning();
                 // Devices = scan.GetUpdatedDiscoveredDevices();
@@ -89,21 +89,22 @@ namespace CosmedBleConsole
 
 
 
-        public static void ReadDevice(CosmedBleAdvertisedDevice device)
+        public async static void ReadDevice(CosmedBleAdvertisedDevice device)
         {
 
-            device.SetBleDevice();
-            BluetoothLEDevice dev = device.device;
+            //device.SetBleDevice();
+            //CosmedBleConnection connection = new CosmedBleConnection(device);
+            /*BluetoothLEDevice dev = await device.GetBleDevice();
             if (dev != null)
             {
                 Console.WriteLine("!!!!!! bledevice !!!!!!!!!!");
                 Console.WriteLine("name " + dev.DeviceInformation.Name);
                 Console.WriteLine("name " + dev.Name);
-                Console.WriteLine("category: " + string.Format("X", dev.Appearance.Category));
+                Console.WriteLine("category: " + dev.Appearance.Category.ToString("X"));
                 Console.WriteLine("!!!!!! fine bledevice !!!!!!!!!!");
             }
                 //BluetoothLEDevice b = bledev.GetResults();
-
+            */
         }
         
 
@@ -122,7 +123,7 @@ namespace CosmedBleConsole
                         DeviceInformationKind.AssociationEndpoint);
 
 
-            dw.Added += onDeviceDiscovered;
+            dw.Added += DeviceDiscoveredHandler;
             dw.EnumerationCompleted += onEnumerationCompleted;
             dw.Start();
 
@@ -130,7 +131,7 @@ namespace CosmedBleConsole
             dw.Stop();
         }
 
-        public static void onDeviceDiscovered(DeviceWatcher dw, DeviceInformation di)
+        public static void DeviceDiscoveredHandler(DeviceWatcher dw, DeviceInformation di)
         {
             Console.WriteLine("----");
             Console.WriteLine("name: " + di.Name.ToString());

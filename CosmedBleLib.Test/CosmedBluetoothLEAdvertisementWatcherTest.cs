@@ -69,7 +69,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartActiveScanning();
             Thread.Sleep(10);
 
-            Assert.IsTrue(watcher.getWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
+            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
         [TestMethod]
@@ -81,7 +81,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartActiveScanning();
             Thread.Sleep(10);
 
-            Assert.IsTrue(watcher.getWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
+            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
         [TestMethod]
@@ -92,7 +92,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             Thread.Sleep(50);
             watcher.StopScanning();
 
-            Assert.IsTrue(watcher.getWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Stopped);
+            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Stopped);
         }
 
         [TestMethod]
@@ -102,7 +102,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartActiveScanning();
             watcher.StartPassiveScanning();
 
-            Assert.IsTrue(watcher.getWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
+            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
             Assert.IsTrue(watcher.IsScanningPassive);
         }
 
@@ -113,7 +113,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartPassiveScanning();
             watcher.StartActiveScanning();
 
-            Assert.IsTrue(watcher.getWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
+            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
             Assert.IsTrue(watcher.IsScanningActive);
         }
 
@@ -142,7 +142,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartPassiveScanning();
             Thread.Sleep(10);
 
-            Assert.IsTrue(watcher.getWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
+            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
 
@@ -155,7 +155,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartPassiveScanning();
             Thread.Sleep(10);
 
-            Assert.IsTrue(watcher.getWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
+            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             Thread.Sleep(50);
             watcher.StopScanning();
             
-            Assert.IsTrue(watcher.getWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Stopped);
+            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Stopped);
         }
 
 /*

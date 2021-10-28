@@ -33,13 +33,13 @@ namespace CosmedBleLib
         }
         
 
-        public void onRecentDevicesUpdated(IReadOnlyCollection<CosmedBleAdvertisedDevice> devices)
+        public void RecentlyUpdatedDevicesHandler(IReadOnlyCollection<CosmedBleAdvertisedDevice> devices)
         {
             recentDiscoveredDevices = devices;
         }
 
 
-        public void onNewDeviceDiscovered(CosmedBleAdvertisedDevice device)
+        public void NewDiscoveredDeviceHandler(CosmedBleAdvertisedDevice device)
         {
             lock (ThreadLock)
             {
@@ -53,7 +53,7 @@ namespace CosmedBleLib
         }
 
 
-        public void onAllDevicesUpdated(IReadOnlyCollection<CosmedBleAdvertisedDevice> devices)
+        public void AllDevicesUpdatedHandler(IReadOnlyCollection<CosmedBleAdvertisedDevice> devices)
         {
             allDiscoveredDevices = devices;
         }
