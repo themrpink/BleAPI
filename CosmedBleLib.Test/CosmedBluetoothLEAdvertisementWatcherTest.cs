@@ -11,7 +11,7 @@ namespace CosmedBleLib.MSTest.UnitTest
     [TestClass]
     public class CosmedBluetoothLEAdvertisementWatcherTest
     {
-
+        /*
         private CosmedBleAdvertisedDevice device;
         public CosmedBleAdvertisedDevice device2;
         private CosmedBluetoothLEAdvertisementWatcher watcher;
@@ -169,33 +169,33 @@ namespace CosmedBleLib.MSTest.UnitTest
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Stopped);
         }
 
-/*
-        [TestMethod]
-        [TestCategory("scanning.mode")]
-        public void StartScanning_startBothModes_eventsAreNotEmpty()
-        {
-            bool check;
-            BluetoothLEAdvertisementWatcher BleWatcher = watcher.getBleWatcher();
-            watcher.StartActiveScanning();
 
-            check = VerifyDelegateAttachedTo(watcher, nameof(watcher.AllDevicesCollectionUpdated));
-            Assert.IsTrue(check);
+    //    [TestMethod]
+    //    [TestCategory("scanning.mode")]
+    //    public void StartScanning_startBothModes_eventsAreNotEmpty()
+    //    {
+    //        bool check;
+    //        BluetoothLEAdvertisementWatcher BleWatcher = watcher.getBleWatcher();
+    //        watcher.StartActiveScanning();
 
-            check = VerifyDelegateAttachedTo(watcher, nameof(watcher.NewDeviceDiscovered));
-            Assert.IsTrue(check);
+    //        check = VerifyDelegateAttachedTo(watcher, nameof(watcher.AllDevicesCollectionUpdated));
+    //        Assert.IsTrue(check);
 
-            check = VerifyDelegateAttachedTo(watcher, nameof(watcher.RecentDevicesCollectionUpdated));
-            Assert.IsTrue(check);
+    //        check = VerifyDelegateAttachedTo(watcher, nameof(watcher.NewDeviceDiscovered));
+    //        Assert.IsTrue(check);
+
+    //        check = VerifyDelegateAttachedTo(watcher, nameof(watcher.RecentDevicesCollectionUpdated));
+    //        Assert.IsTrue(check);
    
-    *   questi non funzionano, restiuiscono null al fieldInfo
-            check = VerifyDelegateAttachedTo(BleWatcher, nameof(BleWatcher.Received));
-            Assert.IsTrue(check);
+    //*   questi non funzionano, restiuiscono null al fieldInfo
+    //        check = VerifyDelegateAttachedTo(BleWatcher, nameof(BleWatcher.Received));
+    //        Assert.IsTrue(check);
 
-            check = VerifyDelegateAttachedTo(BleWatcher, nameof(BleWatcher.Stopped));
-            Assert.IsTrue(check);
+    //        check = VerifyDelegateAttachedTo(BleWatcher, nameof(BleWatcher.Stopped));
+    //        Assert.IsTrue(check);
    
-        }
-*/
+    //    }
+
         private bool VerifyDelegateAttachedTo(object objectWithEvent, string eventName)
         {
                 var allBindings = BindingFlags.IgnoreCase | BindingFlags.Public |
@@ -410,5 +410,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StopUpdateDevices();
             watcher = null;
         }
+
+        */
     }
 }

@@ -36,7 +36,7 @@ namespace CosmedBleConsole
             //scan with filter
             //CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher(filter);
 
-            CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher();
+            CosmedBluetoothLEAdvertisementWatcher scanner = new CosmedBluetoothLEAdvertisementWatcher();
 
             Console.WriteLine("_______________________scanning____________________");
 
@@ -48,25 +48,26 @@ namespace CosmedBleConsole
             //IAdvertisedDevicesCollection Devices = scan.GetUpdatedDiscoveredDevices();
 
             //start scanning
-            scan.StartActiveScanning();
+            scanner.StartActiveScanning();
             //scan.StartPassiveScanning();
             //print the results and connect
             while (true)
             {
-                foreach (var device in scan.GetRecentlyAdvertisedDevices())
+                foreach (var device in scanner.GetRecentlyAdvertisedDevices())
                 {
                    // if (device.DeviceName.Equals("myname") && device.IsConnectable && device.HasScanResponse)
                     {
 
                         device.PrintAdvertisement();
 
-                        if (device.IsConnectable)
+                        if (device.IsConnectable && device.DeviceAddress.Equals("myname"))
                         {
-                            CosmedBleConnection connection = new CosmedBleConnection(device);
+                            CosmedBleConnection connection = new CosmedBleConnection(device, scanner);
                             Console.WriteLine("connected with:" + device.DeviceAddress);
-                            Console.WriteLine("scan status: " + scan.GetWatcherStatus.ToString());
+                            Console.WriteLine("scan status: " + scanner.GetWatcherStatus.ToString());
                             await connection.startConnectionAsync();
-                            await connection.Pair();
+                            Task.WaitAll();
+                           await connection.Pair();
                         }
                         
                     }
@@ -83,7 +84,7 @@ namespace CosmedBleConsole
             
             //Console.ReadLine();
 
-            scan.StopScanning();
+            scanner.StopScanning();
         }
 
 

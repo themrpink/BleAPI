@@ -37,7 +37,7 @@ namespace CosmedBleLib
         //the address value
         public ulong DeviceAddress { get; set; }
 
-        public string HexDeviceAddress { get { return string.Format("0x{0:X}", DeviceAddress); } }
+        public string HexDeviceAddress { get { return string.Format("0x{0:X2}", DeviceAddress); } }
 
         //the type of address (public - random)
         public BluetoothAddressType BluetoothAddressType { get; private set; }
@@ -128,6 +128,7 @@ namespace CosmedBleLib
 
 
         public AdvertisementContent GetAdvertisementContent => advertisementContent;
+
         public AdvertisementContent GetScanResponseAdvertisementContent => scanResponseAdvertisementContent;
 
 
@@ -210,7 +211,7 @@ namespace CosmedBleLib
         public void PrintAdvertisement()
         {
             Console.WriteLine();
-            Console.WriteLine("################################### new ####################################");
+            Console.WriteLine("############################## new advertisement #############################");
             Console.WriteLine();
 
             Console.WriteLine("found: " + DeviceAddress);
@@ -227,20 +228,17 @@ namespace CosmedBleLib
             Console.WriteLine("is directed: " + IsDirected);
             Console.WriteLine("is scannable: " + IsScannable);
             Console.WriteLine("transmit powr level: " + TransmitPowerLevelInDBm);
-
             Console.WriteLine(" localname: " + DeviceName);
             Console.WriteLine(" flags: " + Flags);
-            ///Console.WriteLine(" guid numb: " + devAdv.Advertisement.ServiceUuids.Count);
+
             foreach (Guid g in ServiceUuids)
             {
                 Console.WriteLine(" guid: " + g.ToString());
             }
 
             Console.WriteLine();
-            Console.WriteLine("----------------- normal advertisement ----------------------------");
-            Console.WriteLine();
-
             string advType = "";
+
             foreach (AdvertisementManufacturerData m in ManufacturerData)
             {
                 Console.WriteLine(advType + " company id: " + m.CompanyId);
@@ -253,7 +251,9 @@ namespace CosmedBleLib
                 Console.WriteLine(advType + " manufacturer buffer ASCII: " + m.ASCIIData);
                 Console.WriteLine(advType + " manufacturer buffer UTF16: " + m.UTF16Data);
             }
+
             Console.WriteLine();
+
             foreach (AdvertisementDataSection m in DataSections)
             {
                 Console.WriteLine(advType + " data type: " + m.DataType);
@@ -263,10 +263,14 @@ namespace CosmedBleLib
                 Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIData);
                 Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Data);
             }
+
             Console.WriteLine();
             Console.WriteLine("++++++++++++++++++++++++ scan response +++++++++++++++++++++++");
             Console.WriteLine();
+
+            int count = ManufacturerDataFromScanResponse.AdvertisedManufacturerData.Count;
             advType = "sr:";
+
             foreach (AdvertisementManufacturerData m in ManufacturerDataFromScanResponse)
             {
                 Console.WriteLine(advType + " company id: " + m.CompanyId);
@@ -279,7 +283,14 @@ namespace CosmedBleLib
                 Console.WriteLine(advType + " manufacturer buffer ASCII: " + m.ASCIIData);
                 Console.WriteLine(advType + " manufacturer buffer UTF16: " + m.UTF16Data);
             }
-            Console.WriteLine();
+
+            
+            count += DataSectionsFromScanResponse.AdvertisedDataSection.Count;
+            if(count==0)
+                Console.WriteLine("Scan response not available");
+            else
+                Console.WriteLine();
+
             foreach (AdvertisementDataSection m in DataSectionsFromScanResponse)
             {
                 Console.WriteLine(advType + " data type: " + m.DataType);
@@ -289,7 +300,8 @@ namespace CosmedBleLib
                 Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIData);
                 Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Data);
             }
-            Console.WriteLine();
+
+            Console.WriteLine("--------------------- end advertisement -----------------------");
         }
     }
 

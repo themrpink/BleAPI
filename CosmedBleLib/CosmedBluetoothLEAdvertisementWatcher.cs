@@ -268,7 +268,8 @@ namespace CosmedBleLib
             {
                 watcher.Received -= this.OnAdvertisementReceivedAsync;
                 watcher.Stop();
-                watcher.Stopped -= this.OnScanStopped;              
+                watcher.Stopped -= this.OnScanStopped;
+                Console.WriteLine("Scanning paused");
             }
         }
 
@@ -287,6 +288,7 @@ namespace CosmedBleLib
 
             watcher.ScanningMode = lastScanningMode;
             scan();
+            Console.WriteLine("Scanning resumed");
         }
 
         #endregion
@@ -448,6 +450,8 @@ namespace CosmedBleLib
             {
                 if (sender == watcher && args != null)
                 {
+                    if(args.Advertisement.LocalName.Equals("myname"))
+                        discoveredDevices[0] = DeviceFactory.CreateAdvertisedDevice(args);
                     bool newDevice = !discoveredDevices.ContainsKey(args.BluetoothAddress);
                     if (newDevice)
                     {
@@ -487,7 +491,12 @@ namespace CosmedBleLib
 
         private void OnDeviceNameChanged(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
         {
-            Console.WriteLine("___________________device name changed: " + args.Advertisement.LocalName + " isConnectable: " + args.IsConnectable + " address: " + args.BluetoothAddress + " isscanresponse " + args.IsScanResponse);           
+            //Console.WriteLine("___________________device name changed: " + args.Advertisement.LocalName + " isConnectable: " + args.IsConnectable + " address: " + args.BluetoothAddress + " isscanresponse " + args.IsScanResponse);           
+        }
+
+        private void OnConnectionEstablished()
+        {
+            StopScanning();
         }
     }
 

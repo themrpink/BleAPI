@@ -41,8 +41,6 @@ namespace CosmedBleLib
 
 
 
-
-
     public class DataSectionCollection : IEnumerable<AdvertisementDataSection>
     {
         public IReadOnlyList<AdvertisementDataSection> AdvertisedDataSection { get; }
@@ -98,8 +96,6 @@ namespace CosmedBleLib
 
 
 
-
-
     public abstract class AdvertisementData
     {
 
@@ -145,6 +141,7 @@ namespace CosmedBleLib
         }
 
     }
+
 
     public class AdvertisementManufacturerData : AdvertisementData
     {

@@ -18,11 +18,11 @@ namespace CosmedBleLib
 
         #region Private fields
 
-        public BluetoothLEDevice bluetoothLeDevice = null;
-        private GattCharacteristic selectedCharacteristic;
-        // Only one registered characteristic at a time.
+        
+        private CosmedBluetoothLEAdvertisementWatcher watcher;
         private GattCharacteristic registeredCharacteristic;
         private GattPresentationFormat presentationFormat;
+        public BluetoothLEDevice bluetoothLeDevice = null;
 
         #endregion
 
@@ -53,13 +53,16 @@ namespace CosmedBleLib
 
 
         #region Constructors
-        public CosmedBleConnection(BluetoothLEDevice bluetoothLeDevice)
+        public CosmedBleConnection(BluetoothLEDevice bluetoothLeDevice, CosmedBluetoothLEAdvertisementWatcher watcher)
         {
             this.bluetoothLeDevice = bluetoothLeDevice ?? throw new ArgumentNullException(nameof(bluetoothLeDevice));
+            this.watcher = watcher;
+            bluetoothLeDevice.ConnectionStatusChanged += OnConnectionStatusChanged;
         }
 
-        public CosmedBleConnection(CosmedBleAdvertisedDevice advertisingDevice)
+        public CosmedBleConnection(CosmedBleAdvertisedDevice advertisingDevice, CosmedBluetoothLEAdvertisementWatcher watcher)
         {
+            this.watcher = watcher;
             try
             {
                 _ = SetBluetoothLEDeviceAsync(advertisingDevice.DeviceAddress);
@@ -71,10 +74,12 @@ namespace CosmedBleLib
             
         }
 
-        public CosmedBleConnection(ulong deviceAddress)
+        public CosmedBleConnection(ulong deviceAddress, CosmedBluetoothLEAdvertisementWatcher watcher)
         {
-           _ = SetBluetoothLEDeviceAsync(deviceAddress);
+            this.watcher = watcher;
+            _ = SetBluetoothLEDeviceAsync(deviceAddress);
         }
+
 
         private async Task SetBluetoothLEDeviceAsync(ulong deviceAddress)
         {
@@ -85,8 +90,7 @@ namespace CosmedBleLib
             {
                 Console.WriteLine("no device found");
                 return;
-            }
-                
+            }                
 
             BluetoothAddress = bluetoothLeDevice.BluetoothAddress;
             ConnectionStatus = bluetoothLeDevice.ConnectionStatus;
@@ -102,6 +106,22 @@ namespace CosmedBleLib
 
         #endregion
 
+        #region EventHandlers
+        private void OnConnectionStatusChanged(BluetoothLEDevice device, Object o)
+        {
+            if(device.ConnectionStatus == BluetoothConnectionStatus.Connected)
+            {
+                Console.WriteLine("device is pausing scan");
+                watcher.PauseScanning();
+            }
+            if (device.ConnectionStatus == BluetoothConnectionStatus.Disconnected)
+            {
+                Console.WriteLine("device is resuming scan");
+                watcher.ResumeScanning();
+            }
+
+        }
+        #endregion
 
         #region Pairing
 
@@ -124,6 +144,8 @@ namespace CosmedBleLib
         public async Task startConnectionAsync()
         {
             GattDeviceServicesResult result;
+
+            //this not working well: NullExceptions probably because of bad task implementation
             try
             {
                 result = await bluetoothLeDevice.GetGattServicesAsync().AsTask();
@@ -142,9 +164,9 @@ namespace CosmedBleLib
                 {
                     Console.WriteLine("printing a service:");
                     GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync().AsTask();
-                    Console.WriteLine("service handle: " + service.AttributeHandle);
+                    Console.WriteLine("service handle: " + service.AttributeHandle.ToString("X2"));
                     Console.WriteLine("service uuid: " + service.Uuid.ToString());
-                    Console.WriteLine("service device access information (da spacchettare): " + service.DeviceAccessInformation);
+                    Console.WriteLine("service device access information (current status): " + service.DeviceAccessInformation.CurrentStatus.ToString());
                     /*
                         dalla GattSession posso ottenere dati importanti come MaintainConnection, etc etc
                         public sealed class GattSession : IGattSession, IDisposable
@@ -174,11 +196,36 @@ namespace CosmedBleLib
                         
                         foreach(GattCharacteristic characteristic in characteristics)
                         {
-                            Console.WriteLine(characteristic.UserDescription);
-                            Console.WriteLine(characteristic.Uuid);
-                            Console.WriteLine(characteristic.ToString());
+                            Console.WriteLine("Characteristic, user descriptio: " + characteristic.UserDescription);
+                            Console.WriteLine("UUID: " + characteristic.Uuid.ToString());
+                            Console.WriteLine("Attribute handle: " + characteristic.AttributeHandle.ToString("X2"));
+                            Console.WriteLine("Protection level: " + characteristic.ProtectionLevel.ToString());
+                            Console.WriteLine("Properties: " + characteristic.CharacteristicProperties.ToString());
 
-                            CharacteristicCommunication(characteristic, result);
+                            foreach(var pf in characteristic.PresentationFormats)
+                            {
+                                Console.WriteLine(" - Presentation format - ");
+                                Console.WriteLine("Description"+  pf.Description);
+                                Console.WriteLine("" + pf.FormatType.ToString("X2"));
+                                Console.WriteLine("Unit: " + pf.Unit);
+                                Console.WriteLine("Exponent: " + pf.Exponent);
+                                Console.WriteLine("Namespace" + pf.Namespace.ToString("X2"));
+                                Console.WriteLine();
+                            }
+
+                            var descriptors = await characteristic.GetDescriptorsAsync().AsTask();
+
+                            Console.WriteLine(" - descriptors - ");
+                            foreach(var descriptor in descriptors.Descriptors)
+                            {
+                                Console.WriteLine("protection level: " + descriptor.ProtectionLevel);
+                                Console.WriteLine("Uuid: " + descriptor.Uuid.ToString());
+                                Console.WriteLine("Attribute Handler" + descriptor.AttributeHandle.ToString("X2"));
+                            }
+                            Console.WriteLine("Status: " + descriptors.Status.ToString());
+                            Console.WriteLine("Protocol error: " + descriptors.ProtocolError.Value.ToString("X2"));
+
+                            await CharacteristicCommunication(characteristic, result);
                         }
                     }
                     else if(resultCharacteristics.Status == GattCommunicationStatus.ProtocolError)
