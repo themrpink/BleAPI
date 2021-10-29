@@ -45,7 +45,7 @@ namespace CosmedBleConsole
             // scan.OnScanStopped += (sender, args) => { };
 
             //start the auto update collection
-            IAdvertisedDevicesCollection Devices = scan.GetUpdatedDiscoveredDevices();
+            //IAdvertisedDevicesCollection Devices = scan.GetUpdatedDiscoveredDevices();
 
             //start scanning
             scan.StartActiveScanning();
@@ -57,20 +57,13 @@ namespace CosmedBleConsole
                 {
                    // if (device.DeviceName.Equals("myname") && device.IsConnectable && device.HasScanResponse)
                     {
-                        Console.WriteLine("----------------------normal response-----------------");
 
                         device.PrintAdvertisement();
 
-                        if (device.HasScanResponse)
-                        {
-                            Console.WriteLine("++++++++++++++++scan response+++++++++++++");
-                            device.PrintScanResponses();
-                        }
-                        
                         if (device.IsConnectable)
                         {
                             CosmedBleConnection connection = new CosmedBleConnection(device);
-                            Console.WriteLine("connected with:" + device.getDeviceAddress());
+                            Console.WriteLine("connected with:" + device.DeviceAddress);
                             Console.WriteLine("scan status: " + scan.GetWatcherStatus.ToString());
                             await connection.startConnectionAsync();
                             await connection.Pair();

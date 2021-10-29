@@ -10,18 +10,18 @@ namespace CosmedBleLib
 
 
 
-    public class AutoUpdateDiscoveredDevicesCollection2 : IAdvertisedDevicesCollection2
+    public class AutoUpdateDiscoveredDevicesCollection : IAdvertisedDevicesCollection
     { 
 
         private readonly object ThreadLock = new object();
         private List<CosmedBleAdvertisedDevice> lastDiscoveredDevices;
 
-        public AutoUpdateDiscoveredDevicesCollection2()
+        public AutoUpdateDiscoveredDevicesCollection()
         {
             this.lastDiscoveredDevices = new List<CosmedBleAdvertisedDevice>();
         }
 
-        public IReadOnlyCollection<CosmedBleAdvertisedDevice> getLastDiscoveredDevices()
+        public IReadOnlyCollection<CosmedBleAdvertisedDevice> GetLastDiscoveredDevices()
         {
             lock (ThreadLock)
             {
@@ -37,8 +37,10 @@ namespace CosmedBleLib
             {
                 //aggiungo quelli già inseriti in una lista a parte, tranne quello nuovo(che potrebbe essere già presente ma non aggiornato)
                 List<CosmedBleAdvertisedDevice> temp = lastDiscoveredDevices.Where(dev => dev.DeviceAddress != device.DeviceAddress).ToList();
+                
                 //aggiungo alla copia della lista quello nuovo
                 temp.Add(device);
+                
                 //ricreo la lista readOnly aggiornata
                 lastDiscoveredDevices = temp;
             }
@@ -46,14 +48,25 @@ namespace CosmedBleLib
     }
 
 
-    public class AutoUpdateDiscoveredDevicesCollection : IAdvertisedDevicesCollection
+
+
+
+
+
+
+
+    /*
+    /// <summary>
+    /// ////////////////////////////////////////////////////////////////////////////////////////////////
+    /// </summary>
+    public class AutoUpdateDiscoveredDevicesCollection2 : IAdvertisedDevicesCollection2
     {
         // private bool isCollectingDevices = false;
         private readonly object ThreadLock = new object();
 
         private List<CosmedBleAdvertisedDevice> lastDiscoveredDevices;
 
-        public AutoUpdateDiscoveredDevicesCollection()
+        public AutoUpdateDiscoveredDevicesCollection2()
         {
             this.lastDiscoveredDevices = new List<CosmedBleAdvertisedDevice>();
         }
@@ -113,5 +126,5 @@ namespace CosmedBleLib
             lastDiscoveredDevices = null;
         }
     }
-
+    */
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CosmedBleLib
 {
-    public interface IAdvertisedDevicesCollection
+    public interface IAdvertisedDevicesCollection2
     {
         IReadOnlyCollection<CosmedBleAdvertisedDevice> allDiscoveredDevices { get; }
         IReadOnlyCollection<CosmedBleAdvertisedDevice> recentDiscoveredDevices { get; }
@@ -19,9 +19,9 @@ namespace CosmedBleLib
 
     }
 
-    public interface IAdvertisedDevicesCollection2
+    public interface IAdvertisedDevicesCollection
     {
-        IReadOnlyCollection<CosmedBleAdvertisedDevice> getLastDiscoveredDevices();
+        IReadOnlyCollection<CosmedBleAdvertisedDevice> GetLastDiscoveredDevices();
 
         void NewDiscoveredDeviceHandler(CosmedBleAdvertisedDevice newDevice);
 

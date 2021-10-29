@@ -20,9 +20,7 @@ namespace CosmedBleLib
         bool IsScannable { get; }
         short? TransmitPowerLevelInDBm { get; }
 
-        void PrintAdvertisement();
 
-        void PrintScanResponses();
         T SetAdvertisement(BluetoothLEAdvertisementReceivedEventArgs args);
 
     }

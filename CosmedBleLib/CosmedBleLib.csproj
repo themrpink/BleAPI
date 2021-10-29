@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="AutoUpdateDiscoveredDevicesCollection.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="CosmedAdvertisedData.cs" />
     <Compile Include="CosmedBleConnection.cs" />
     <Compile Include="CosmedBluetoothLEAdapter.cs" />
     <Compile Include="CosmedBleAdvertisedDevice.cs" />
