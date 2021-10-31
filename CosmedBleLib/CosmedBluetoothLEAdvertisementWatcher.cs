@@ -226,21 +226,21 @@ namespace CosmedBleLib
         {
             clearDiscoveredDevices(discoveredDevices);
             clearDiscoveredDevices(lastDiscoveredDevices);
-
-            if(GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Aborted)
+            lock (WatcherThreadLock)
             {
-                resetScanningState();
-            }
-            if (watcher == null)
-            {
-                watcher = new BluetoothLEAdvertisementWatcher();
-                watcher.Received += this.OnAdvertisementReceived;
-                watcher.Stopped += this.OnScanStopped;
-            }
-                
+                if (GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Aborted)
+                {
+                    resetScanningState();
+                }
+                if (watcher == null)
+                {
+                    watcher = new BluetoothLEAdvertisementWatcher();
+                    watcher.Received += this.OnAdvertisementReceived;
+                    watcher.Stopped += this.OnScanStopped;
+                }
+            }               
             bool isExtendedAdvertisementSupported = CosmedBluetoothLEAdapter.IsExtendedAdvertisingSupported;
-            watcher.AllowExtendedAdvertisements = isExtendedAdvertisementSupported;
-           
+            watcher.AllowExtendedAdvertisements = isExtendedAdvertisementSupported;          
         }
 
 
@@ -286,13 +286,14 @@ namespace CosmedBleLib
 
         public void PauseScanning()
         { 
-            if (watcher != null && IsScanningStarted)
+            lock (WatcherThreadLock)
             {
-                //watcher.Received -= this.OnAdvertisementReceivedAsync;
-                watcher.Stop();
-                //watcher.Stopped -= this.OnScanStopped;
-                lastScanningMode = watcher.ScanningMode;
-                Console.WriteLine("Scanning paused");
+                if (watcher != null && IsScanningStarted)
+                {
+                    watcher.Stop();
+                    while (watcher.Status == BluetoothLEAdvertisementWatcherStatus.Stopping) { }
+                    lastScanningMode = watcher.ScanningMode;
+                }
             }
         }
 
@@ -300,16 +301,18 @@ namespace CosmedBleLib
         // in case the method is called as first scanning call, the default scanning mode is Passive
         public void ResumeScanning()
         {
-            if (IsScanningStarted)
+            lock (WatcherThreadLock)
             {
-                return;
+                if (IsScanningStarted)
+                {
+                    return;
+                }
+                if (watcher != null)
+                {
+                    watcher.ScanningMode = lastScanningMode;
+                    scan();
+                }
             }
-            if(watcher != null)
-            {
-                watcher.ScanningMode = lastScanningMode;
-                scan();
-            }
-
         }
 
 
@@ -389,7 +392,7 @@ namespace CosmedBleLib
         {
             lock (DevicesThreadLock)
             {
-                discoveredDevices.Clear();
+                dict.Clear();
             }
         }
 
