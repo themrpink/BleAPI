@@ -44,8 +44,11 @@
     <Reference Include="Windows, Version=255.255.255.255, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeviceEnimeration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaticManualIntegrationTests.cs" />
+    <Compile Include="TestWatcher.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
