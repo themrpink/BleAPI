@@ -14,7 +14,7 @@ namespace CosmedBleLib.NUnit.Test
         private CosmedBluetoothLEAdvertisementWatcher watcher;
         private IReadOnlyCollection<CosmedBleAdvertisedDevice> collection;
 
-
+        /*
         [SetUp]
         public void Setup()
         {
@@ -37,6 +37,6 @@ namespace CosmedBleLib.NUnit.Test
             watcher.getUpdatedDiscoveredDevices(1000);
 
             //Assert.AreSame(watcher.allDiscoveredDevices, collection);
-        }
+        }*/
     }
 }

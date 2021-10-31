@@ -158,7 +158,11 @@ namespace CosmedBleLib
         {
             get
             {
-                return advertisementContent.Advertisement.Flags;
+                if(advertisementContent.Advertisement == null)
+                {
+                    Console.WriteLine();
+                }
+                return advertisementContent.Advertisement == null ? scanResponseAdvertisementContent.Advertisement.Flags : advertisementContent.Advertisement.Flags;
             }
         }
 
@@ -239,29 +243,29 @@ namespace CosmedBleLib
             Console.WriteLine();
             string advType = "";
 
-            foreach (AdvertisementManufacturerData m in ManufacturerData)
+            foreach (ManufacturerDataReader m in ManufacturerData)
             {
                 Console.WriteLine(advType + " company id: " + m.CompanyId);
                 Console.WriteLine(advType + " company id HEX: " + m.CompanyIdHex);
                 Console.WriteLine(advType + " manufacturer data capacity: " + m.RawData.Capacity);
                 Console.WriteLine(advType + " manufacturer data length: " + m.RawData.Length);
 
-                Console.WriteLine(advType + " manufacturer buffer: " + m.HexData);
-                Console.WriteLine(advType + " manufacturer buffer UTF8: " + m.UTF8Data);
-                Console.WriteLine(advType + " manufacturer buffer ASCII: " + m.ASCIIData);
-                Console.WriteLine(advType + " manufacturer buffer UTF16: " + m.UTF16Data);
+                Console.WriteLine(advType + " manufacturer buffer: " + m.HexValue);
+                Console.WriteLine(advType + " manufacturer buffer UTF8: " + m.UTF8Value);
+                Console.WriteLine(advType + " manufacturer buffer ASCII: " + m.ASCIIValue);
+                Console.WriteLine(advType + " manufacturer buffer UTF16: " + m.UTF16Value);
             }
 
             Console.WriteLine();
 
-            foreach (AdvertisementDataSection m in DataSections)
+            foreach (DataSectionReader m in DataSections)
             {
                 Console.WriteLine(advType + " data type: " + m.DataType);
 
-                Console.WriteLine(advType + " buffer: " + m.HexData);
-                Console.WriteLine(advType + " buffer UTF8: " + m.UTF8Data);
-                Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIData);
-                Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Data);
+                Console.WriteLine(advType + " buffer: " + m.HexValue);
+                Console.WriteLine(advType + " buffer UTF8: " + m.UTF8Value);
+                Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIValue);
+                Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Value);
             }
 
             Console.WriteLine();
@@ -271,17 +275,17 @@ namespace CosmedBleLib
             int count = ManufacturerDataFromScanResponse.AdvertisedManufacturerData.Count;
             advType = "sr:";
 
-            foreach (AdvertisementManufacturerData m in ManufacturerDataFromScanResponse)
+            foreach (ManufacturerDataReader m in ManufacturerDataFromScanResponse)
             {
                 Console.WriteLine(advType + " company id: " + m.CompanyId);
                 Console.WriteLine(advType + " company id HEX: " + m.CompanyIdHex);
                 Console.WriteLine(advType + " manufacturer data capacity: " + m.RawData.Capacity);
                 Console.WriteLine(advType + " manufacturer data length: " + m.RawData.Length);
 
-                Console.WriteLine(advType + " manufacturer buffer: " + m.HexData);
-                Console.WriteLine(advType + " manufacturer buffer UTF8: " + m.UTF8Data);
-                Console.WriteLine(advType + " manufacturer buffer ASCII: " + m.ASCIIData);
-                Console.WriteLine(advType + " manufacturer buffer UTF16: " + m.UTF16Data);
+                Console.WriteLine(advType + " manufacturer buffer: " + m.HexValue);
+                Console.WriteLine(advType + " manufacturer buffer UTF8: " + m.UTF8Value);
+                Console.WriteLine(advType + " manufacturer buffer ASCII: " + m.ASCIIValue);
+                Console.WriteLine(advType + " manufacturer buffer UTF16: " + m.UTF16Value);
             }
 
             
@@ -291,14 +295,14 @@ namespace CosmedBleLib
             else
                 Console.WriteLine();
 
-            foreach (AdvertisementDataSection m in DataSectionsFromScanResponse)
+            foreach (DataSectionReader m in DataSectionsFromScanResponse)
             {
                 Console.WriteLine(advType + " data type: " + m.DataType);
 
-                Console.WriteLine(advType + " buffer: " + m.HexData);
-                Console.WriteLine(advType + " buffer UTF8: " + m.UTF8Data);
-                Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIData);
-                Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Data);
+                Console.WriteLine(advType + " buffer: " + m.HexValue);
+                Console.WriteLine(advType + " buffer UTF8: " + m.UTF8Value);
+                Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIValue);
+                Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Value);
             }
 
             Console.WriteLine("--------------------- end advertisement -----------------------");

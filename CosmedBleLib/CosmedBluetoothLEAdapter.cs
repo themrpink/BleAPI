@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
+using Windows.Devices.Radios;
 using Windows.Foundation;
 
 namespace CosmedBleLib
@@ -11,7 +12,7 @@ namespace CosmedBleLib
 
     public static class CosmedBluetoothLEAdapter
     {
-        private static BluetoothAdapter adapter;     
+        private static BluetoothAdapter adapter;
         public static bool IsLowEnergySupported { get; private set; }
         public static ulong DecimalAddress { get; private set; }
         public static string HexAddress { get; private set; }
@@ -28,7 +29,7 @@ namespace CosmedBleLib
 
         private static async Task SetAdapterAsync()
         {
-            BluetoothAdapter adapter =  await BluetoothAdapter.GetDefaultAsync();
+            adapter = await BluetoothAdapter.GetDefaultAsync();
 
             IsLowEnergySupported = adapter.IsLowEnergySupported;
             DecimalAddress = adapter.BluetoothAddress;
@@ -37,16 +38,29 @@ namespace CosmedBleLib
             MaxAdvertisementDataLength = adapter.MaxAdvertisementDataLength;
             IsExtendedAdvertisingSupported = adapter.IsExtendedAdvertisingSupported;
             IsCentralRoleSupported = adapter.IsCentralRoleSupported;
+        }
+
+
+        //public static async Task<RadioState> GetRadioState()
+        //{
+        //    Task.WaitAll();
+        //    if (adapter == null)
+        //    {
+        //        await SetAdapterAsync();
+        //    }
+        //    var temp = adapter.GetRadioAsync().AsTask();
+        //    Task.WaitAll(temp);
+        //    Radio radio = temp.Result;
+        //    return radio.State;
+        //}
+
+        //public static async Task<bool> IsRadioStateOn()
+        //{
             
-        }
+        //    RadioState rs = await GetRadioState();
+        //    Task.WaitAll();
+        //    return rs == RadioState.On;
+        //}
 
-        public static async Task<BluetoothAdapter> GetAdapterAsync()
-        {
-            if (adapter == null)
-                await SetAdapterAsync();
-            return adapter;
-        }
     }
-
-
 }

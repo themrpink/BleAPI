@@ -18,11 +18,13 @@ namespace CosmedBleLib
 
         #region Private fields
 
-        
+
         private CosmedBluetoothLEAdvertisementWatcher watcher;
         private GattCharacteristic registeredCharacteristic;
         private GattPresentationFormat presentationFormat;
+        private List<BleOperation> supportedOperations;
         public BluetoothLEDevice bluetoothLeDevice = null;
+        public GattCommunicationStatus Status { get; private set; } = GattCommunicationStatus.Unreachable;
 
         #endregion
 
@@ -33,7 +35,7 @@ namespace CosmedBleLib
         public BluetoothConnectionStatus ConnectionStatus { get; private set; }
 
         //removed because duplicate of BluetoothDeviceId.DeviceId
-       // public string DeviceId { get; private set; }
+        // public string DeviceId { get; private set; }
         public string Name { get; private set; }
         public BluetoothLEAppearance Appearance { get; private set; }
         public BluetoothAddressType BluetoothAddressType { get; private set; }
@@ -46,7 +48,7 @@ namespace CosmedBleLib
         //device ID
         public BluetoothDeviceId BluetoothDeviceId { get; private set; }
 
-    
+
         public bool WasSecureConnectionUsedForPairing { get; private set; }
 
         #endregion
@@ -67,17 +69,19 @@ namespace CosmedBleLib
             {
                 _ = SetBluetoothLEDeviceAsync(advertisingDevice.DeviceAddress);
             }
-            catch(ArgumentNullException e)
+            catch (ArgumentNullException e)
             {
                 Console.WriteLine(e.Message);
             }
-            
+            // Task.WaitAll();
+            bluetoothLeDevice.ConnectionStatusChanged += OnConnectionStatusChanged;
         }
 
         public CosmedBleConnection(ulong deviceAddress, CosmedBluetoothLEAdvertisementWatcher watcher)
         {
             this.watcher = watcher;
             _ = SetBluetoothLEDeviceAsync(deviceAddress);
+            bluetoothLeDevice.ConnectionStatusChanged += OnConnectionStatusChanged;
         }
 
 
@@ -90,7 +94,7 @@ namespace CosmedBleLib
             {
                 Console.WriteLine("no device found");
                 return;
-            }                
+            }
 
             BluetoothAddress = bluetoothLeDevice.BluetoothAddress;
             ConnectionStatus = bluetoothLeDevice.ConnectionStatus;
@@ -106,10 +110,11 @@ namespace CosmedBleLib
 
         #endregion
 
+
         #region EventHandlers
         private void OnConnectionStatusChanged(BluetoothLEDevice device, Object o)
         {
-            if(device.ConnectionStatus == BluetoothConnectionStatus.Connected)
+            if (device.ConnectionStatus == BluetoothConnectionStatus.Connected)
             {
                 Console.WriteLine("device is pausing scan");
                 watcher.PauseScanning();
@@ -123,16 +128,18 @@ namespace CosmedBleLib
         }
         #endregion
 
+
         #region Pairing
 
         public async Task Pair()
         {
-            if(DeviceInformation != null)
+            if (DeviceInformation != null)
             {
-                DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync().AsTask();
+                //DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync().AsTask();
+                DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync();
                 Console.WriteLine("paring status: " + dpr.Status.ToString());
                 Console.WriteLine("pairing protection level: " + dpr.ProtectionLevelUsed.ToString());
-               
+
             }
         }
 
@@ -141,32 +148,36 @@ namespace CosmedBleLib
 
         #region Connection
 
-        public async Task startConnectionAsync()
+        public async void StartConnectionAsync()
         {
             GattDeviceServicesResult result;
 
             //this not working well: NullExceptions probably because of bad task implementation
             try
             {
-                result = await bluetoothLeDevice.GetGattServicesAsync().AsTask();
+                result = await bluetoothLeDevice.GetGattServicesAsync();
+
+                //Task< GattDeviceServicesResult> t = bluetoothLeDevice.GetGattServicesAsync().AsTask();
+                //result = await t;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("exception: " + e.Message);           
+                Console.WriteLine("exception: " + e.Message);
                 return;
             }
 
-            if(result.Status == GattCommunicationStatus.Success)
+            if (result.Status == GattCommunicationStatus.Success)
             {
                 IReadOnlyList<GattDeviceService> resultServices = result.Services;
                 Console.WriteLine("iterating the services");
-                foreach( var service in resultServices)
+
+                foreach (var service in resultServices)
                 {
                     Console.WriteLine("printing a service:");
-                    GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync().AsTask();
                     Console.WriteLine("service handle: " + service.AttributeHandle.ToString("X2"));
                     Console.WriteLine("service uuid: " + service.Uuid.ToString());
                     Console.WriteLine("service device access information (current status): " + service.DeviceAccessInformation.CurrentStatus.ToString());
+                    Console.WriteLine("service Gatt Session: " + service.Session);
                     /*
                         dalla GattSession posso ottenere dati importanti come MaintainConnection, etc etc
                         public sealed class GattSession : IGattSession, IDisposable
@@ -185,16 +196,17 @@ namespace CosmedBleLib
                             public event TypedEventHandler<GattSession, GattSessionStatusChangedEventArgs> SessionStatusChanged;
                         }
                      * */
-                    Console.WriteLine("service Gatt Session: " + service.Session);
 
+                    //GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync().AsTask();
+                    GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync();
 
                     if (resultCharacteristics.Status == GattCommunicationStatus.Success)
                     {
                         Console.WriteLine("iterating the characteristics:");
                         IReadOnlyList<GattCharacteristic> characteristics = resultCharacteristics.Characteristics;
                         int i = characteristics.Count;
-                        
-                        foreach(GattCharacteristic characteristic in characteristics)
+
+                        foreach (GattCharacteristic characteristic in characteristics)
                         {
                             Console.WriteLine("Characteristic, user descriptio: " + characteristic.UserDescription);
                             Console.WriteLine("UUID: " + characteristic.Uuid.ToString());
@@ -202,10 +214,10 @@ namespace CosmedBleLib
                             Console.WriteLine("Protection level: " + characteristic.ProtectionLevel.ToString());
                             Console.WriteLine("Properties: " + characteristic.CharacteristicProperties.ToString());
 
-                            foreach(var pf in characteristic.PresentationFormats)
+                            foreach (var pf in characteristic.PresentationFormats)
                             {
                                 Console.WriteLine(" - Presentation format - ");
-                                Console.WriteLine("Description"+  pf.Description);
+                                Console.WriteLine("Description" + pf.Description);
                                 Console.WriteLine("" + pf.FormatType.ToString("X2"));
                                 Console.WriteLine("Unit: " + pf.Unit);
                                 Console.WriteLine("Exponent: " + pf.Exponent);
@@ -213,22 +225,53 @@ namespace CosmedBleLib
                                 Console.WriteLine();
                             }
 
-                            var descriptors = await characteristic.GetDescriptorsAsync().AsTask();
+                            //var descriptors = await characteristic.GetDescriptorsAsync().AsTask();
+                            var descriptors = await characteristic.GetDescriptorsAsync();
 
                             Console.WriteLine(" - descriptors - ");
-                            foreach(var descriptor in descriptors.Descriptors)
+
+                            foreach (var descriptor in descriptors.Descriptors)
                             {
                                 Console.WriteLine("protection level: " + descriptor.ProtectionLevel);
                                 Console.WriteLine("Uuid: " + descriptor.Uuid.ToString());
                                 Console.WriteLine("Attribute Handler" + descriptor.AttributeHandle.ToString("X2"));
                             }
-                            Console.WriteLine("Status: " + descriptors.Status.ToString());
-                            Console.WriteLine("Protocol error: " + descriptors.ProtocolError.Value.ToString("X2"));
 
-                            await CharacteristicCommunication(characteristic, result);
+                            Console.WriteLine("Status: " + descriptors.Status.ToString());
+
+                            if (descriptors.ProtocolError != null)
+                            {
+                                Console.WriteLine("Protocol error: " + descriptors.ProtocolError.Value.ToString("X2"));
+                            }
+
+                            //Task t = CharacteristicCommunication(characteristic, result);
+                            var t = CharacteristicCommunication(characteristic, result);
+                            try
+                            {
+                                await t;
+                            }
+                            catch (AggregateException ae)
+                            {
+                                Console.WriteLine("Caught aggregate exception-Task.Wait behavior");
+                                ae.Handle((x) =>
+                                {
+                                    if (x is UnauthorizedAccessException) // This we know how to handle.
+                                    {
+                                        Console.WriteLine("You do not have permission to access all folders in this path.");
+                                        Console.WriteLine("See your network administrator or try another path.");
+                                        return true;
+                                    }
+                                    return false; // Let anything else stop the application.
+                                });
+                            }
+                            catch (SystemException se)
+                            {
+                                Console.WriteLine(se.Message);
+                            }
+
                         }
                     }
-                    else if(resultCharacteristics.Status == GattCommunicationStatus.ProtocolError)
+                    else if (resultCharacteristics.Status == GattCommunicationStatus.ProtocolError)
                     {
                         Console.WriteLine("protocol error");
                     }
@@ -243,7 +286,7 @@ namespace CosmedBleLib
                 var error = result.ProtocolError;
             }
 
- 
+
         }
 
         private async Task CharacteristicCommunication(GattCharacteristic characteristic, GattDeviceServicesResult result)
@@ -254,29 +297,19 @@ namespace CosmedBleLib
             if (properties.HasFlag(GattCharacteristicProperties.Read))
             {
                 // This characteristic supports reading from it.
-                GattReadResult value = await characteristic.ReadValueAsync().AsTask();
+                //GattReadResult value = await characteristic.ReadValueAsync().AsTask();
+                GattReadResult value = await characteristic.ReadValueAsync();
                 if (result.Status == GattCommunicationStatus.Success)
                 {
-                    var reader = DataReader.FromBuffer(value.Value);
-                    byte[] data = new byte[reader.UnconsumedBufferLength];
-                    reader.ReadBytes(data);
-                    // Utilize the data as needed
+                    GattReadResultReader grr = new GattReadResultReader(value.Value, value.Status, value.ProtocolError);
 
-                    string dataContent = BitConverter.ToString(data); ;
-                    Console.WriteLine(advType + " characteristic buffer: " + dataContent);
-
-                    string result1 = System.Text.Encoding.UTF8.GetString(data);
-                    Console.WriteLine(advType + " characteristic buffer UTF8: " + result1);
-
-                    string result2 = System.Text.Encoding.ASCII.GetString(data);
-                    Console.WriteLine(advType + " characteristic buffer ASCII: " + result2);
-
-                    System.Text.UnicodeEncoding unicode = new System.Text.UnicodeEncoding();
-                    String decodedString = unicode.GetString(data);
-                    Console.WriteLine(advType + " characteristic buffer UTF16: " + decodedString);
-
+                    Console.WriteLine("characteristic buffer hex: " + grr.HexValue);
+                    Console.WriteLine(advType + " characteristic buffer UTF8: " + grr.UTF8Value);
+                    Console.WriteLine(advType + " characteristic buffer ASCII: " + grr.ASCIIValue);
+                    Console.WriteLine(advType + " characteristic buffer UTF16: " + grr.UTF16Value);
                 }
             }
+
             if (properties.HasFlag(GattCharacteristicProperties.Write))
             {
                 // This characteristic supports writing to it.
@@ -284,57 +317,54 @@ namespace CosmedBleLib
                 // WriteByte used for simplicity. Other common functions - WriteInt16 and WriteSingle
                 writer.WriteByte(0x01);
 
-                GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer()).AsTask();
+                ///GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer()).AsTask();
+                GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer());
                 if (value == GattCommunicationStatus.Success)
                 {
                     // Successfully wrote to device
 
                 }
 
-
             }
+
             if (properties.HasFlag(GattCharacteristicProperties.Notify))
             {
                 // This characteristic supports subscribing to notifications.
-                GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask();
+                //GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask();
+                GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
+
                 if (status == GattCommunicationStatus.Success)
                 {
                     // Server has been informed of clients interest.
+                    characteristic.ValueChanged += Characteristic_ValueChanged;
                 }
-
-                characteristic.ValueChanged += Characteristic_ValueChanged;
 
                 void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
                 {
+                    CharacteristicReader cr = new CharacteristicReader(args.CharacteristicValue, args.Timestamp);
                     // An Indicate or Notify reported that the value has changed.
-                    var reader = DataReader.FromBuffer(args.CharacteristicValue);
-                    // Parse the data however required.
-                    byte[] data = new byte[reader.UnconsumedBufferLength];
-                    reader.ReadBytes(data);
-                    // Utilize the data as needed
 
-                    string dataContent = BitConverter.ToString(data); ;
-                    Console.WriteLine(advType + " characteristic buffer: " + dataContent);
+                    Console.WriteLine("characteristic buffer hex: " + cr.HexValue);
                 }
             }
 
             if (properties.HasFlag(GattCharacteristicProperties.Indicate))
             {
                 // This characteristic supports subscribing to notifications.
-                GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(
-                GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask();
+                //GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask();
+                GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate);
+
                 if (status == GattCommunicationStatus.Success)
                 {
                     // Server has been informed of clients interest.
+                    characteristic.ValueChanged += Characteristic_ValueChanged;
                 }
-
-                characteristic.ValueChanged += Characteristic_ValueChanged;
 
                 void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
                 {
                     // An Indicate or Notify reported that the value has changed.
-                    var reader = DataReader.FromBuffer(args.CharacteristicValue);
-                    // Parse the data however required.
+                    CharacteristicReader cr = new CharacteristicReader(args.CharacteristicValue, args.Timestamp);
+                    Console.WriteLine("characteristic buffer hex: " + cr.HexValue);
                 }
             }
 
@@ -366,4 +396,25 @@ namespace CosmedBleLib
         readonly int E_DEVICE_NOT_AVAILABLE = unchecked((int)0x800710df); // HRESULT_FROM_WIN32(ERROR_DEVICE_NOT_AVAILABLE)
         #endregion
     }
+
+
+
+    /*
+     * TODO:
+     * 
+     * permettere di cercare servizi e caratteristiche con un determinato uuid (16 o 128 bit)
+     * permettere di ricevere i dati, questo si può fare con la subscribe.
+     * 
+     * intanto fare la ricerca. io ho un oggetto connessione. da lí posso richiedere quello che voglio con due metodi:
+     * 
+     * uno esplora, poi io seleziono e richiedo
+     * uno esplora e poi mi manda tutti i dati possibili? no bisogna sempre fare richiesta, uno per volta.
+     * allora io ricevo vari oggetti, in una stessa lista, per tutti i write, read, notify e indicate
+     * 
+     * quindi avrò una classe astratta BleOperation. questa deve avere le info per poter richiedere quello che mi serve
+     * 
+     */
+
+
+    
 }

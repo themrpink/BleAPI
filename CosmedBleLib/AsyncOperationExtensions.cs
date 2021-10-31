@@ -8,7 +8,7 @@ using Windows.Foundation;
 
 namespace CosmedBleLib
 {
-    public static class AsynOperationExtensions
+    public static class AsyncOperationExtensions
     {
 
         public static Task<TResult> AsTask<TResult>(this IAsyncOperation<TResult> asyncOperation)
@@ -28,21 +28,11 @@ namespace CosmedBleLib
                     case AsyncStatus.Canceled:
                         tsc.SetCanceled();
                         break;
-
                 }
             };
             return tsc.Task;
         }
     }
-    public class CosmedAdvertisementEventArgs : EventArgs
-    {
-        public BluetoothLEAdvertisementReceivedEventArgs args { get; private set; }
-        public BluetoothLEAdvertisementWatcher sender { get; private set; }
 
-        public CosmedAdvertisementEventArgs(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
-        {
-            this.args = args;
-            this.sender = sender;
-        }
-    }
+
 }

@@ -23,12 +23,40 @@ namespace CosmedBleConsole
         public static bool check = true;
         public static IReadOnlyCollection<CosmedBleAdvertisedDevice> dev;
 
-        public static async Task Main(String[] args)
+        public static Task Main(String[] args)
         {
+            /*      CosmedBluetoothLEAdvertisementWatcher scanner = new CosmedBluetoothLEAdvertisementWatcher();
+                  TestWatcher test = new TestWatcher();
+                  test.StartScan();
+                  test.StopScan();
+                  test.StartScan();
+                  Console.WriteLine("stacco bth");
+                  Thread.Sleep(5000);
+                  Console.WriteLine(  "vediamo se esce dal lock, primi enter");
+                  CheckStatusAfterAbortAndNewStart();
+                  CheckBthConnectionIsOffDuringScan();
+                  CheckStartBthConnectionIsOn();
+                  CheckBleAdapter();
 
+                  Console.WriteLine("press enter for next test");
+                  Console.ReadLine();
+                  TestBleOff();
+
+                  General general = new General();
+
+                  general.AddOperation(new BleReadOperation());
+                  //general.AddOperation(new BleWriteOperation());
+
+                  foreach (var l in general.GetList())
+                  {
+                      //l.ExcecuteOperation();
+                  }
+
+                  Console.ReadLine();
+      */
             //to use the other implementation option
             //DeviceEnumeration();
-
+            var scanner = new CosmedBluetoothLEAdvertisementWatcher();
             //create a filter
             CosmedBluetoothLEAdvertisementFilter filter = new CosmedBluetoothLEAdvertisementFilter();
             //set the filter
@@ -36,7 +64,7 @@ namespace CosmedBleConsole
             //scan with filter
             //CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher(filter);
 
-            CosmedBluetoothLEAdvertisementWatcher scanner = new CosmedBluetoothLEAdvertisementWatcher();
+            
 
             Console.WriteLine("_______________________scanning____________________");
 
@@ -53,23 +81,23 @@ namespace CosmedBleConsole
             //print the results and connect
             while (true)
             {
-                foreach (var device in scanner.GetRecentlyAdvertisedDevices())
+                foreach (var device in scanner.RecentlyDiscoveredDevices)
                 {
-                   // if (device.DeviceName.Equals("myname") && device.IsConnectable && device.HasScanResponse)
+                    // if (device.DeviceName.Equals("myname") && device.IsConnectable && device.HasScanResponse)
                     {
 
                         device.PrintAdvertisement();
 
-                        if (device.IsConnectable && device.DeviceAddress.Equals("myname"))
+                        if (device.IsConnectable && device.DeviceName.Equals("myname"))
                         {
                             CosmedBleConnection connection = new CosmedBleConnection(device, scanner);
-                            Console.WriteLine("connected with:" + device.DeviceAddress);
-                            Console.WriteLine("scan status: " + scanner.GetWatcherStatus.ToString());
-                            await connection.startConnectionAsync();
+                            Console.WriteLine("in connection with:" + device.DeviceAddress);
+                            Console.WriteLine("watcher status: " + scanner.GetWatcherStatus.ToString());
+                            connection.StartConnectionAsync();
                             Task.WaitAll();
-                           await connection.Pair();
+                            connection.Pair().Wait();
                         }
-                        
+
                     }
 
                 }
@@ -80,8 +108,8 @@ namespace CosmedBleConsole
                 // Devices = scan.GetUpdatedDiscoveredDevices();
                 // count++; ;
             }
-            
-            
+
+
             //Console.ReadLine();
 
             scanner.StopScanning();
@@ -106,13 +134,13 @@ namespace CosmedBleConsole
                 //BluetoothLEDevice b = bledev.GetResults();
             */
         }
-        
+
 
         public static void DeviceEnumeration()
         {
             DeviceWatcher dw = DeviceInformation.CreateWatcher();
             string[] requestedProperties = { "System.Devices.Aep.DeviceAddress", "System.Devices.Aep.IsConnected", "System.Devices.Aep.Bluetooth.Le.IsConnectable" };
-            
+
             // BT_Code: Example showing paired and non-paired in a single query., questo é specifico per il BLE
             string aqsAllBluetoothLEDevices = "(System.Devices.Aep.ProtocolId:=\"{bb7bb05e-5972-42b5-94fc-76eaa7084d49}\")";
 
@@ -156,6 +184,125 @@ namespace CosmedBleConsole
         {
             Console.WriteLine("----");
             Console.WriteLine("fine");
+            Console.ReadLine();
+        }
+
+
+        public static void CheckBleAdapter()
+        {
+            Console.WriteLine("going to check, press enter");
+            Console.ReadLine();
+            bool b = CosmedBluetoothLEAdapter.IsLowEnergySupported;
+            Thread.Sleep(2000);
+            Console.WriteLine("checked, press enter");
+            Console.ReadLine();
+
+        }
+
+
+
+        public static void TestBleOff()
+        {
+            CosmedBluetoothLEAdvertisementWatcher watcher = new CosmedBluetoothLEAdvertisementWatcher();
+            watcher.StartPassiveScanning();
+            Thread.Sleep(1000);
+            Console.WriteLine("now turn off ble and press a key");
+            Console.ReadLine();
+            Console.WriteLine("now waíting 1 second");
+            Thread.Sleep(1000);
+            //here I should turn ble off on the machine and see if an exception is thrown
+            Console.WriteLine("now pausing scan");
+            watcher.PauseScanning();
+            Thread.Sleep(1000);
+            Console.WriteLine("scan paused");
+            Console.WriteLine("press a key");
+            Console.WriteLine("now resuming scan");
+            watcher.ResumeScanning();
+            Thread.Sleep(1000);
+            Console.WriteLine("è successo qualcosa? press enter");
+            Console.ReadLine();
+        }
+
+        public static void CheckStartBthConnectionIsOn()
+        {
+            Console.WriteLine("turn off ble and press a key");
+            Console.ReadLine();
+            CosmedBluetoothLEAdvertisementWatcher watcher = new CosmedBluetoothLEAdvertisementWatcher();
+            watcher.StartPassiveScanning();
+            watcher = null;
+        }
+
+        public static void CheckStatusAfterAbortAndNewStart()
+        {
+            Console.WriteLine("turn on ble and press a key");
+            Console.ReadLine();
+            CosmedBluetoothLEAdvertisementWatcher watcher = new CosmedBluetoothLEAdvertisementWatcher();
+            watcher.StartPassiveScanning();
+            Console.WriteLine("turn bth off and wait, then press enter");
+            Thread.Sleep(10000);
+            watcher.StartPassiveScanning();
+            Console.ReadLine();
+            watcher.StopScanning();
+            watcher = null;
+        }
+        public static void CheckBthConnectionIsOffDuringScan()
+        {
+            
+            Console.WriteLine("turn on ble and press a key");
+            Console.ReadLine();
+            CosmedBluetoothLEAdvertisementWatcher watcher = new CosmedBluetoothLEAdvertisementWatcher();
+            watcher.StartPassiveScanning();
+            Console.WriteLine("turn bth off and wait, then press enter");
+            Thread.Sleep(10000);
+            Console.ReadLine();
+            watcher = null;
+
+        }
+
+        public static void MeasureElapsingCounts()
+        {
+            List<BluetoothLEAdvertisementWatcherStatus> stati = new List<BluetoothLEAdvertisementWatcherStatus>();
+            int i = 0;
+            int j = 0;
+            int k = 0;
+            var testw = new TestWatcher();
+
+            testw.StartScan();
+            while (testw.watcher.Status != BluetoothLEAdvertisementWatcherStatus.Started)
+            {
+                i++;
+            }
+
+            testw.StopScan();
+            while (testw.watcher.Status == BluetoothLEAdvertisementWatcherStatus.Started)
+            {
+                k++;
+            }
+            //testw.StartScan();
+            while (testw.watcher.Status == BluetoothLEAdvertisementWatcherStatus.Stopping)
+            {
+                j++;
+            }
+            while (i < 15000000)
+            {
+                stati.Add(testw.watcher.Status);
+                //if(testw.watcher.Status == BluetoothLEAdvertisementWatcherStatus.Stopping)
+                //{
+                //    Console.WriteLine("stato stopping");
+                //}
+                i++;
+            }
+
+            for (i = 0; i < stati.Count; i++)
+            {
+                if (stati[i] == BluetoothLEAdvertisementWatcherStatus.Stopped)
+                {
+                    Console.WriteLine("stato stopping");
+                }
+                //Console.WriteLine(stati[i].ToString());
+            }
+
+            Console.WriteLine("finito, premi enter");
             Console.ReadLine();
         }
     }
