@@ -55,7 +55,6 @@ namespace CosmedBleConsole
                 {
                     // if (device.DeviceName.Equals("myname") && device.IsConnectable && device.HasScanResponse)
                     {
-
                         device.PrintAdvertisement();
 
                         if (device.IsConnectable && device.DeviceName.Equals("myname"))
@@ -68,13 +67,10 @@ namespace CosmedBleConsole
                             //pairing
                             connection.Pair().Wait();
                         }
-
                     }
-
                 }
                 Thread.Sleep(5000);
             }
-
             //scanner.StopScanning();
         }
 

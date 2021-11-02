@@ -148,7 +148,7 @@ namespace CosmedBleLib
                     break;
 
                 case DataConversionType.Utf16:
-                    result =  new System.Text.UnicodeEncoding().GetString(data);
+                    result = Encoding.Unicode.GetString(data);
                     break;
 
                 default:
