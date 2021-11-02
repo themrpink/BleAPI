@@ -32,6 +32,11 @@ namespace CosmedBleLib
             };
             return tsc.Task;
         }
+
+        public static void AddDevice(this CosmedBluetoothLEAdvertisementWatcher watcher, CosmedBleAdvertisedDevice device)
+        {
+
+        }
     }
 
 

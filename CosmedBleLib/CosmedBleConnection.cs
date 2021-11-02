@@ -25,7 +25,6 @@ namespace CosmedBleLib
         private List<BleOperation> supportedOperations;
         public BluetoothLEDevice bluetoothLeDevice = null;
         public GattCommunicationStatus Status { get; private set; } = GattCommunicationStatus.Unreachable;
-
         #endregion
 
 
@@ -48,6 +47,8 @@ namespace CosmedBleLib
         //device ID
         public BluetoothDeviceId BluetoothDeviceId { get; private set; }
 
+        public bool IsConnected { get { return bluetoothLeDevice?.ConnectionStatus == BluetoothConnectionStatus.Connected; } }
+
 
         public bool WasSecureConnectionUsedForPairing { get; private set; }
 
@@ -67,14 +68,14 @@ namespace CosmedBleLib
             this.watcher = watcher;
             try
             {
-                _ = SetBluetoothLEDeviceAsync(advertisingDevice.DeviceAddress);
+                Task t = SetBluetoothLEDeviceAsync(advertisingDevice.DeviceAddress);
+                Task.WaitAll(t);
+                bluetoothLeDevice.ConnectionStatusChanged += OnConnectionStatusChanged;
             }
-            catch (ArgumentNullException e)
+            catch (ArgumentException e)
             {
                 Console.WriteLine(e.Message);
-            }
-            // Task.WaitAll();
-            bluetoothLeDevice.ConnectionStatusChanged += OnConnectionStatusChanged;
+            }            
         }
 
         public CosmedBleConnection(ulong deviceAddress, CosmedBluetoothLEAdvertisementWatcher watcher)
@@ -116,12 +117,16 @@ namespace CosmedBleLib
         {
             if (device.ConnectionStatus == BluetoothConnectionStatus.Connected)
             {
+                Console.WriteLine("------------------------");
                 Console.WriteLine("device is pausing scan");
+                Console.WriteLine("------------------------");
                 watcher.PauseScanning();
             }
             if (device.ConnectionStatus == BluetoothConnectionStatus.Disconnected)
             {
-                Console.WriteLine("device is resuming scan");
+                Console.WriteLine("------------------------");
+                Console.WriteLine("device is resuming scan"); 
+                Console.WriteLine("------------------------");
                 watcher.ResumeScanning();
             }
 
@@ -135,11 +140,18 @@ namespace CosmedBleLib
         {
             if (DeviceInformation != null)
             {
-                //DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync().AsTask();
-                DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync();
+                DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync().AsTask();
+                //DevicePairingResult result = await customPairing.PairAsync(ceremoniesSelected, protectionLevel);
+                // DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync();
                 Console.WriteLine("paring status: " + dpr.Status.ToString());
                 Console.WriteLine("pairing protection level: " + dpr.ProtectionLevelUsed.ToString());
-
+                if(dpr.Status != DevicePairingResultStatus.Paired || dpr.Status != DevicePairingResultStatus.AlreadyPaired)
+                {
+                    Console.WriteLine("------------------------");
+                    Console.WriteLine("device is resuming scan");
+                    Console.WriteLine("------------------------");
+                    watcher.ResumeScanning();
+                }
             }
         }
 
@@ -148,7 +160,7 @@ namespace CosmedBleLib
 
         #region Connection
 
-        public async void StartConnectionAsync()
+        public async Task StartConnectionAsync()
         {
             GattDeviceServicesResult result;
 
@@ -208,7 +220,7 @@ namespace CosmedBleLib
 
                         foreach (GattCharacteristic characteristic in characteristics)
                         {
-                            Console.WriteLine("Characteristic, user descriptio: " + characteristic.UserDescription);
+                            Console.WriteLine("Characteristic, user description: " + characteristic.UserDescription);
                             Console.WriteLine("UUID: " + characteristic.Uuid.ToString());
                             Console.WriteLine("Attribute handle: " + characteristic.AttributeHandle.ToString("X2"));
                             Console.WriteLine("Protection level: " + characteristic.ProtectionLevel.ToString());
@@ -224,24 +236,45 @@ namespace CosmedBleLib
                                 Console.WriteLine("Namespace" + pf.Namespace.ToString("X2"));
                                 Console.WriteLine();
                             }
-
-                            //var descriptors = await characteristic.GetDescriptorsAsync().AsTask();
-                            var descriptors = await characteristic.GetDescriptorsAsync();
+                            
+                            GattDescriptorsResult descriptors = null;
+                            try
+                            {
+                                //var descriptors = await characteristic.GetDescriptorsAsync().AsTask();
+                                descriptors = await characteristic.GetDescriptorsAsync();
+                            }
+                            catch (AggregateException ae)
+                            {
+                                ae.Handle( (x) =>
+                                {
+                                   if (x is System.ObjectDisposedException)
+                                   {
+                                        //'L'oggetto è stato chiuso. (Eccezione da HRESULT: 0x80000013)'
+                                        return true;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine(ae.InnerException.Message);
+                                    }
+                                    return false; // Let anything else stop the application.
+                                });
+                                 
+                            }
 
                             Console.WriteLine(" - descriptors - ");
 
-                            foreach (var descriptor in descriptors.Descriptors)
+                            foreach (var descriptor in descriptors?.Descriptors)
                             {
                                 Console.WriteLine("protection level: " + descriptor.ProtectionLevel);
                                 Console.WriteLine("Uuid: " + descriptor.Uuid.ToString());
                                 Console.WriteLine("Attribute Handler" + descriptor.AttributeHandle.ToString("X2"));
                             }
 
-                            Console.WriteLine("Status: " + descriptors.Status.ToString());
+                            Console.WriteLine("Status: " + descriptors?.Status.ToString());
 
-                            if (descriptors.ProtocolError != null)
+                            if (descriptors?.ProtocolError != null)
                             {
-                                Console.WriteLine("Protocol error: " + descriptors.ProtocolError.Value.ToString("X2"));
+                                Console.WriteLine("Protocol error: " + descriptors?.ProtocolError.Value.ToString("X2"));
                             }
 
                             //Task t = CharacteristicCommunication(characteristic, result);
@@ -260,6 +293,10 @@ namespace CosmedBleLib
                                         Console.WriteLine("You do not have permission to access all folders in this path.");
                                         Console.WriteLine("See your network administrator or try another path.");
                                         return true;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine(ae.InnerException.Message);
                                     }
                                     return false; // Let anything else stop the application.
                                 });
@@ -317,8 +354,8 @@ namespace CosmedBleLib
                 // WriteByte used for simplicity. Other common functions - WriteInt16 and WriteSingle
                 writer.WriteByte(0x01);
 
-                ///GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer()).AsTask();
-                GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer());
+                GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer()).AsTask();
+                //GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer());
                 if (value == GattCommunicationStatus.Success)
                 {
                     // Successfully wrote to device
@@ -350,10 +387,19 @@ namespace CosmedBleLib
 
             if (properties.HasFlag(GattCharacteristicProperties.Indicate))
             {
-                // This characteristic supports subscribing to notifications.
-                //GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask();
-                GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate);
+                GattCommunicationStatus status = GattCommunicationStatus.Unreachable;
+                try
+                {
+                    // This characteristic supports subscribing to notifications.
+                    status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask();
+                    //GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate);
 
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(  characteristic.Uuid.ToString());
+                    Console.WriteLine(e.Message);
+                }
                 if (status == GattCommunicationStatus.Success)
                 {
                     // Server has been informed of clients interest.

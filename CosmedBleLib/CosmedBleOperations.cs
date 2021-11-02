@@ -16,6 +16,7 @@ namespace CosmedBleLib
         public General()
         {
             lista = new List<BleOperation>();
+            var v = new BleReadOperation();
         }
 
         public void AddOperation(BleOperation operation)
@@ -66,6 +67,16 @@ namespace CosmedBleLib
       * 
       * */
     
+
+
+    /*
+     * forse migliore soluzione:
+     * la class abstract ha un abstract method executeCommand(void)
+     * le classe che ereditano dalla abstract hanno un costruttore che prendere i parametri necessari
+     * exectuteCommand utilizzerä questi parametri per fare le sue operazioni
+     * così istanzio le operazioni che mi servono come abstract class, ma chiamando executeCommand ottengo i giusti dati
+     * forse il problema potrebbe essere il valore di ritorno, che potrebbe cambiare a seconda del tipo di operazione
+     */
     public abstract class BleOperation// : IBleOperation
     {
         public abstract void print();
@@ -84,6 +95,10 @@ namespace CosmedBleLib
         private IBuffer buffer;
         private GattCharacteristic characteristic;
 
+        public BleWriteOperation()
+        {
+            
+        }
         public BleWriteOperation(IBuffer buffer)
         {
             this.buffer = buffer;
@@ -134,7 +149,14 @@ namespace CosmedBleLib
 
     public class BleNotifyOperation : BleOperation
     {
+        GattCharacteristic characteristic;
         public Operations operation { get; } = Operations.Notify;
+
+        public BleNotifyOperation(GattCharacteristic chars)
+        {
+            this.characteristic = chars;
+            characteristic.ValueChanged += Characteristic_ValueChanged;
+        }
 
         public override async void ExcecuteOperation(GattCharacteristic characteristic, GattClientCharacteristicConfigurationDescriptorValue value)
         {
@@ -143,18 +165,22 @@ namespace CosmedBleLib
             if (status == GattCommunicationStatus.Success)
             {
                 // Server has been informed of clients interest.
-                characteristic.ValueChanged += Characteristic_ValueChanged;
-            }
-
-            void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
-            {
-                CharacteristicReader cr = new CharacteristicReader(args.CharacteristicValue, args.Timestamp);
-                // An Indicate or Notify reported that the value has changed.
-
-                Console.WriteLine("characteristic buffer hex: " + cr.HexValue);
+                
             }
         }
 
+        public override void ExcecuteOperation(IBuffer buffer)
+        {
+            base.ExcecuteOperation(buffer);
+        }
+
+        void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
+        {
+            CharacteristicReader cr = new CharacteristicReader(args.CharacteristicValue, args.Timestamp);
+            // An Indicate or Notify reported that the value has changed.
+
+            Console.WriteLine("characteristic buffer hex: " + cr.HexValue);
+        }
         public override void print()
         {
             Console.WriteLine("im notify");

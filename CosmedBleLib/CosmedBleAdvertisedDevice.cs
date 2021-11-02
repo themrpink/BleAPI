@@ -93,10 +93,8 @@ namespace CosmedBleLib
 
         public CosmedBleAdvertisedDevice SetAdvertisement(BluetoothLEAdvertisementReceivedEventArgs args)
         {
-
             DeviceAddress = args.BluetoothAddress;
             Timestamp = args.Timestamp;
-            IsConnectable = args.IsConnectable;
             RawSignalStrengthInDBm = args.RawSignalStrengthInDBm;
             BluetoothAddressType = args.BluetoothAddressType;
             IsAnonymous = args.IsAnonymous;
@@ -118,6 +116,7 @@ namespace CosmedBleLib
             }
             else
             {
+                IsConnectable = args.IsConnectable;
                 DeviceName = args.Advertisement.LocalName;
                 advertisementContent.Advertisement = args.Advertisement;
                 advertisementContent.AdvertisementType = args.AdvertisementType;

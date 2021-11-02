@@ -23,7 +23,7 @@ namespace CosmedBleConsole
         public static bool check = true;
         public static IReadOnlyCollection<CosmedBleAdvertisedDevice> dev;
 
-        public static Task Main(String[] args)
+        public async static Task Main(String[] args)
         {
             //to use the other implementation option
             //DeviceEnumeration();
@@ -63,8 +63,9 @@ namespace CosmedBleConsole
                             CosmedBleConnection connection = new CosmedBleConnection(device, scanner);
                             Console.WriteLine("in connection with:" + device.DeviceAddress);
                             Console.WriteLine("watcher status: " + scanner.GetWatcherStatus.ToString());
-                            connection.StartConnectionAsync();
-                            Task.WaitAll();
+                            //service discovery
+                            await connection.StartConnectionAsync();
+                            //pairing
                             connection.Pair().Wait();
                         }
 
