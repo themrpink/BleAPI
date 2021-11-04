@@ -53,8 +53,6 @@
     <Compile Include="AutoUpdateDiscoveredDevicesCollection.cs" />
     <Compile Include="AsyncOperationExtensions.cs" />
     <Compile Include="GattCommunicator.cs" />
-    <Compile Include="CosmedBleAttributes.cs" />
-    <Compile Include="CosmedBleOperations.cs" />
     <Compile Include="CosmedDataReader.cs" />
     <Compile Include="CosmedBleConnectedDevice.cs" />
     <Compile Include="CosmedBluetoothLEAdapter.cs" />

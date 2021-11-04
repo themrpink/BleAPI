@@ -52,7 +52,7 @@ namespace CosmedBleConsole
             scanner.StartActiveScanning();
             //scan.StartPassiveScanning();
 
-            scanner.StopScanning();
+            //scanner.StopScanning();
             //print the results and connect
             while (true)
             {

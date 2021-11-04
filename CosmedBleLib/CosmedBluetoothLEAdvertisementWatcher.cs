@@ -19,8 +19,8 @@ namespace CosmedBleLib
     /// </summary>
     public class CosmedBluetoothLEAdvertisementWatcher
     {
-        private ObservableCollection<CosmedBleAdvertisedDevice> KnownDevices = new ObservableCollection<CosmedBleAdvertisedDevice>();
-        private List<DeviceInformation> UnknownDevices = new List<DeviceInformation>();
+        //private ObservableCollection<CosmedBleAdvertisedDevice> KnownDevices = new ObservableCollection<CosmedBleAdvertisedDevice>();
+        //private List<DeviceInformation> UnknownDevices = new List<DeviceInformation>();
 
 
         #region Private fields
@@ -251,7 +251,7 @@ namespace CosmedBleLib
                     watcher.Stopped += this.OnScanStopped;
                 }
             }               
-            bool isExtendedAdvertisementSupported = CosmedBluetoothLEAdapter.IsExtendedAdvertisingSupported;
+            //bool isExtendedAdvertisementSupported = CosmedBluetoothLEAdapter.IsExtendedAdvertisingSupported;
             //watcher.AllowExtendedAdvertisements = isExtendedAdvertisementSupported;          
         }
 
