@@ -41,8 +41,6 @@ namespace CosmedBleLib
     }
 
 
-
-
     public class DataSectionCollection : IEnumerable<DataSectionReader>
     {
         public IReadOnlyList<DataSectionReader> AdvertisedDataSection { get; }
@@ -71,6 +69,8 @@ namespace CosmedBleLib
         }
     }
 
+
+
     /*
     public class AdvertisemendDataCollection<T, R> where T : AdvertisementData
     {
@@ -94,8 +94,6 @@ namespace CosmedBleLib
         }
     }
     */
-
-
 
 
     public abstract class BufferReader
@@ -313,7 +311,6 @@ namespace CosmedBleLib
     }
 
 
-
     public class ManufacturerDataReader : BufferReader
     {
         public string CompanyId { get; private set; }
@@ -352,6 +349,7 @@ namespace CosmedBleLib
         }
     }
 
+
     public class DataSectionReader : BufferReader
     {
         public byte RawDataType { get; }
@@ -366,7 +364,6 @@ namespace CosmedBleLib
     }
 
 
-
     public enum DataConversionType
     {
         Hex,
@@ -374,7 +371,6 @@ namespace CosmedBleLib
         Utf8,
         Utf16
     }
-
 
 
     public static class GattConvert

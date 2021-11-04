@@ -40,7 +40,7 @@ namespace CosmedBleLib
 
 
         //add advertisement service UUID element: 
-        public CosmedBluetoothLEAdvertisementFilter setServiceUUID(Guid ServiceUUID)
+        public CosmedBluetoothLEAdvertisementFilter SetServiceUUID(Guid ServiceUUID)
         {
             //checkAdvertisementFilter();
             AdvertisementFilter.Advertisement.ServiceUuids.Add(ServiceUUID);
@@ -73,7 +73,7 @@ namespace CosmedBleLib
          * requested flag value = 6.
          * if only one flag is requested and the device advertises 2 flags, it will be excluded by the filter
          */
-        public CosmedBluetoothLEAdvertisementFilter setFlags(BluetoothLEAdvertisementFlags flag)
+        public CosmedBluetoothLEAdvertisementFilter SetFlags(BluetoothLEAdvertisementFlags flag)
         {
             //checkAdvertisementFilter();
             AdvertisementFilter.Advertisement.Flags = flag;
@@ -81,7 +81,7 @@ namespace CosmedBleLib
         }
         
 
-        public CosmedBluetoothLEAdvertisementFilter setLocalName(string LocalName)
+        public CosmedBluetoothLEAdvertisementFilter SetLocalName(string LocalName)
         {
             if(LocalName == null)
             {
@@ -141,10 +141,10 @@ namespace CosmedBleLib
 
             // Finally set the data payload within the manufacturer-specific section
             // Here, use a 16-bit UUID: 0x1234 -> {0x34, 0x12} (little-endian)
-            var writer = new Windows.Storage.Streams.DataWriter();
+            var writer = new DataWriter();
             writer.WriteUInt16(ManufacturerData);
 
-            // Make sure that the buffer length can fit within an advertisement payload. Otherwise you will get an exception.
+            // Make sure that the buffer length can fit within an advertisement payload (20 bytes). Otherwise you will get an exception.
             manufacturerData.Data = writer.DetachBuffer();
 
             // Add the manufacturer data to the advertisement filter on the watcher:
@@ -172,18 +172,18 @@ namespace CosmedBleLib
         IReadOnlyList<BluetoothLEAdvertisementDataSection> sectionByType = AdvertisementFilter.Advertisement.GetSectionsByType(ADType);
 
         */
-        public CosmedBluetoothLEAdvertisementFilter setDataBuffer(byte dataType, ushort data)
+        public CosmedBluetoothLEAdvertisementFilter SetDataBuffer(byte dataType, ushort data)
         {
             BluetoothLEAdvertisementDataSection dataSection = new BluetoothLEAdvertisementDataSection();
             dataSection.DataType = dataType;
-            var writer = new Windows.Storage.Streams.DataWriter();
+            var writer = new DataWriter();
             writer.WriteUInt16(data);
             dataSection.Data = writer.DetachBuffer();
             AdvertisementFilter.Advertisement.DataSections.Add(dataSection);
             return this;
             }
 
-        public CosmedBluetoothLEAdvertisementFilter setDataBuffer(uint dataType, ushort data)
+        public CosmedBluetoothLEAdvertisementFilter SetDataBuffer(uint dataType, ushort data)
         {
             //checkAdvertisementFilter();
             BluetoothLEAdvertisementDataSection dataSection = new BluetoothLEAdvertisementDataSection();
@@ -191,7 +191,7 @@ namespace CosmedBleLib
             {
                 byte ADType = Convert.ToByte(dataType);
                 dataSection.DataType = ADType;
-                var writer = new Windows.Storage.Streams.DataWriter();
+                var writer = new DataWriter();
                 writer.WriteUInt16(data);
                 dataSection.Data = writer.DetachBuffer();
             }
@@ -203,7 +203,7 @@ namespace CosmedBleLib
             return this;
         }
 
-        public CosmedBluetoothLEAdvertisementFilter ResetAdvertismentFilter()
+        public CosmedBluetoothLEAdvertisementFilter ResetAdvertisementFilter()
         {
             AdvertisementFilter = new BluetoothLEAdvertisementFilter(); ;
             return this;

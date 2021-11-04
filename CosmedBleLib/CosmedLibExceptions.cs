@@ -46,12 +46,13 @@ namespace CosmedBleLib
 
     }
 
-
+    /*
 
     public static class BluetoothConnectionInterruptedEventArgsBuilder
     {
         public async static Task<BluetoothConnectionInterruptedEventArgs> checkBLEAdapterError()
         {
+            var adapter
             string str = CosmedBluetoothLEAdapter.HexAddress;
             BluetoothConnectionInterruptedEventArgs eventArgs;
 
@@ -97,5 +98,5 @@ namespace CosmedBleLib
         }
 
     }
-
+    */
 }

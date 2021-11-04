@@ -9,36 +9,6 @@ using Windows.Storage.Streams;
 namespace CosmedBleLib
 {
 
-    public class General
-    {
-        private List<BleOperation> lista;
-
-        public General()
-        {
-            lista = new List<BleOperation>();
-            var v = new BleReadOperation();
-        }
-
-        public void AddOperation(BleOperation operation)
-        {
-            lista.Add(operation);
-        }
-
-        public List<BleOperation> GetList()
-        {
-            return lista;
-        }
-    }
-
-
-    public enum Operations
-    {
-        Write,
-        Read,
-        Notify,
-        Indicate
-    }
-
 
     //questo probabilmente non mi serve
     public interface IBleOperation
@@ -51,32 +21,6 @@ namespace CosmedBleLib
 
     }
 
-
-     /*
-      * TODO:
-      * non so come strutturarlo, deve fare degli schemi
-      * i vari bleOperation hanno bisogno della characteristic per eseguire l´operazione, questa gliela posso passare
-      * nel costruttore e nel metodo. Se lo possa nel costruttore ogni istanza contiene la caratteristica, forse sotto forma di 
-      * classe mia o originale, dipende da come strutturo il lavoro.
-      * di base: 
-      * richiedo i servizi, da questi ottengo delle caratteristiche. 
-      * (devo rivedere differenza tra profilo e servizio)
-      * su queste caratteristiche posso eseguire delle operazioni. Credo sia bene eseguirle all´interno di oggetti strutturati,
-      * in modo di sapere entro quale servizio si sta operando.
-      * Servizio.caratteristica.execute
-      * 
-      * */
-    
-
-
-    /*
-     * forse migliore soluzione:
-     * la class abstract ha un abstract method executeCommand(void)
-     * le classe che ereditano dalla abstract hanno un costruttore che prendere i parametri necessari
-     * exectuteCommand utilizzerä questi parametri per fare le sue operazioni
-     * così istanzio le operazioni che mi servono come abstract class, ma chiamando executeCommand ottengo i giusti dati
-     * forse il problema potrebbe essere il valore di ritorno, che potrebbe cambiare a seconda del tipo di operazione
-     */
     public abstract class BleOperation// : IBleOperation
     {
         public abstract void print();
@@ -87,8 +31,6 @@ namespace CosmedBleLib
         public virtual void ExcecuteOperation(GattCharacteristic characteristic, GattClientCharacteristicConfigurationDescriptorValue value) { }
     }
 
-   
-    
     public class BleWriteOperation :  BleOperation
     {
         public Operations operation { get; } = Operations.Write;
@@ -116,7 +58,7 @@ namespace CosmedBleLib
             writer.WriteByte(0x01);
 
             ///GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer()).AsTask();
-            GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer());
+            GattCommunicationStatus value = await characteristic.WriteValueAsync(writer.DetachBuffer()).AsTask().ConfigureAwait(false);
             if (value == GattCommunicationStatus.Success)
             {
                 // Successfully wrote to device
@@ -160,7 +102,7 @@ namespace CosmedBleLib
 
         public override async void ExcecuteOperation(GattCharacteristic characteristic, GattClientCharacteristicConfigurationDescriptorValue value)
         {
-            GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
+            GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask().ConfigureAwait(false);
             
             if (status == GattCommunicationStatus.Success)
             {
@@ -194,7 +136,7 @@ namespace CosmedBleLib
 
         public override async void ExcecuteOperation(GattCharacteristic characteristic, GattClientCharacteristicConfigurationDescriptorValue value)
         {
-            GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate);
+            GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask().ConfigureAwait(false);
 
             if (status == GattCommunicationStatus.Success)
             {

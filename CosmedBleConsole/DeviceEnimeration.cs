@@ -6,12 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
-
+using CosmedBleLib;
 namespace CosmedBleConsole
 {
-    class DeviceEnimeration
+    class DeviceEnumeration
     {
-        public static void DeviceEnumeration()
+        public static void StartDeviceEnumeration()
         {
             DeviceWatcher dw = DeviceInformation.CreateWatcher();
             string[] requestedProperties = { "System.Devices.Aep.DeviceAddress", "System.Devices.Aep.IsConnected", "System.Devices.Aep.Bluetooth.Le.IsConnectable" };
@@ -34,25 +34,33 @@ namespace CosmedBleConsole
             dw.Stop();
         }
 
-        public static void DeviceDiscoveredHandler(DeviceWatcher dw, DeviceInformation di)
+        public static async void DeviceDiscoveredHandler(DeviceWatcher dw, DeviceInformation di)
         {
             Console.WriteLine("----");
             Console.WriteLine("name: " + di.Name.ToString());
             Console.WriteLine("kind: " + di.Kind.ToString());
             Console.WriteLine("id: " + di.Id);
             Console.WriteLine("bool: " + di.Pairing.CanPair);
-            Console.WriteLine("protection: " + di.Pairing.ProtectionLevel.ToString());
-            Console.WriteLine("is paired 1: " + di.Pairing.IsPaired);
-            IAsyncOperation<DevicePairingResult> result = di.Pairing.PairAsync();
-            Thread.Sleep(100);
-            Console.WriteLine("status: " + result.GetResults().Status.ToString());
-            Console.WriteLine(result.GetResults().ProtectionLevelUsed.ToString());
+
             foreach (var p in di.Properties.Keys)
             {
                 Console.WriteLine("prop key: " + p);
                 if (di.Properties[p] != null)
                     Console.WriteLine("prop value: " + di.Properties[p].ToString());
             }
+
+            if (di.Pairing.CanPair)
+            {
+                Console.WriteLine("trying to pair...");
+                Console.WriteLine("protection: " + di.Pairing.ProtectionLevel.ToString());
+                Console.WriteLine("is paired: " + di.Pairing.IsPaired);
+                var result = await di.Pairing.PairAsync().AsTask();
+                ///Thread.Sleep(100);
+                Console.WriteLine("status: " + result.Status.ToString());
+                Console.WriteLine(result.ProtectionLevelUsed.ToString());
+            }
+
+
         }
 
         public static void onEnumerationCompleted(DeviceWatcher dw, object di)

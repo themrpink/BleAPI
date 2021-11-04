@@ -11,6 +11,8 @@ using Windows.Foundation;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Storage.Streams;
 using Windows.Devices.Bluetooth;
+using Windows.Devices.Radios;
+using System.Management;
 
 namespace CosmedBleConsole
 {
@@ -26,20 +28,23 @@ namespace CosmedBleConsole
         public async static Task Main(String[] args)
         {
             //to use the other implementation option
-            //DeviceEnumeration();
+           // DeviceEnumeration.StartDeviceEnumeration();
+
+            //Console.ReadLine();
 
             var scanner = new CosmedBluetoothLEAdvertisementWatcher();
 
             //create a filter
             CosmedBluetoothLEAdvertisementFilter filter = new CosmedBluetoothLEAdvertisementFilter();
-            
+
             //set the filter
-            filter.setFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode | BluetoothLEAdvertisementFlags.ClassicNotSupported).SetCompanyID("4D");
-           
+            filter.SetFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode | BluetoothLEAdvertisementFlags.ClassicNotSupported).SetCompanyID("4D");
+
             //scan with filter
             //CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher(filter);
 
-            
+
+        
 
             Console.WriteLine("_______________________scanning____________________");
 
@@ -47,7 +52,7 @@ namespace CosmedBleConsole
             scanner.StartActiveScanning();
             //scan.StartPassiveScanning();
 
-
+            scanner.StopScanning();
             //print the results and connect
             while (true)
             {
@@ -59,10 +64,13 @@ namespace CosmedBleConsole
 
                         if (device.IsConnectable && device.DeviceName.Equals("myname"))
                         {
-                            CosmedBleConnection connection = new CosmedBleConnection(device, scanner);
+                            CosmedBleConnectedDevice connection = new CosmedBleConnectedDevice(device, scanner);
                             Console.WriteLine("in connection with:" + device.DeviceAddress);
                             Console.WriteLine("watcher status: " + scanner.GetWatcherStatus.ToString());
-                            //service discovery
+
+                            connection.MaintainConnection();
+                            Thread.Sleep(5000);
+
                             await connection.StartConnectionAsync();
                             //pairing
                             connection.Pair().Wait();
@@ -74,12 +82,42 @@ namespace CosmedBleConsole
             //scanner.StopScanning();
         }
 
-
         public static void SetCallbacks(CosmedBluetoothLEAdvertisementWatcher watcher)
         {
-            //  scan.NewDeviceDiscovered += (device) => { Console.WriteLine(device.ToString() + "+++++++++++++++new device+++++++++++++++"); };
-            //scan.OnScanStopped += (sender, args) => { };
+            watcher.NewDeviceDiscovered += (watch, device) => { Console.WriteLine(device.ToString() + "+++++++++++++++new device+++++++++++++++"); };
+            watcher.ScanStopped += (sender, args) => { };
         }
     }
+
+
 }
+
+
+
+
+/*
+ * TODO:
+ * capire cosa è che fa connettere e come:
+ * new BleDevice
+ * GattService
+ * GattResult
+ * 
+ * uno di questi o tutti e tre? se metto canMaintainConnection=false non si interrompe?
+ * 
+ * 
+ * poi le cose che non è possibile fare magari cerco di farle con p/invoke
+ * 
+ * poi io devo ottenere: o la lista dei services, o un service o una caratteristica
+ * con ognuno di questi devo poter comunicare. La meglio cosa sarebbe avere a disposizione dei metodi a seconda del tipo
+ * se non può fare la read, allora la read non appare. Oppure questo è un overhead e lascio fare il controllo all´utente?
+ *
+ *
+ 
+ se connection ha un metodo che restituisce gli uuid e glieli passo per interrogare un service, ha senso come design?
+ 
+ poi, come usare le appearance? posso fare una ricerca più "approfondita"? magari ci sta, così ottengo più informazioni sui device
+ 
+ 
+ */
+
 

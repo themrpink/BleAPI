@@ -12,13 +12,14 @@ using Windows.Storage.Streams;
 namespace CosmedBleLib
 {
 
-    public static class DeviceFactory
+    public static class DeviceBuilder
     {
         public static CosmedBleAdvertisedDevice CreateAdvertisedDevice(BluetoothLEAdvertisementReceivedEventArgs args)
         {
             return new CosmedBleAdvertisedDevice(args);
         }
     }
+
 
     public class CosmedBleAdvertisedDevice : IAdvertisedDevice<CosmedBleAdvertisedDevice>
     {
@@ -56,6 +57,85 @@ namespace CosmedBleLib
         public bool IsScannable { get; private set; }
         public short? TransmitPowerLevelInDBm { get; private set; }
 
+
+        public AdvertisementContent GetAdvertisementContent => advertisementContent;
+
+
+        public AdvertisementContent GetScanResponseAdvertisementContent => scanResponseAdvertisementContent;
+
+
+        public IReadOnlyCollection<Guid> ServiceUuids
+        {
+            get
+            {
+                return advertisementContent.Advertisement == null ? new List<Guid>().AsReadOnly() :
+                    new List<Guid>(advertisementContent.Advertisement.ServiceUuids).AsReadOnly();
+            }
+        }
+
+
+        public IReadOnlyCollection<Guid> ServiceUuidsFromScanResponse
+        {
+            get
+            {
+                return HasScanResponse ? new List<Guid>().AsReadOnly() :
+                    new List<Guid>(scanResponseAdvertisementContent.Advertisement.ServiceUuids).AsReadOnly();
+            }
+        }
+
+
+        public BluetoothLEAdvertisementFlags? Flags
+        {
+            get
+            {
+                if (advertisementContent.Advertisement == null)
+                {
+                    Console.WriteLine();
+                }
+                return advertisementContent.Advertisement == null ? scanResponseAdvertisementContent.Advertisement.Flags : advertisementContent.Advertisement.Flags;
+            }
+        }
+
+
+        public ManufacturerDataCollection ManufacturerData
+        {
+            get
+            {
+                return advertisementContent.Advertisement != null ? new ManufacturerDataCollection(advertisementContent.Advertisement.ManufacturerData) :
+                    new ManufacturerDataCollection(new List<BluetoothLEManufacturerData>());
+            }
+        }
+
+
+        public ManufacturerDataCollection ManufacturerDataFromScanResponse
+        {
+            get
+            {
+                return scanResponseAdvertisementContent.Advertisement != null ? new ManufacturerDataCollection(scanResponseAdvertisementContent.Advertisement.ManufacturerData) :
+                    new ManufacturerDataCollection(new List<BluetoothLEManufacturerData>());
+            }
+        }
+
+
+        public DataSectionCollection DataSections
+        {
+            get
+            {
+                return advertisementContent.Advertisement != null ? new DataSectionCollection(advertisementContent.Advertisement.DataSections) :
+                    new DataSectionCollection(new List<BluetoothLEAdvertisementDataSection>());
+            }
+        }
+
+
+        public DataSectionCollection DataSectionsFromScanResponse
+        {
+            get
+            {
+                return scanResponseAdvertisementContent.Advertisement != null ? new DataSectionCollection(scanResponseAdvertisementContent.Advertisement.DataSections) :
+                    new DataSectionCollection(new List<BluetoothLEAdvertisementDataSection>());
+            }
+        }
+
         #endregion
 
 
@@ -65,6 +145,8 @@ namespace CosmedBleLib
 
         #endregion
 
+
+        #region Constructors
 
         public CosmedBleAdvertisedDevice()
         {
@@ -82,8 +164,6 @@ namespace CosmedBleLib
             this.Timestamp = timestamp;
             this.IsConnectable = isConnectable;
         }
-
-
 
         public CosmedBleAdvertisedDevice(BluetoothLEAdvertisementReceivedEventArgs args) : this()
         {
@@ -123,91 +203,7 @@ namespace CosmedBleLib
             }
             return this;
         }
-
-
-
-        public AdvertisementContent GetAdvertisementContent => advertisementContent;
-
-        public AdvertisementContent GetScanResponseAdvertisementContent => scanResponseAdvertisementContent;
-
-
-
-        public IReadOnlyCollection<Guid> ServiceUuids
-        {
-            get
-            {
-                return advertisementContent.Advertisement == null ? new List<Guid>().AsReadOnly() :
-                    new List<Guid>(advertisementContent.Advertisement.ServiceUuids).AsReadOnly();
-            }
-        }
-
-
-        public IReadOnlyCollection<Guid> ServiceUuidsFromScanResponse
-        {
-            get
-            {
-                return HasScanResponse ? new List<Guid>().AsReadOnly() :
-                    new List<Guid>(scanResponseAdvertisementContent.Advertisement.ServiceUuids).AsReadOnly();
-            }
-        }
-
-
-
-        public BluetoothLEAdvertisementFlags? Flags
-        {
-            get
-            {
-                if(advertisementContent.Advertisement == null)
-                {
-                    Console.WriteLine();
-                }
-                return advertisementContent.Advertisement == null ? scanResponseAdvertisementContent.Advertisement.Flags : advertisementContent.Advertisement.Flags;
-            }
-        }
-
-
-        public ManufacturerDataCollection ManufacturerData
-        {
-            get
-            {
-                return advertisementContent.Advertisement != null ? new ManufacturerDataCollection(advertisementContent.Advertisement.ManufacturerData) :
-                    new ManufacturerDataCollection(new List<BluetoothLEManufacturerData>());
-            }
-        }
-
-
-        public ManufacturerDataCollection ManufacturerDataFromScanResponse
-        {
-            get
-            {
-                return scanResponseAdvertisementContent.Advertisement != null ? new ManufacturerDataCollection(scanResponseAdvertisementContent.Advertisement.ManufacturerData) :
-                    new ManufacturerDataCollection(new List<BluetoothLEManufacturerData>());
-            }
-        }
-
-
-        public DataSectionCollection DataSections
-        {
-            get
-            {
-                return advertisementContent.Advertisement != null ? new DataSectionCollection(advertisementContent.Advertisement.DataSections) :
-                    new DataSectionCollection(new List<BluetoothLEAdvertisementDataSection>());
-            }
-        }
-
-
-
-        public DataSectionCollection DataSectionsFromScanResponse
-        {
-            get
-            {
-                return scanResponseAdvertisementContent.Advertisement != null ? new DataSectionCollection(scanResponseAdvertisementContent.Advertisement.DataSections) :
-                    new DataSectionCollection(new List<BluetoothLEAdvertisementDataSection>());
-            }
-        }
-
-
-
+        #endregion
 
 
 
@@ -306,6 +302,7 @@ namespace CosmedBleLib
 
             Console.WriteLine("--------------------- end advertisement -----------------------");
         }
+
     }
 
 

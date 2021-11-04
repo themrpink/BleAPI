@@ -31,11 +31,12 @@ namespace CosmedBleLib
         }
 
 
-        public static void CheckBleAdapter()
+        public async static void CheckBleAdapter()
         {
             Console.WriteLine("going to check, press enter");
             Console.ReadLine();
-            bool b = CosmedBluetoothLEAdapter.IsLowEnergySupported;
+            var adapter = CosmedBluetoothLEAdapter.GetAdapterAsync();
+            await adapter;
             Thread.Sleep(2000);
             Console.WriteLine("checked, press enter");
             Console.ReadLine();

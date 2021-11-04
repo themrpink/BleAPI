@@ -37,7 +37,7 @@ namespace CosmedBleLib
 
         public async void GetBleCharactiristics()
         {
-            GattCharacteristicsResult resultCharacteristics = await Service.GetCharacteristicsAsync();
+            GattCharacteristicsResult resultCharacteristics = await Service.GetCharacteristicsAsync().AsTask().ConfigureAwait(false);
 
             if (resultCharacteristics.Status == GattCommunicationStatus.Success)
             {
@@ -80,7 +80,7 @@ namespace CosmedBleLib
 
         public async Task<GattDescriptorsResult> GetDescriptorsResult()
         {
-            GattDescriptorsResult gdr = await Characteristic.GetDescriptorsAsync();
+            GattDescriptorsResult gdr = await Characteristic.GetDescriptorsAsync().AsTask().ConfigureAwait(false);
             GattDescriptorsResult = gdr;
             if(gdr.ProtocolError != null)
             {
@@ -95,7 +95,7 @@ namespace CosmedBleLib
             {
                 // This characteristic supports reading from it.
                 //GattReadResult value = await characteristic.ReadValueAsync().AsTask();
-                GattReadResult value = await Characteristic.ReadValueAsync();
+                GattReadResult value = await Characteristic.ReadValueAsync().AsTask().ConfigureAwait(false);
                 if (GattCommunicationStatus == GattCommunicationStatus.Success)
                 {
                     GattReadResultReader grr = new GattReadResultReader(value.Value, value.Status, value.ProtocolError);
