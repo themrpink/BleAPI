@@ -40,7 +40,6 @@ namespace CosmedBleLib.MSTest.UnitTest
                     );
 
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
-            //autoUpdatedCollections = watcher.getUpdatedDiscoveredDevices();
             collectionAll = watcher.AllDiscoveredDevices;
             collectionRecent = watcher.RecentlyDiscoveredDevices;
             collectionLast = watcher.LastDiscoveredDevices;
@@ -70,12 +69,11 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartActiveScanning_startScan_ScanIsStarted()
+        public void StartActiveScanning_startScan_ScanIsStarting()
         {
             watcher.StartActiveScanning();
-           // Thread.Sleep(10);
-
-            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
+            Thread.Sleep(10);
+             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
 
@@ -87,7 +85,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartActiveScanning();
             watcher.StopScanning();
             watcher.StartActiveScanning();
-          //  Thread.Sleep(10);
+            Thread.Sleep(10);
 
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
@@ -129,7 +127,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartPassiveScanning();
             watcher.StartActiveScanning();
             //delay must be added because every mode change has implicit scan stop in between, which is not instantaneous
-           // Thread.Sleep(100);
+            Thread.Sleep(10);
 
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
             Assert.IsTrue(watcher.IsScanningActive);
@@ -162,7 +160,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void StartPassiveScanning_startScan_ScanIsStarted()
         {
             watcher.StartPassiveScanning();
-
+            Thread.Sleep(10);
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
@@ -175,7 +173,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartPassiveScanning();
             watcher.StopScanning();
             watcher.StartPassiveScanning();
-
+            Thread.Sleep(10);
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
@@ -391,11 +389,9 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void Resume_afterStop_StatusIsStopped()
         {
             watcher.StartActiveScanning();
-            //it takes a little while to start the scan and update status
-           // Thread.Sleep(500);
             watcher.StopScanning();
             watcher.ResumeScanning();
-
+            Thread.Sleep(2500);
             Assert.IsFalse(watcher.IsScanningStarted);
         }
 
@@ -408,7 +404,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartActiveScanning();
             watcher.PauseScanning();
             watcher.ResumeScanning();
-            //Thread.Sleep(10);
+            Thread.Sleep(10);
             Assert.IsTrue(watcher.IsScanningStarted);
         }
 
@@ -421,7 +417,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartActiveScanning();
             watcher.PauseScanning();
             watcher.PauseScanning();
-
+            Thread.Sleep(100);
             Assert.IsFalse(watcher.IsScanningStarted);
         }
 

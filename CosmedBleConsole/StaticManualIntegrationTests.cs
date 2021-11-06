@@ -35,8 +35,7 @@ namespace CosmedBleLib
         {
             Console.WriteLine("going to check, press enter");
             Console.ReadLine();
-            var adapter = CosmedBluetoothLEAdapter.GetAdapterAsync();
-            await adapter;
+            var adapter = await CosmedBluetoothLEAdapter.CreateAsync();
             Thread.Sleep(2000);
             Console.WriteLine("checked, press enter");
             Console.ReadLine();

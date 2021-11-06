@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -18,26 +19,28 @@ namespace CosmedBleLib
 
         #region Private fields
 
-        private CosmedBluetoothLEAdvertisementWatcher watcher;
-        
+
         private DevicePairingResult DevicePairingResult;
         private GattDeviceServicesResult gattResult;
-        private BluetoothLEDevice bluetoothLeDevice = null;
+        private BluetoothLEDevice bluetoothLeDevice;
 
         #endregion
 
 
         #region Properties
 
+        public BluetoothLEDevice BluetoothLeDevice { get { return bluetoothLeDevice; } }
+
         public ulong BluetoothAddress { get; private set; }
 
-        public GattCommunicationStatus GattCommunicationStatus { get { return gattResult.Status; } }
-        public GattSession session { get; private set; }
+        //private GattCommunicationStatus GattCommunicationStatus { get { return gattResult.Status; } }
 
-        //removed because duplicate of BluetoothDeviceId.DeviceId
-        // public string DeviceId { get; private set; }
+        public GattSession GattSession { get; private set; }
+
         public string Name { get; private set; }
+        
         public BluetoothLEAppearance Appearance { get; private set; }
+        
         public BluetoothAddressType BluetoothAddressType { get; private set; }
 
         //inforations about device and pairing
@@ -61,66 +64,69 @@ namespace CosmedBleLib
             }
         }
 
-        public ushort? MaxPduSize { get { return session?.MaxPduSize; } }
+        public ushort MaxPduSize { get { return GattSession.MaxPduSize; } }
 
-        public GattSessionStatus? SessionStatus { get { return session?.SessionStatus; } }
+        public GattSessionStatus SessionStatus { get { return GattSession.SessionStatus; } }
 
-        public bool IsConnectionMaintained { get { return session != null ? session.MaintainConnection : false; } }
+        public bool IsConnectionMaintained { get { return GattSession != null ? GattSession.MaintainConnection : false; } }
+
+        public IReadOnlyDictionary<GattDeviceService, IReadOnlyList<GattCharacteristic>> ServicesDictionary 
+        {
+            get
+            {
+                if (gattResult != null && gattResult.Status == GattCommunicationStatus.Success)
+                {
+                    IReadOnlyList<GattDeviceService> resultServices = gattResult.Services;
+
+                    var readOnlyDict = (IReadOnlyDictionary<GattDeviceService, IReadOnlyList<GattCharacteristic>>)resultServices.ToDictionary(async (s) =>
+                    {
+                        var tempResult = await s.GetCharacteristicsAsync().AsTask();
+                        return tempResult.Characteristics;
+                    });
+
+                    return readOnlyDict;
+                }
+
+                return new Dictionary<GattDeviceService, IReadOnlyList<GattCharacteristic>>();
+            }             
+        }
+
+        public Action<GattCharacteristic, GattValueChangedEventArgs> CharacteristicValueChanged { get { return characteristicValueChanged; } }
+        
+        public Action<CosmedGattCharacteristic, CosmedGattErrorFoundEventArgs> CharacteristicErrorFound { get { return characteristicErrorFound; } }
+
 
         #endregion
 
 
         #region Constructors
-        public CosmedBleConnectedDevice(BluetoothLEDevice bluetoothLeDevice, CosmedBluetoothLEAdvertisementWatcher watcher)
+
+        private CosmedBleConnectedDevice()
         {
-            this.bluetoothLeDevice = bluetoothLeDevice ?? throw new ArgumentNullException(nameof(bluetoothLeDevice));
-            this.watcher = watcher;
-            bluetoothLeDevice.ConnectionStatusChanged += OnConnectionStatusChanged;
+
         }
 
-        public CosmedBleConnectedDevice(CosmedBleAdvertisedDevice advertisingDevice, CosmedBluetoothLEAdvertisementWatcher watcher)
+
+        private async Task InitializeAsync(ulong deviceAddress)
         {
-            this.watcher = watcher;
+            BluetoothAddress = deviceAddress;
             try
             {
-                Task t = SetBluetoothLEDeviceAsync(advertisingDevice.DeviceAddress);
-                t.Wait();
-                bluetoothLeDevice.ConnectionStatusChanged += OnConnectionStatusChanged;
+                IAsyncOperation<BluetoothLEDevice> task = BluetoothLEDevice.FromBluetoothAddressAsync(deviceAddress);
+                this.bluetoothLeDevice = await task.AsTask().ConfigureAwait(false);
             }
-            catch (ArgumentException e)
+            catch(Exception e)
             {
-                Console.WriteLine(e.Message);
-            }            
-        }
-
-        public CosmedBleConnectedDevice(ulong deviceAddress, CosmedBluetoothLEAdvertisementWatcher watcher)
-        {
-            this.watcher = watcher;
-            try
-            {
-                Task t = SetBluetoothLEDeviceAsync(deviceAddress);
-                t.Wait();
-                bluetoothLeDevice.ConnectionStatusChanged += OnConnectionStatusChanged;
+                throw new BleDeviceNotFoundException("Impossible to connect to device", e);
             }
-            catch (ArgumentException e)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
 
-
-        private async Task SetBluetoothLEDeviceAsync(ulong deviceAddress)
-        {
-            IAsyncOperation<BluetoothLEDevice> task = BluetoothLEDevice.FromBluetoothAddressAsync(deviceAddress);
-            this.bluetoothLeDevice = await task.AsTask().ConfigureAwait(false);
 
             if (bluetoothLeDevice == null)
             {
-                Console.WriteLine("no device found");
-                return;
+                throw new BleDeviceNotFoundException("Impossible to connect to device");
             }
 
-            BluetoothAddress = bluetoothLeDevice.BluetoothAddress;
+            
             //DeviceId = bluetoothLeDevice.DeviceId;
             Name = bluetoothLeDevice.Name;
             Appearance = bluetoothLeDevice.Appearance;
@@ -128,41 +134,90 @@ namespace CosmedBleLib
             DeviceInformation = bluetoothLeDevice.DeviceInformation;
             DeviceAccessInformation = bluetoothLeDevice.DeviceAccessInformation;
             BluetoothDeviceId = bluetoothLeDevice.BluetoothDeviceId;
+            bluetoothLeDevice.ConnectionStatusChanged += OnConnectionStatusChanged;
 
-            session = await GattSession.FromDeviceIdAsync(BluetoothDeviceId).AsTask().ConfigureAwait(false);
-            //session = Connect().Result;
+            try
+            {
+                GattSession = await GattSession.FromDeviceIdAsync(BluetoothDeviceId).AsTask().ConfigureAwait(false);
+            }
+            catch(Exception e)
+            {
+                throw new GattCommunicationFailureException("Impossible to open the Gatt Session", e);
+            }
+            if(GattSession == null)
+            {
+                throw new GattCommunicationFailureException("Impossible to open the Gatt Session");
+            }
+        }
+
+        
+        public static async Task<CosmedBleConnectedDevice> CreateAsync(ulong deviceAddress)
+        {
+            var connectedDevice = new CosmedBleConnectedDevice();
+            await connectedDevice.InitializeAsync(deviceAddress);
+            return connectedDevice;
+        }
+        
+        
+        public static async Task<CosmedBleConnectedDevice> CreateAsync(CosmedBleAdvertisedDevice advertisingDevice)
+        {
+            if(advertisingDevice == null)
+            {
+                throw new ArgumentNullException("parameter cannot be null");
+            }
+
+            var connectedDevice = new CosmedBleConnectedDevice();
+            await connectedDevice.InitializeAsync(advertisingDevice.DeviceAddress);
+            return connectedDevice;
         }
 
 
         public void MaintainConnection()
         {
-            if (session!=null && session.CanMaintainConnection)
+            if (GattSession!=null && GattSession.CanMaintainConnection)
             {
-                session.MaintainConnection = true;
+                GattSession.MaintainConnection = true;
             }
         }
 
+
+        //private async Task<bool> CheckBleDevice()
+        //{
+        //    if(bluetoothLeDevice == null)
+        //    {
+        //        await InitializeAsync(BluetoothAddress);
+        //    }
+        //    if(bluetoothLeDevice == null)
+        //    {
+        //        return false;
+        //    }
+        //    else
+        //    {
+        //        return true;
+        //    }
+        //}
         #endregion
 
 
         #region EventHandlers
-        private void OnConnectionStatusChanged(BluetoothLEDevice device, Object o)
-        {
-            if (device.ConnectionStatus == BluetoothConnectionStatus.Connected)
-            {
-                Console.WriteLine("------------------------");
-                Console.WriteLine("device is pausing scan");
-                Console.WriteLine("------------------------");
-                watcher.PauseScanning();
-            }
-            if (device.ConnectionStatus == BluetoothConnectionStatus.Disconnected)
-            {
-                Console.WriteLine("------------------------");
-                Console.WriteLine("device is resuming scan"); 
-                Console.WriteLine("------------------------");
-                watcher.ResumeScanning();
-            }
 
+        private void OnConnectionStatusChanged(BluetoothLEDevice device, Object o)
+        {               
+            Console.WriteLine("------------------------");               
+            Console.WriteLine("new device connection status: " + device.ConnectionStatus);              
+            Console.WriteLine("------------------------");
+        }
+
+        private void characteristicValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
+        {
+            // An Indicate or Notify reported that the value has changed.
+            CharacteristicReader cr = new CharacteristicReader(args.CharacteristicValue, args.Timestamp);
+            Console.WriteLine("characteristic buffer hex: " + cr.HexValue);
+        }
+
+        private void characteristicErrorFound(CosmedGattCharacteristic sender, CosmedGattErrorFoundEventArgs args)
+        {
+            Console.WriteLine("(((((((((((((((( error found ))))))))))))");
         }
         #endregion
 
@@ -173,24 +228,17 @@ namespace CosmedBleLib
         {
             if (DeviceInformation != null)
             {
-                DevicePairingResult = await DeviceInformation.Pairing.PairAsync().AsTask().ConfigureAwait(false);
-                //DevicePairingResult result = await customPairing.PairAsync(ceremoniesSelected, protectionLevel);
-                // DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync();
+                try
+                {
+                    DevicePairingResult = await DeviceInformation.Pairing.PairAsync().AsTask().ConfigureAwait(false);
+                }
+                catch(Exception e)
+                {
+                    throw;
+                }
                 Console.WriteLine("paring status: " + DevicePairingResult.Status.ToString());
                 Console.WriteLine("pairing protection level: " + DevicePairingResult.ProtectionLevelUsed.ToString());
-                if(DevicePairingResult.Status != DevicePairingResultStatus.Paired || DevicePairingResult.Status != DevicePairingResultStatus.AlreadyPaired)
-                {
-                    Console.WriteLine("------------------------");
-                    Console.WriteLine("device is resuming scan");
-                    Console.WriteLine("------------------------");
-                    watcher.ResumeScanning();
-                }
-                else
-                {
-                    //in questo caso, se non è ConnectionStatusChanged ad accorgersene,
-                    //stoppa lo scanning perchè c´é stato il pairing (da verificare però gli altri DevicePairingResultStatus)
-                    watcher.PauseScanning();
-                }
+
             }
         }
 
@@ -199,24 +247,17 @@ namespace CosmedBleLib
         {
             if (DeviceInformation != null)
             {
-                DevicePairingResult = await DeviceInformation.Pairing.PairAsync(minProtectionLevel).AsTask().ConfigureAwait(false);
+                try
+                {
+                    DevicePairingResult = await DeviceInformation.Pairing.PairAsync(minProtectionLevel).AsTask().ConfigureAwait(false);
+                }
+                catch(Exception e)
+                {
+                    throw;
+                }
                 //DevicePairingResult result = await customPairing.PairAsync(ceremoniesSelected, protectionLevel);
-                // DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync();
                 Console.WriteLine("paring status: " + DevicePairingResult.Status.ToString());
                 Console.WriteLine("pairing protection level: " + DevicePairingResult.ProtectionLevelUsed.ToString());
-                if (DevicePairingResult.Status != DevicePairingResultStatus.Paired || DevicePairingResult.Status != DevicePairingResultStatus.AlreadyPaired)
-                {
-                    Console.WriteLine("------------------------");
-                    Console.WriteLine("device is resuming scan");
-                    Console.WriteLine("------------------------");
-                    watcher.ResumeScanning();
-                }
-                else
-                {
-                    //in questo caso, se non è ConnectionStatusChanged ad accorgersene,
-                    //stoppa lo scanning perchè c´é stato il pairing (da verificare però gli altri DevicePairingResultStatus)
-                    watcher.PauseScanning();
-                }
             }
         }
 
@@ -225,31 +266,17 @@ namespace CosmedBleLib
         {
             if (DeviceInformation != null)
             {
-       
-                DevicePairingResult = await DeviceInformation.Pairing.Custom.PairAsync(pairingKindsSupported).AsTask().ConfigureAwait(false);
+                try
+                {
+                    DevicePairingResult = await DeviceInformation.Pairing.Custom.PairAsync(pairingKindsSupported).AsTask().ConfigureAwait(false);
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
                 //DevicePairingResult result = await customPairing.PairAsync(ceremoniesSelected, protectionLevel);
-                // DevicePairingResult dpr = await DeviceInformation.Pairing.PairAsync();
                 Console.WriteLine("paring status: " + DevicePairingResult.Status.ToString());
                 Console.WriteLine("pairing protection level: " + DevicePairingResult.ProtectionLevelUsed.ToString());
-                if (DevicePairingResult.Status != DevicePairingResultStatus.Paired || DevicePairingResult.Status != DevicePairingResultStatus.AlreadyPaired)
-                {
-                    Console.WriteLine("------------------------");
-                    Console.WriteLine("device is resuming scan");
-                    Console.WriteLine("------------------------");
-                    watcher.ResumeScanning();
-                    DeviceInformation.Pairing.Custom.PairingRequested += OnPairingRequested;
-
-                    void OnPairingRequested(DeviceInformationCustomPairing a, DevicePairingRequestedEventArgs b)
-                    {
-                        Console.WriteLine("Pairing requested");
-                    }
-                }
-                else
-                {
-                    //in questo caso, se non è ConnectionStatusChanged ad accorgersene,
-                    //stoppa lo scanning perchè c´é stato il pairing (da verificare però gli altri DevicePairingResultStatus)
-                    watcher.PauseScanning();
-                }
             }
         }
         #endregion
@@ -257,45 +284,139 @@ namespace CosmedBleLib
 
         #region Connection methods
 
-        public async Task<IReadOnlyDictionary<GattDeviceService, IReadOnlyList<GattCharacteristic>>> DiscoverAllGattServicesAndCharacteristicsAsync()
+
+        public async Task<GattDeviceServicesResult> FindGattServiceAsync(Guid requestedUuid, BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached)
         {
-            IReadOnlyDictionary<GattDeviceService, IReadOnlyList<GattCharacteristic>> dict = new Dictionary<GattDeviceService, IReadOnlyList<GattCharacteristic>>();
-
-            await GetGattServicesAsync();
-
-            if (gattResult.Status == GattCommunicationStatus.Success)
-            {
-                IReadOnlyList<GattDeviceService> resultServices = gattResult.Services;
-
-                dict = (IReadOnlyDictionary < GattDeviceService, IReadOnlyList < GattCharacteristic >> )resultServices.ToDictionary<GattDeviceService, Task<IReadOnlyList<GattCharacteristic>>>(async(s) =>
-                {
-                    var tempResult =  await s.GetCharacteristicsAsync().AsTask();
-                    return tempResult.Characteristics;
-                });
-
-                return dict;
-            }
-            
-            return dict;
-        }
-
-        private async Task GetGattServicesAsync()
-        {
-            //vedere cosa fanno questi
-            //public IAsyncOperation<DeviceAccessStatus> RequestAccessAsync();
-            //public IAsyncOperation<GattDeviceServicesResult> GetGattServicesAsync(BluetoothCacheMode cacheMode);
-
             try
             {
-                gattResult = await bluetoothLeDevice.GetGattServicesAsync().AsTask();
-                ;
+                GattDeviceServicesResult services = await bluetoothLeDevice.GetGattServicesForUuidAsync(requestedUuid, cacheMode).AsTask();
+                return services;
             }
             catch (Exception e)
             {
-                //non so come si comporta in seguito. Restiuisce un´eccezione?
-                await Task.FromException<GattDeviceServicesResult>(e);
+                throw new GattCommunicationFailureException("communication with Gatt failed", e);
             }
         }
+
+
+        public async Task<GattCharacteristic> FindGattCharacteristicAsync(Guid requestedUuid)
+        {
+            try
+            {
+                await GetGattServicesAsync();
+            }
+            catch(Exception e)
+            {
+                return null;
+            }   
+            
+            if (gattResult != null && gattResult.Status == GattCommunicationStatus.Success)
+            {
+                foreach (var service in gattResult.Services)
+                {
+                    try
+                    {
+                        GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync().AsTask().ConfigureAwait(false);
+                        
+                        if (resultCharacteristics.Status == GattCommunicationStatus.Success)
+                        {
+                            foreach (GattCharacteristic characteristic in resultCharacteristics.Characteristics)
+                            {
+                                if (characteristic.Uuid.Equals(requestedUuid))
+                                {
+                                    return characteristic;
+                                }
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        throw new GattCommunicationFailureException("communication with Gatt failed", e);
+                    }
+                }
+                return null;
+            }
+            
+            GattCharacteristic nullGattCharacteristic = null;
+            return nullGattCharacteristic;
+            //return await Task.FromResult<GattCharacteristic>(nullGattCharacteristic);
+        }
+
+
+        public async Task<ReadOnlyDictionary<GattDeviceService, Task<IReadOnlyList<GattCharacteristic>>>> DiscoverAllGattServicesAndCharacteristics()
+        {
+            var emptyDictionary = new Dictionary<GattDeviceService, Task<IReadOnlyList<GattCharacteristic>>>();
+            var servicesDictionary = new ReadOnlyDictionary<GattDeviceService, Task<IReadOnlyList<GattCharacteristic>>>(emptyDictionary);
+            
+            try
+            {
+                await GetGattServicesAsync();
+            }
+            finally
+            {
+                if (gattResult != null && gattResult.Status == GattCommunicationStatus.Success)
+                {
+                    IReadOnlyList<GattDeviceService> resultServices = gattResult.Services;
+
+                    var servicesDictionaryTemp = resultServices.ToDictionary(s => s, async (s) =>
+                    {
+                        var tempResult = await s.GetCharacteristicsAsync().AsTask();
+                        return tempResult.Characteristics;
+                    });
+
+                    servicesDictionary = new ReadOnlyDictionary<GattDeviceService, Task<IReadOnlyList<GattCharacteristic>>>(servicesDictionaryTemp);
+                }               
+            }
+            return servicesDictionary;
+        }
+
+
+        public async Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<CosmedGattCharacteristic>>>> DiscoverAllCosmedGattServicesAndCharacteristics()
+        {
+            var emptyDictionary = new Dictionary<GattDeviceService, Task<ReadOnlyCollection<CosmedGattCharacteristic>>>();
+            IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<CosmedGattCharacteristic>>> servicesDictionary = new ReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<CosmedGattCharacteristic>>>(emptyDictionary);
+
+            try
+            {
+                await GetGattServicesAsync();
+            }
+            finally
+            {
+                if (gattResult != null && gattResult.Status == GattCommunicationStatus.Success)
+                {
+                    IReadOnlyList<GattDeviceService> resultServices = gattResult.Services;
+
+                    var servicesDictionaryTemp = resultServices.ToDictionary(s => s, async (s) =>
+                    {
+                        var tempResult = await s.GetCharacteristicsAsync().AsTask();
+                        var temp = tempResult.Characteristics.ToList().AsEnumerable().Select(p => 
+                        {
+                            var e = new CosmedGattCharacteristic(p, characteristicErrorFound);
+                            return e;
+                            }
+                        ).ToList().AsReadOnly();
+                        return temp;
+                    });
+                    var b = new ReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<CosmedGattCharacteristic>>>(servicesDictionaryTemp);
+                    servicesDictionary = b;
+                }
+            }
+            return servicesDictionary;
+        }
+
+
+        private async Task GetGattServicesAsync()
+        {
+            try
+            {
+                gattResult = await bluetoothLeDevice.GetGattServicesAsync().AsTask();
+            }
+            catch (Exception e)
+            {
+                throw new GattCommunicationFailureException("impossible to retrieve the services", e);
+            }
+        }
+
 
         public async Task StartConnectionAsync()
         {
@@ -305,169 +426,172 @@ namespace CosmedBleLib
             //public IAsyncOperation<DeviceAccessStatus> RequestAccessAsync();
             //public IAsyncOperation<GattDeviceServicesResult> GetGattServicesAsync(BluetoothCacheMode cacheMode);
             
-            try
-            {
-                DeviceAccessStatus das = await bluetoothLeDevice.RequestAccessAsync();
-                Console.WriteLine("device access status1: " + das);
-                result = bluetoothLeDevice.GetGattServicesAsync().AsTask().Result;
-                das = await bluetoothLeDevice.RequestAccessAsync();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("exception: " + e.Message);
-                return;
-            }
-
-            if (result.Status == GattCommunicationStatus.Success)
-            {
-
-                IReadOnlyList<GattDeviceService> resultServices = result.Services;
-                Console.WriteLine("iterating the services");
-
-
-
-                foreach (var service in resultServices)
+            
+                try
                 {
-                    Console.WriteLine("printing a service:");
-                    Console.WriteLine("service handle: " + service.AttributeHandle.ToString("X2"));
-                    Console.WriteLine("service uuid: " + service.Uuid.ToString());
-                    Console.WriteLine("service device access information (current status): " + service.DeviceAccessInformation.CurrentStatus.ToString());
-                    Console.WriteLine("service Gatt Session: " + service.Session);
-                    /*
-                        dalla GattSession posso ottenere dati importanti come MaintainConnection, etc etc
-                        public sealed class GattSession : IGattSession, IDisposable
-                        {
-                            public void Dispose();
-                            [RemoteAsync]
-                            public static IAsyncOperation<GattSession> FromDeviceIdAsync(BluetoothDeviceId deviceId);
+                    DeviceAccessStatus das = await bluetoothLeDevice.RequestAccessAsync();
+                    Console.WriteLine("device access status1: " + das);
+                    result = await bluetoothLeDevice.GetGattServicesAsync().AsTask();
+                    das = await bluetoothLeDevice.RequestAccessAsync();
 
-                            public bool MaintainConnection { get; set; }
-                            public bool CanMaintainConnection { get; }
-                            public BluetoothDeviceId DeviceId { get; }
-                            public ushort MaxPduSize { get; }
-                            public GattSessionStatus SessionStatus { get; }
-
-                            public event TypedEventHandler<GattSession, object> MaxPduSizeChanged;
-                            public event TypedEventHandler<GattSession, GattSessionStatusChangedEventArgs> SessionStatusChanged;
-                        }
-                     * */
-
-                    //GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync().AsTask();
-                    GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync().AsTask().ConfigureAwait(false);
-
-                    if (resultCharacteristics.Status == GattCommunicationStatus.Success)
+                    if (result.Status == GattCommunicationStatus.Success)
                     {
-                        Console.WriteLine("iterating the characteristics:");
-                        IReadOnlyList<GattCharacteristic> characteristics = resultCharacteristics.Characteristics;
-                        int i = characteristics.Count;
 
-                        foreach (GattCharacteristic characteristic in characteristics)
+                        IReadOnlyList<GattDeviceService> resultServices = result.Services;
+                        Console.WriteLine("iterating the services");
+
+
+
+                        foreach (var service in resultServices)
                         {
-                            Console.WriteLine("Characteristic, user description: " + characteristic.UserDescription);
-                            Console.WriteLine("UUID: " + characteristic.Uuid.ToString());
-                            Console.WriteLine("Attribute handle: " + characteristic.AttributeHandle.ToString("X2"));
-                            Console.WriteLine("Protection level: " + characteristic.ProtectionLevel.ToString());
-                            Console.WriteLine("Properties: " + characteristic.CharacteristicProperties.ToString());
-
-                            foreach (var pf in characteristic.PresentationFormats)
-                            {
-                                Console.WriteLine(" - Presentation format - ");
-                                Console.WriteLine("Description" + pf.Description);
-                                Console.WriteLine("" + pf.FormatType.ToString("X2"));
-                                Console.WriteLine("Unit: " + pf.Unit);
-                                Console.WriteLine("Exponent: " + pf.Exponent);
-                                Console.WriteLine("Namespace" + pf.Namespace.ToString("X2"));
-                                Console.WriteLine();
-                            }
-                            
-                            GattDescriptorsResult descriptors = null;
-                            try
-                            {
-                                //var descriptors = await characteristic.GetDescriptorsAsync().AsTask();
-                                descriptors = await characteristic.GetDescriptorsAsync().AsTask().ConfigureAwait(false);
-                            }
-                            catch (AggregateException ae)
-                            {
-                                ae.Handle( (x) =>
+                            Console.WriteLine("printing a service:");
+                            Console.WriteLine("service handle: " + service.AttributeHandle.ToString("X2"));
+                            Console.WriteLine("service uuid: " + service.Uuid.ToString());
+                            Console.WriteLine("service device access information (current status): " + service.DeviceAccessInformation.CurrentStatus.ToString());
+                            Console.WriteLine("service Gatt Session: " + service.Session);
+                            /*
+                                dalla GattSession posso ottenere dati importanti come MaintainConnection, etc etc
+                                public sealed class GattSession : IGattSession, IDisposable
                                 {
-                                   if (x is System.ObjectDisposedException)
-                                   {
-                                        //'L'oggetto è stato chiuso. (Eccezione da HRESULT: 0x80000013)'
-                                        return true;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine(ae.InnerException.Message);
-                                    }
-                                    return false; // Let anything else stop the application.
-                                });
-                                 
-                            }
+                                    public void Dispose();
+                                    [RemoteAsync]
+                                    public static IAsyncOperation<GattSession> FromDeviceIdAsync(BluetoothDeviceId deviceId);
 
-                            Console.WriteLine(" - descriptors - ");
+                                    public bool MaintainConnection { get; set; }
+                                    public bool CanMaintainConnection { get; }
+                                    public BluetoothDeviceId DeviceId { get; }
+                                    public ushort MaxPduSize { get; }
+                                    public GattSessionStatus SessionStatus { get; }
 
-                            foreach (var descriptor in descriptors?.Descriptors)
+                                    public event TypedEventHandler<GattSession, object> MaxPduSizeChanged;
+                                    public event TypedEventHandler<GattSession, GattSessionStatusChangedEventArgs> SessionStatusChanged;
+                                }
+                             * */
+
+                            //GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync().AsTask();
+                            GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync().AsTask().ConfigureAwait(false);
+
+                            if (resultCharacteristics.Status == GattCommunicationStatus.Success)
                             {
-                                Console.WriteLine("protection level: " + descriptor.ProtectionLevel);
-                                Console.WriteLine("Uuid: " + descriptor.Uuid.ToString());
-                                Console.WriteLine("Attribute Handler" + descriptor.AttributeHandle.ToString("X2"));
-                            }
+                                Console.WriteLine("iterating the characteristics:");
+                                IReadOnlyList<GattCharacteristic> characteristics = resultCharacteristics.Characteristics;
+                                int i = characteristics.Count;
 
-                            Console.WriteLine("Status: " + descriptors?.Status.ToString());
-
-                            if (descriptors?.ProtocolError != null)
-                            {
-                                Console.WriteLine("Protocol error: " + descriptors?.ProtocolError.Value.ToString("X2"));
-                            }
-
-                            //Task t = CharacteristicCommunication(characteristic, result);
-                            var t = CharacteristicCommunication(characteristic, result).ConfigureAwait(false);
-                            try
-                            {
-                                await t;
-                            }
-                            catch (AggregateException ae)
-                            {
-                                Console.WriteLine("Caught aggregate exception-Task.Wait behavior");
-                                ae.Handle((x) =>
+                                foreach (GattCharacteristic characteristic in characteristics)
                                 {
-                                    if (x is UnauthorizedAccessException) // This we know how to handle.
-                                    {
-                                        Console.WriteLine("You do not have permission to access all folders in this path.");
-                                        Console.WriteLine("See your network administrator or try another path.");
-                                        return true;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine(ae.InnerException.Message);
-                                    }
-                                    return false; // Let anything else stop the application.
-                                });
-                            }
-                            catch (SystemException se)
-                            {
-                                Console.WriteLine(se.Message);
-                            }
+                                    Console.WriteLine("Characteristic, user description: " + characteristic.UserDescription);
+                                    Console.WriteLine("UUID: " + characteristic.Uuid.ToString());
+                                    Console.WriteLine("Attribute handle: " + characteristic.AttributeHandle.ToString("X2"));
+                                    Console.WriteLine("Protection level: " + characteristic.ProtectionLevel.ToString());
+                                    Console.WriteLine("Properties: " + characteristic.CharacteristicProperties.ToString());
 
+                                    foreach (var pf in characteristic.PresentationFormats)
+                                    {
+                                        Console.WriteLine(" - Presentation format - ");
+                                        Console.WriteLine("Description" + pf.Description);
+                                        Console.WriteLine("" + pf.FormatType.ToString("X2"));
+                                        Console.WriteLine("Unit: " + pf.Unit);
+                                        Console.WriteLine("Exponent: " + pf.Exponent);
+                                        Console.WriteLine("Namespace" + pf.Namespace.ToString("X2"));
+                                        Console.WriteLine();
+                                    }
+
+                                    GattDescriptorsResult descriptors = null;
+                                    try
+                                    {
+                                        //var descriptors = await characteristic.GetDescriptorsAsync().AsTask();
+                                        descriptors = await characteristic.GetDescriptorsAsync().AsTask().ConfigureAwait(false);
+                                    }
+                                    catch (AggregateException ae)
+                                    {
+                                        ae.Handle((x) =>
+                                        {
+                                            if (x is System.ObjectDisposedException)
+                                            {
+                                                //'L'oggetto è stato chiuso. (Eccezione da HRESULT: 0x80000013)'
+                                                return true;
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine(ae.InnerException.Message);
+                                            }
+                                            return false; 
+                                        });
+
+                                    }
+
+                                    Console.WriteLine(" - descriptors - ");
+
+                                    foreach (var descriptor in descriptors?.Descriptors)
+                                    {
+                                        Console.WriteLine("protection level: " + descriptor.ProtectionLevel);
+                                        Console.WriteLine("Uuid: " + descriptor.Uuid.ToString());
+                                        Console.WriteLine("Attribute Handler" + descriptor.AttributeHandle.ToString("X2"));
+                                    }
+
+                                    Console.WriteLine("Status: " + descriptors?.Status.ToString());
+
+                                    if (descriptors?.ProtocolError != null)
+                                    {
+                                        Console.WriteLine("Protocol error: " + descriptors?.ProtocolError.Value.ToString("X2"));
+                                    }
+
+                                    //Task t = CharacteristicCommunication(characteristic, result);
+                                    var t = CharacteristicCommunication(characteristic, result).ConfigureAwait(false);
+                                    try
+                                    {
+                                        await t;
+                                    }
+                                    catch (AggregateException ae)
+                                    {
+                                        Console.WriteLine("Caught aggregate exception-Task.Wait behavior");
+                                        ae.Handle((x) =>
+                                        {
+                                            if (x is UnauthorizedAccessException) // This we know how to handle.
+                                            {
+                                                Console.WriteLine("You do not have permission to access all folders in this path.");
+                                                Console.WriteLine("See your network administrator or try another path.");
+                                                return true;
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine(ae.InnerException.Message);
+                                            }
+                                            return false; // Let anything else stop the application.
+                                        });
+                                    }
+                                    catch (SystemException se)
+                                    {
+                                        Console.WriteLine(se.Message);
+                                    }
+
+                                }
+                            }
+                            else if (resultCharacteristics.Status == GattCommunicationStatus.ProtocolError)
+                            {
+                                Console.WriteLine("protocol error");
+                            }
+                            else
+                            {
+                                Console.WriteLine("protocol status: " + GattCommunicationStatus.AccessDenied.ToString() + " or " + GattCommunicationStatus.Unreachable.ToString());
+                            }
                         }
-                    }
-                    else if (resultCharacteristics.Status == GattCommunicationStatus.ProtocolError)
-                    {
-                        Console.WriteLine("protocol error");
                     }
                     else
                     {
-                        Console.WriteLine("protocol status: " + GattCommunicationStatus.AccessDenied.ToString() + " or " + GattCommunicationStatus.Unreachable.ToString());
+                        var error = result.ProtocolError;
                     }
-                }
-            }
-            else
-            {
-                var error = result.ProtocolError;
-            }
 
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("exception: " + e.Message);
+                    //non so come si comporta in seguito. Restiuisce un´eccezione?
+                    await Task.FromException(e);
+                }
 
         }
+
 
         private async Task CharacteristicCommunication(GattCharacteristic characteristic, GattDeviceServicesResult result)
         {
@@ -481,7 +605,8 @@ namespace CosmedBleLib
                 GattReadResult value = await characteristic.ReadValueAsync().AsTask().ConfigureAwait(false);
                 if (result.Status == GattCommunicationStatus.Success)
                 {
-                    GattReadResultReader grr = new GattReadResultReader(value.Value, value.Status, value.ProtocolError);
+                    CosmedGattCommunicationStatus newStatus = GattCharacteristicExtensions.ConvertStatus(value.Status);
+                    GattReadResultReader grr = new GattReadResultReader(value.Value, newStatus, value.ProtocolError);
 
                     Console.WriteLine("characteristic buffer hex: " + grr.HexValue);
                     Console.WriteLine(advType + " characteristic buffer UTF8: " + grr.UTF8Value);
@@ -489,7 +614,7 @@ namespace CosmedBleLib
                     Console.WriteLine(advType + " characteristic buffer UTF16: " + grr.UTF16Value);
                 }
             }
-
+            GattReadResultReader grr2 = new GattReadResultReader(null, CosmedGattCommunicationStatus.Success, null);
             if (properties.HasFlag(GattCharacteristicProperties.Write))
             {
                 // This characteristic supports writing to it.
@@ -534,9 +659,9 @@ namespace CosmedBleLib
                 try
                 {
                     // This characteristic supports subscribing to notifications.
-                    status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask().ConfigureAwait(false);
+                    status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask().ConfigureAwait(false);
                     //GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate);
-
+                    Console.WriteLine("indicate status: " + status.ToString() + ">>>>>>>>>>>>>>>>>>>>>>>>>>");
                 }
                 catch(Exception e)
                 {
@@ -556,25 +681,75 @@ namespace CosmedBleLib
                     Console.WriteLine("characteristic buffer hex: " + cr.HexValue);
                 }
             }
-
-            /*
-                    public enum GattCharacteristicProperties : uint
-                    {
-                        None = 0,
-                        Broadcast = 1,
-                        Read = 2,
-                        WriteWithoutResponse = 4,
-                        Write = 8,
-                        Notify = 16,
-                        Indicate = 32,
-                        AuthenticatedSignedWrites = 64,
-                        ExtendedProperties = 128,
-                        ReliableWrites = 256,
-                        WritableAuxiliaries = 512
-                    }
-             */
         }
 
+
+
+
+
+        #endregion
+
+
+        #region Print Method
+        public async Task PrintCharacteristicValues(GattCharacteristic characteristic)
+        {
+            Console.WriteLine("Characteristic, user description: " + characteristic.UserDescription);
+            Console.WriteLine("UUID: " + characteristic.Uuid.ToString());
+            Console.WriteLine("Attribute handle: " + characteristic.AttributeHandle.ToString("X2"));
+            Console.WriteLine("Protection level: " + characteristic.ProtectionLevel.ToString());
+            Console.WriteLine("Properties: " + characteristic.CharacteristicProperties.ToString());
+
+            foreach (var pf in characteristic.PresentationFormats)
+            {
+                Console.WriteLine(" - Presentation format - ");
+                Console.WriteLine("Description" + pf.Description);
+                Console.WriteLine("" + pf.FormatType.ToString("X2"));
+                Console.WriteLine("Unit: " + pf.Unit);
+                Console.WriteLine("Exponent: " + pf.Exponent);
+                Console.WriteLine("Namespace" + pf.Namespace.ToString("X2"));
+                Console.WriteLine();
+            }
+
+            GattDescriptorsResult descriptors = null;
+            try
+            {
+                //var descriptors = await characteristic.GetDescriptorsAsync().AsTask();
+                descriptors = await characteristic.GetDescriptorsAsync().AsTask().ConfigureAwait(false);
+            }
+            catch (AggregateException ae)
+            {
+                ae.Handle((x) =>
+                {
+                    if (x is System.ObjectDisposedException)
+                    {
+                        //'L'oggetto è stato chiuso. (Eccezione da HRESULT: 0x80000013)'
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine(ae.InnerException.Message);
+                    }
+                    return false; // Let anything else stop the application.
+                });
+
+            }
+
+            Console.WriteLine(" - descriptors - ");
+
+            foreach (var descriptor in descriptors?.Descriptors)
+            {
+                Console.WriteLine("protection level: " + descriptor.ProtectionLevel);
+                Console.WriteLine("Uuid: " + descriptor.Uuid.ToString());
+                Console.WriteLine("Attribute Handler" + descriptor.AttributeHandle.ToString("X2"));
+            }
+
+            Console.WriteLine("Status: " + descriptors?.Status.ToString());
+
+            if (descriptors?.ProtocolError != null)
+            {
+                Console.WriteLine("Protocol error: " + descriptors?.ProtocolError.Value.ToString("X2"));
+            }
+        }
         #endregion
 
 

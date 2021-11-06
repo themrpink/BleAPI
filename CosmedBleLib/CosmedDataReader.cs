@@ -112,11 +112,15 @@ namespace CosmedBleLib
         public BufferReader(IBuffer buffer)
         {
             RawData = buffer;
-            HexValue = convertBufferData(buffer, DataConversionType.Hex);
-            UTF8Value = convertBufferData(buffer, DataConversionType.Utf8);
-            ASCIIValue = convertBufferData(buffer, DataConversionType.ASCII);
-            UTF16Value = convertBufferData(buffer, DataConversionType.Utf16);
+            if (buffer != null)
+            {
+                HexValue = convertBufferData(buffer, DataConversionType.Hex);
+                UTF8Value = convertBufferData(buffer, DataConversionType.Utf8);
+                ASCIIValue = convertBufferData(buffer, DataConversionType.ASCII);
+                UTF16Value = convertBufferData(buffer, DataConversionType.Utf16);
+            }
         }
+
         #endregion
 
 
@@ -326,16 +330,17 @@ namespace CosmedBleLib
     public class GattReadResultReader : BufferReader
     {
         private byte? protocolError;
-        public GattCommunicationStatus Status { get; }
+        public CosmedGattCommunicationStatus Status { get; }
 
 
         private string ProtocolError { get { return string.Format("X2", protocolError); } }
 
-        public GattReadResultReader(IBuffer buffer, GattCommunicationStatus status, byte? protocolError) : base(buffer)
+        public GattReadResultReader(IBuffer buffer, CosmedGattCommunicationStatus status, byte? protocolError) : base(buffer)
         {
             Status = status;
             this.protocolError = protocolError;
         }
+
     }
 
 
@@ -373,6 +378,7 @@ namespace CosmedBleLib
     }
 
 
+    /*
     public static class GattConvert
     {
         public static IBuffer ToIBufferFromHexString(string data)
@@ -638,4 +644,5 @@ namespace CosmedBleLib
             return ret;
         }
     }
+    */
 }

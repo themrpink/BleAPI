@@ -28,7 +28,7 @@ namespace CosmedBleConsole
         public async static Task Main(String[] args)
         {
             //to use the other implementation option
-           // DeviceEnumeration.StartDeviceEnumeration();
+            // DeviceEnumeration.StartDeviceEnumeration();
 
             //Console.ReadLine();
 
@@ -44,7 +44,7 @@ namespace CosmedBleConsole
             //CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher(filter);
 
 
-        
+
 
             Console.WriteLine("_______________________scanning____________________");
 
@@ -54,34 +54,90 @@ namespace CosmedBleConsole
 
             //scanner.StopScanning();
             //print the results and connect
+            CosmedBleConnectedDevice connectionTemp;
+            int c = 0;
             while (true)
             {
-                foreach (var device in scanner.RecentlyDiscoveredDevices)
+                scanner.StartActiveScanning();
+                foreach (var device in scanner.AllDiscoveredDevices)
                 {
                     // if (device.DeviceName.Equals("myname") && device.IsConnectable && device.HasScanResponse)
                     {
                         device.PrintAdvertisement();
 
+                        var conn = await Connector.StartConnectionProcessAsync(scanner, device);
+
                         if (device.IsConnectable && device.DeviceName.Equals("myname"))
                         {
-                            CosmedBleConnectedDevice connection = new CosmedBleConnectedDevice(device, scanner);
+                            c += 1;
+                            CosmedBleConnectedDevice connection = await CosmedBleConnectedDevice.CreateAsync(device);
+                            if (c == 1)
+                                connectionTemp = connection;
                             Console.WriteLine("in connection with:" + device.DeviceAddress);
                             Console.WriteLine("watcher status: " + scanner.GetWatcherStatus.ToString());
 
-                            connection.MaintainConnection();
-                            Thread.Sleep(5000);
 
-                            await connection.StartConnectionAsync();
+                            string s = BluetoothLEDevice.GetDeviceSelectorFromBluetoothAddress(connection.BluetoothAddress);
+                            Console.WriteLine("device selector: " + s);
+                            Console.WriteLine("press enter");
+                            // Console.ReadLine();
+
+                            //connection.MaintainConnection();
+                            //Thread.Sleep(5000);
+
+                            //await connection.StartConnectionAsync();
                             //pairing
                             connection.Pair().Wait();
+
+                            //var ser = await connection.get
+                            var results = await connection.DiscoverAllGattServicesAndCharacteristics();
+                            foreach (var service in results.Keys)
+                            {
+                                foreach (var ch in await results[service])
+                                {
+                                    Console.WriteLine("leggo chars, round: " + c);
+                                    await ch.Write(0x01);
+                                    var a = await ch.Read();
+                                    await ch.SubscribeToIndications(connection.CharacteristicValueChanged);
+                                    await ch.SubscribeToNotifications(connection.CharacteristicValueChanged);
+                                }
+                            }
+
+                            var results2 = await connection.DiscoverAllCosmedGattServicesAndCharacteristics();
+                            foreach (var service in results2.Keys)
+                            {
+                                foreach (var ch in await results2[service])
+                                {
+                                    Console.WriteLine("leggo chars, round: " + c);
+                                    await ch.Write(0x01, prova);
+                                    var a = await ch.Read(connection.CharacteristicErrorFound);
+                                    await ch.SubscribeToIndications(connection.CharacteristicValueChanged);
+                                    await ch.SubscribeToNotifications(connection.CharacteristicValueChanged);
+                                }
+                            }
+                            foreach (var service in results2.Keys)
+                            {
+                                foreach (var ch in await results2[service])
+                                {
+                                    Console.WriteLine("leggo chars, round: " + c);
+                                    await ch.Write(0x01, prova);
+                                    var a = await ch.Read(connection.CharacteristicErrorFound);
+                                    await ch.SubscribeToIndications(connection.CharacteristicValueChanged, prova);
+                                    await ch.SubscribeToNotifications(connection.CharacteristicValueChanged);
+                                }
+                            }
+
                         }
                     }
                 }
-                Thread.Sleep(5000);
+                Thread.Sleep(1000);
             }
             //scanner.StopScanning();
         }
-
+        public static void prova (CosmedGattCharacteristic sender, CosmedGattErrorFoundEventArgs args)
+        {
+            Console.WriteLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
         public static void SetCallbacks(CosmedBluetoothLEAdvertisementWatcher watcher)
         {
             watcher.NewDeviceDiscovered += (watch, device) => { Console.WriteLine(device.ToString() + "+++++++++++++++new device+++++++++++++++"); };

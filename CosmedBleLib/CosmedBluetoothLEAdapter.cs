@@ -13,15 +13,14 @@ namespace CosmedBleLib
 
     public class CosmedBluetoothLEAdapter
     {
-        private static BluetoothAdapter adapter;
-        private static bool isLowEnergySupported;
-        private static ulong decimalAddress;
-        private static string hexAddress;
-        private static bool areLowEnergySecureConnectionsSupported;
-        private static uint maxAdvertisementDataLength;
-        private static bool isExtendedAdvertisingSupported;
-        private static bool isCentralRoleSupported;
-        private static CosmedBluetoothLEAdapter thisAdapter;
+        private BluetoothAdapter adapter;
+        private bool isLowEnergySupported;
+        private ulong decimalAddress;
+        private string hexAddress;
+        private bool areLowEnergySecureConnectionsSupported;
+        private uint maxAdvertisementDataLength;
+        private bool isExtendedAdvertisingSupported;
+        private bool isCentralRoleSupported;
 
         public ulong DecimalAddress { get {return decimalAddress; } }
         public string HexAddress { get { return hexAddress; }  }
@@ -37,28 +36,36 @@ namespace CosmedBleLib
         {
 
         }
- 
-       
-        public static async Task<CosmedBluetoothLEAdapter> GetAdapterAsync()
+
+
+        private async Task InitializeAsync()
         {
-            if(thisAdapter != null)
+            try
             {
-                return thisAdapter;
-            }
-            else
-            {
-                thisAdapter = new CosmedBluetoothLEAdapter();
                 adapter = await BluetoothAdapter.GetDefaultAsync().AsTask();
-                isLowEnergySupported = adapter.IsLowEnergySupported;
-                decimalAddress = adapter.BluetoothAddress;
-                hexAddress = string.Format("{0:X}", decimalAddress);
-                areLowEnergySecureConnectionsSupported = adapter.AreLowEnergySecureConnectionsSupported;
-                maxAdvertisementDataLength = adapter.MaxAdvertisementDataLength;
-                isExtendedAdvertisingSupported = adapter.IsExtendedAdvertisingSupported;
-                isCentralRoleSupported = adapter.IsCentralRoleSupported;
-                return thisAdapter;
             }
+            catch(Exception e)
+            {
+                throw new BluetoothAdapterCommunicationFailureException("communication failure with the adapter", e);
+            }
+
+            isLowEnergySupported = adapter.IsLowEnergySupported;
+            decimalAddress = adapter.BluetoothAddress;
+            hexAddress = string.Format("{0:X}", decimalAddress);
+            areLowEnergySecureConnectionsSupported = adapter.AreLowEnergySecureConnectionsSupported;
+            maxAdvertisementDataLength = adapter.MaxAdvertisementDataLength;
+            isExtendedAdvertisingSupported = adapter.IsExtendedAdvertisingSupported;
+            isCentralRoleSupported = adapter.IsCentralRoleSupported;
         }
+
+
+        public static async Task<CosmedBluetoothLEAdapter> CreateAsync()
+        {
+            var adapter = new CosmedBluetoothLEAdapter();
+            await adapter.InitializeAsync();
+            return adapter;
+        }
+
 
         //controlla la compatibilità di questa soluzione
         public static bool IsBluetoothLEOn()
@@ -75,34 +82,13 @@ namespace CosmedBleLib
             return device;
         }
 
+
         public static async Task<BluetoothLEDevice> GetRemoteDeviceAsync(string deviceId)
         {
             BluetoothLEDevice device = await BluetoothLEDevice.FromIdAsync(deviceId).AsTask().ConfigureAwait(false);
             return device;
         }
 
-
-
-        //public static async Task<RadioState> GetRadioState()
-        //{
-        //    Task.WaitAll();
-        //    if (adapter == null)
-        //    {
-        //        await SetAdapterAsync();
-        //    }
-        //    var temp = adapter.GetRadioAsync().AsTask();
-        //    Task.WaitAll(temp);
-        //    Radio radio = temp.Result;
-        //    return radio.State;
-        //}
-
-        //public static async Task<bool> IsRadioStateOn()
-        //{
-
-        //    RadioState rs = await GetRadioState();
-        //    Task.WaitAll();
-        //    return rs == RadioState.On;
-        //}
 
     }
 }

@@ -306,7 +306,6 @@ namespace CosmedBleLib
     }
 
 
-    //meglio una classe??
     public struct AdvertisementContent
     {
         public BluetoothLEAdvertisement Advertisement { get; set; }
