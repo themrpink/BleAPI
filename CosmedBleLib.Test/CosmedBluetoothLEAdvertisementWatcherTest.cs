@@ -16,9 +16,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         private CosmedBleAdvertisedDevice device;
         public CosmedBleAdvertisedDevice device2;
         private CosmedBluetoothLEAdvertisementWatcher watcher;
-        private IReadOnlyCollection<CosmedBleAdvertisedDevice> collectionAll;
-        private IReadOnlyCollection<CosmedBleAdvertisedDevice> collectionRecent;
-        private IReadOnlyCollection<CosmedBleAdvertisedDevice> collectionLast;
+
 
 
 
@@ -40,9 +38,7 @@ namespace CosmedBleLib.MSTest.UnitTest
                     );
 
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
-            collectionAll = watcher.AllDiscoveredDevices;
-            collectionRecent = watcher.RecentlyDiscoveredDevices;
-            collectionLast = watcher.LastDiscoveredDevices;
+
         }
 
 
@@ -72,7 +68,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void StartActiveScanning_startScan_ScanIsStarting()
         {
             watcher.StartActiveScanning();
-            Thread.Sleep(10);
+            Thread.Sleep(50);
              Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
@@ -97,7 +93,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void StartActiveScanning_stopScan_ScanIsStopped()
         {
             watcher.StartActiveScanning();
-          //  Thread.Sleep(50);
+            Thread.Sleep(50);
             watcher.StopScanning();
 
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Stopped);
@@ -110,9 +106,10 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void StartActiveScanning_changeScanMode_ScanIsPassive()
         {
             watcher.StartActiveScanning();
+            Thread.Sleep(100);
             watcher.StartPassiveScanning();
             //delay must be added because every mode change has implicit scan stop in between, which is not instantaneous
-           // Thread.Sleep(100);
+            Thread.Sleep(100);
 
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
             Assert.IsTrue(watcher.IsScanningPassive);
@@ -125,9 +122,10 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void StartPassiveScanning_changeScanMode_ScanIsActive()
         {
             watcher.StartPassiveScanning();
+            Thread.Sleep(100);
             watcher.StartActiveScanning();
             //delay must be added because every mode change has implicit scan stop in between, which is not instantaneous
-            Thread.Sleep(10);
+            Thread.Sleep(30);
 
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
             Assert.IsTrue(watcher.IsScanningActive);
@@ -160,7 +158,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void StartPassiveScanning_startScan_ScanIsStarted()
         {
             watcher.StartPassiveScanning();
-            Thread.Sleep(10);
+            Thread.Sleep(30);
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
@@ -184,7 +182,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void StartPassiveScanning_stopScan_ScanIsStopped()
         {
             watcher.StartPassiveScanning();
-           // Thread.Sleep(50);
+            Thread.Sleep(50);
             watcher.StopScanning();
             
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Stopped);
@@ -266,32 +264,119 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void StartScanning_scanStoppedAndStartedInAllCombinations_DictionaryIsEmpty()
         {
             watcher.StartActiveScanning();
+            Thread.Sleep(50);
+            watcher.addDiscoveredDevices(device);
+            Thread.Sleep(50);
+            watcher.StopScanning();
+            Thread.Sleep(50);
+            watcher.StartActiveScanning();
+            Thread.Sleep(50);
+            CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList());
+            
+            watcher.StartPassiveScanning();
+            Thread.Sleep(50);
             watcher.addDiscoveredDevices(device);
             watcher.StopScanning();
+            Thread.Sleep(50);
+            watcher.StartPassiveScanning();
+            
+            CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
+            
             watcher.StartActiveScanning();
+            Thread.Sleep(50);
+            watcher.addDiscoveredDevices(device);
+            watcher.StopScanning();
+            Thread.Sleep(50);
+            watcher.StartPassiveScanning();
 
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
-            
-            watcher.StartPassiveScanning();
-            watcher.addDiscoveredDevices(device);
-            watcher.StopScanning();
-            watcher.StartPassiveScanning();
-            
-            CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
-            
-            watcher.StartActiveScanning();
-            watcher.addDiscoveredDevices(device);
-            watcher.StopScanning();
-            watcher.StartPassiveScanning();
-
-            CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
 
             watcher.StartPassiveScanning();
+            Thread.Sleep(50);
             watcher.addDiscoveredDevices(device);
             watcher.StopScanning();
+            Thread.Sleep(50);
             watcher.StartActiveScanning();
             
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
+        }
+
+
+
+        [TestMethod]
+        [TestCategory("scanning.collections")]
+        public void recentlyDiscoveredDevices_AddDeviceAndWaitTimeout_DeviceRemoved()
+        {
+            watcher.timeoutSeconds = 1;
+            double timeout = watcher.timeoutSeconds;
+            //IAdvertisedDevicesCollection collections = watcher.GetUpdatedDiscoveredDevices();
+
+            watcher.addDiscoveredDevices(device);
+            Thread.Sleep((int)timeout * 1000);
+            //we need extra sleep because the update loop makes 2x5 seconds cycles, which end shortly after the timeout
+            // Thread.Sleep(1000);
+
+            CollectionAssert.DoesNotContain(watcher.RecentlyDiscoveredDevices.ToList(), device);
+            //CollectionAssert.DoesNotContain(collections.recentDiscoveredDevices.ToList(), device);
+        }
+
+
+
+        [TestMethod]
+        [TestCategory("scanning.collections")]
+        public void lastDiscoveredDevices_AddDeviceAndRead_DeviceRemoved()
+        {
+            double timeout = watcher.timeoutSeconds;
+            //IAdvertisedDevicesCollection collections = watcher.GetUpdatedDiscoveredDevices();
+
+            watcher.addDiscoveredDevices(device);
+            var lastDevices = watcher.LastDiscoveredDevices;
+
+            CollectionAssert.DoesNotContain(watcher.LastDiscoveredDevices.ToList(), device);
+        }
+
+
+
+        [TestMethod]
+        [TestCategory("scanning.collections")]
+        public void EachDeviceCollection_NewDeviceAdded_DeviceExists()
+        {
+            watcher.addDiscoveredDevices(device);
+
+            CollectionAssert.Contains(watcher.AllDiscoveredDevices.ToList(), device);
+            CollectionAssert.Contains(watcher.RecentlyDiscoveredDevices.ToList(), device);
+            CollectionAssert.Contains(watcher.LastDiscoveredDevices.ToList(), device);
+        }
+
+
+
+        [TestMethod]
+        [TestCategory("scanning.collections")]
+        public void RecentlyDevicesCollection_UpdateTimeElapsed_CollectionChanged()
+        {
+            IReadOnlyCollection<CosmedBleAdvertisedDevice> recent;
+            watcher.timeoutSeconds = 1;
+            double timeout = watcher.timeoutSeconds;
+            watcher.StartPassiveScanning();
+            watcher.addDiscoveredDevices(device);
+            recent = watcher.RecentlyDiscoveredDevices;
+            Thread.Sleep((int)timeout * 1000);
+
+            CollectionAssert.AreNotEquivalent(watcher.RecentlyDiscoveredDevices.ToList(), recent.ToList());
+        }
+
+
+
+        [TestMethod]
+        [TestCategory("scanning.collections")]
+        public void RecentlyDiscoveredDevicesCollection_CollectionsUpdateTimeNotElapsedYet_CollectionNotChanged()
+        {
+            IReadOnlyCollection<CosmedBleAdvertisedDevice> recent;
+            watcher.timeoutSeconds = 1;
+            watcher.addDiscoveredDevices(device);
+            recent = watcher.RecentlyDiscoveredDevices;
+            Thread.Sleep((int)watcher.timeoutSeconds * 1000 / 2);
+            CollectionAssert.AreEquivalent(watcher.RecentlyDiscoveredDevices.ToList(), recent.ToList());
         }
 
 
@@ -389,9 +474,10 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void Resume_afterStop_StatusIsStopped()
         {
             watcher.StartActiveScanning();
+            Thread.Sleep(50);
             watcher.StopScanning();
             watcher.ResumeScanning();
-            Thread.Sleep(2500);
+            Thread.Sleep(50);
             Assert.IsFalse(watcher.IsScanningStarted);
         }
 
@@ -404,7 +490,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StartActiveScanning();
             watcher.PauseScanning();
             watcher.ResumeScanning();
-            Thread.Sleep(10);
+            Thread.Sleep(50);
             Assert.IsTrue(watcher.IsScanningStarted);
         }
 
@@ -415,6 +501,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void Pause_afterPause_StatusIsStarted()
         {
             watcher.StartActiveScanning();
+            Thread.Sleep(100);
             watcher.PauseScanning();
             watcher.PauseScanning();
             Thread.Sleep(100);
@@ -422,81 +509,29 @@ namespace CosmedBleLib.MSTest.UnitTest
         }
 
 
-
         [TestMethod]
-        [TestCategory("scanning.collections")]
-        public void recentlyDiscoveredDevices_AddDeviceAndWaitTimeout_DeviceRemoved()
+        [TestCategory("scanning.status")]
+        public void StopScan_afterPause_WatcherIsNull()
         {
-            watcher.timeoutSeconds = 1;
-            double timeout = watcher.timeoutSeconds;
-            //IAdvertisedDevicesCollection collections = watcher.GetUpdatedDiscoveredDevices();
+            watcher.StartActiveScanning();
+            Thread.Sleep(50);
+            watcher.PauseScanning();
+            Thread.Sleep(50);
+            watcher.StopScanning();
 
-            watcher.addDiscoveredDevices(device);
-            Thread.Sleep((int)timeout * 1000);
-            //we need extra sleep because the update loop makes 2x5 seconds cycles, which end shortly after the timeout
-           // Thread.Sleep(1000);
-
-            CollectionAssert.DoesNotContain(watcher.RecentlyDiscoveredDevices.ToList(), device);
-            //CollectionAssert.DoesNotContain(collections.recentDiscoveredDevices.ToList(), device);
+            Assert.IsNull(watcher.GetWatcher());
         }
 
 
-
         [TestMethod]
-        [TestCategory("scanning.collections")]
-        public void lastDiscoveredDevices_AddDeviceAndRead_DeviceRemoved()
+        [TestCategory("scanning.status")]
+        public void StopScan_afterStart_WatcherIsNull()
         {
-            double timeout = watcher.timeoutSeconds;
-            //IAdvertisedDevicesCollection collections = watcher.GetUpdatedDiscoveredDevices();
+            watcher.StartActiveScanning();
+            Thread.Sleep(50);
+            watcher.StopScanning();
 
-            watcher.addDiscoveredDevices(device);
-            var lastDevices = watcher.LastDiscoveredDevices;
-
-            CollectionAssert.DoesNotContain(watcher.LastDiscoveredDevices.ToList(), device);
-        }
-
-
-
-        [TestMethod]
-        [TestCategory("scanning.collections")]
-        public void EachDeviceCollection_NewDeviceAdded_DeviceExists()
-        {
-            watcher.addDiscoveredDevices(device);
-
-            CollectionAssert.Contains(watcher.AllDiscoveredDevices.ToList(), device);
-            CollectionAssert.Contains(watcher.RecentlyDiscoveredDevices.ToList(), device);
-            CollectionAssert.Contains(watcher.LastDiscoveredDevices.ToList(), device);
-        }
-
-
-
-        [TestMethod]
-        [TestCategory("scanning.collections")]
-        public void RecentlyDevicesCollection_UpdateTimeElapsed_CollectionChanged()
-        {
-            IReadOnlyCollection<CosmedBleAdvertisedDevice> recent;
-            watcher.timeoutSeconds = 1;
-            double timeout = watcher.timeoutSeconds;
-            watcher.StartPassiveScanning();
-            watcher.addDiscoveredDevices(device);
-            recent = watcher.RecentlyDiscoveredDevices;
-            Thread.Sleep((int)timeout * 1000);
-          
-            CollectionAssert.AreNotEquivalent(watcher.RecentlyDiscoveredDevices.ToList(), recent.ToList());
-        }
-      
-
-
-        [TestMethod]
-        [TestCategory("scanning.collections")]
-        public void RecentlyDiscoveredDevicesCollection_CollectionsUpdateTimeNotElapsedYet_CollectionNotChanged()
-        {
-            IReadOnlyCollection<CosmedBleAdvertisedDevice> recent;
-            watcher.timeoutSeconds = 1;
-            watcher.addDiscoveredDevices(device);
-            recent = watcher.RecentlyDiscoveredDevices;
-            Thread.Sleep((int)watcher.timeoutSeconds * 1000 / 2);
-            CollectionAssert.AreEquivalent(watcher.RecentlyDiscoveredDevices.ToList(), recent.ToList());
+            Assert.IsNull(watcher.GetWatcher());
         }
 
 

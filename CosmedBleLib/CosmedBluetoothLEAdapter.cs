@@ -11,7 +11,7 @@ using Windows.Foundation;
 namespace CosmedBleLib
 {
 
-    public class CosmedBluetoothLEAdapter
+    public sealed class CosmedBluetoothLEAdapter
     {
         private BluetoothAdapter adapter;
         private bool isLowEnergySupported;

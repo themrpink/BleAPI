@@ -313,7 +313,7 @@ namespace CosmedBleLib
             // no format, return bytes
             if (format == null)
             {
-                return GattConvert.ToHexString(value);
+                return GattFromBufferReader.ToHexString(value);
             }
 
             // Bool
@@ -327,46 +327,46 @@ namespace CosmedBleLib
             {
                 // 2bit or nibble - no exponent
                 // Previous implementation was incorrect. Need to implement in GattHelper.
-                return GattConvert.ToHexString(value);
+                return GattFromBufferReader.ToHexString(value);
             }
             else if (format.FormatType == GattPresentationFormatTypes.UInt8 ||
                      format.FormatType == GattPresentationFormatTypes.UInt12 ||
                      format.FormatType == GattPresentationFormatTypes.UInt16)
             {
                 // Previous implementation was incorrect. Need to implement in GattHelper.
-                return GattConvert.ToHexString(value);
+                return GattFromBufferReader.ToHexString(value);
             }
             else if (format.FormatType == GattPresentationFormatTypes.UInt24 ||
                      format.FormatType == GattPresentationFormatTypes.UInt32)
             {
                 // Previous implementation was incorrect. Need to implement in GattHelper.
-                return GattConvert.ToHexString(value);
+                return GattFromBufferReader.ToHexString(value);
             }
             else if (format.FormatType == GattPresentationFormatTypes.UInt48 ||
                      format.FormatType == GattPresentationFormatTypes.UInt64)
             {
                 // Previous implementation was incorrect. Need to implement in GattHelper.
-                return GattConvert.ToHexString(value);
+                return GattFromBufferReader.ToHexString(value);
             }
             else if (format.FormatType == GattPresentationFormatTypes.SInt8 ||
                      format.FormatType == GattPresentationFormatTypes.SInt12 ||
                      format.FormatType == GattPresentationFormatTypes.SInt16)
             {
                 // Previous implementation was incorrect. Need to implement in GattHelper.
-                return GattConvert.ToHexString(value);
+                return GattFromBufferReader.ToHexString(value);
             }
             else if (format.FormatType == GattPresentationFormatTypes.SInt24 ||
                     format.FormatType == GattPresentationFormatTypes.SInt32)
             {
-                return GattConvert.ToInt32(value).ToString();
+                return GattFromBufferReader.ToInt32(value).ToString();
             }
             else if (format.FormatType == GattPresentationFormatTypes.Utf8)
             {
-                return GattConvert.ToUTF8String(value);
+                return GattFromBufferReader.ToUTF8String(value);
             }
             else if (format.FormatType == GattPresentationFormatTypes.Utf16)
             {
-                return GattConvert.ToUTF16String(value);
+                return GattFromBufferReader.ToUTF16String(value);
             }
             else
             {
@@ -378,7 +378,7 @@ namespace CosmedBleLib
                 // format.FormatType == GattPresentationFormatTypes.Float ||
                 // format.FormatType == GattPresentationFormatTypes.Float32 ||
                 // format.FormatType == GattPresentationFormatTypes.Float64
-                return GattConvert.ToHexString(value);
+                return GattFromBufferReader.ToHexString(value);
             }
         }
     }

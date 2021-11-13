@@ -7,7 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace CosmedBleLib
 {
-    public class CosmedBluetoothLEAdvertisementFilter
+    public sealed class CosmedBluetoothLEAdvertisementFilter
     {
         public BluetoothLEAdvertisementFilter AdvertisementFilter { get; private set; }
         public BluetoothSignalStrengthFilter SignalStrengthFilter { get; private set; }

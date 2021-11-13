@@ -134,16 +134,16 @@ namespace CosmedBleLib
                     if (valueChangedAction != null)
                     {
                         characteristic.ValueChanged += valueChangedAction;
-                        if (GattDiscoveryService.CharacteristicsChangedSubscriptions.ContainsKey(characteristic))
+                        if (GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions.ContainsKey(characteristic))
                         {
                             TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> oldEventHandler;
-                            var success = GattDiscoveryService.CharacteristicsChangedSubscriptions.TryGetValue(characteristic, out oldEventHandler);
+                            var success = GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions.TryGetValue(characteristic, out oldEventHandler);
                             if (success)
                             {
                                 characteristic.ValueChanged -= oldEventHandler;
                             }
                         }
-                        GattDiscoveryService.CharacteristicsChangedSubscriptions[characteristic] = valueChangedAction;
+                        GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions[characteristic] = valueChangedAction;
                     }                   
                 }
 
@@ -438,7 +438,7 @@ namespace CosmedBleLib
     }
 
 
-    public static class AsycOperationExtensions
+    public static class AsyncOperationExtensions
     {
         public static Task<TResult> AsTask<TResult>(this IAsyncOperation<TResult> asyncOperation)
         {

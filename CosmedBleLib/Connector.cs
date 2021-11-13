@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace CosmedBleLib
 {
+
+    /*
+     * per permettere di disconnettere, questo deve avere sia il gattResult, che la gattSession, che l´adapter, che il bleDevice
+     * e poi alla fine, con la disconnessione, ripulire tutto. Forse il dizionario degli eventi potrebbe tenerlo lui e gestirselo in qualche modo
+     * 
+     */
     public static class Connector
     {
 
@@ -42,7 +48,7 @@ namespace CosmedBleLib
     }
 
 
-    public class ConnectionProcess
+    public sealed class ConnectionProcess
     {
         public CosmedBleConnectedDevice device { get; private set; }
         public Exception exception { get; private set; }
