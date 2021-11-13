@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connector.cs" />
+    <Compile Include="CosmedBleDevice.cs" />
     <Compile Include="CosmedGattCharacteristic.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="CosmedDataReader.cs" />
@@ -62,8 +63,13 @@
     <Compile Include="CosmedLibExceptions.cs" />
     <Compile Include="IAdvertisedDevicesCollection.cs" />
     <Compile Include="IAdvertisedDevice.cs" />
+    <Compile Include="ICommunicationResult.cs" />
+    <Compile Include="IScanAdvertisement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Values.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="temp.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

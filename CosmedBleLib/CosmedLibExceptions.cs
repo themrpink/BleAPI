@@ -15,8 +15,6 @@ namespace CosmedBleLib
         public BluetoothAdapterCommunicationFailureException(string message) : base(message) { }
         public BluetoothAdapterCommunicationFailureException(string message, Exception inner) : base(message, inner) { }
 
-        // A constructor is needed for serialization when an
-        // exception propagates from a remoting server to the client.
         protected BluetoothAdapterCommunicationFailureException(System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
@@ -24,29 +22,25 @@ namespace CosmedBleLib
 
 
     [Serializable]
-    public class GattCommunicationFailureException : Exception
+    public class GattCommunicationException : Exception
     {
-        public GattCommunicationFailureException() : base() { }
-        public GattCommunicationFailureException(string message) : base(message) { }
-        public GattCommunicationFailureException(string message, Exception inner) : base(message, inner) { }
-
-        // A constructor is needed for serialization when an
-        // exception propagates from a remoting server to the client.
-        protected GattCommunicationFailureException(System.Runtime.Serialization.SerializationInfo info,
+        public GattCommunicationException() : base() { }
+        public GattCommunicationException(string message) : base(message) { }
+        public GattCommunicationException(string message, Exception inner) : base(message, inner) { }
+      
+        protected GattCommunicationException(System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
     
 
     [Serializable]
-    public class BleDeviceNotFoundException : Exception
+    public class BleDeviceConnectionException : Exception
     {
-        public BleDeviceNotFoundException() : base() { }
-        public BleDeviceNotFoundException(string message) : base(message) { }
-        public BleDeviceNotFoundException(string message, Exception inner) : base(message, inner) { }
+        public BleDeviceConnectionException() : base() { }
+        public BleDeviceConnectionException(string message) : base(message) { }
+        public BleDeviceConnectionException(string message, Exception inner) : base(message, inner) { }
 
-        // A constructor is needed for serialization when an
-        // exception propagates from a remoting server to the client.
-        protected BleDeviceNotFoundException(System.Runtime.Serialization.SerializationInfo info,
+        protected BleDeviceConnectionException(System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 
@@ -58,8 +52,6 @@ namespace CosmedBleLib
         public ScanAbortedException(string message) : base(message) { }
         public ScanAbortedException(string message, Exception inner) : base(message, inner) { }
 
-        // A constructor is needed for serialization when an
-        // exception propagates from a remoting server to the client.
         protected ScanAbortedException(System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
@@ -72,8 +64,6 @@ namespace CosmedBleLib
         public BluetoothLeNotSupportedException(string message) : base(message) { }
         public BluetoothLeNotSupportedException(string message, Exception inner) : base(message, inner) { }
 
-        // A constructor is needed for serialization when an
-        // exception propagates from a remoting server to the client.
         protected BluetoothLeNotSupportedException(System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
@@ -86,8 +76,6 @@ namespace CosmedBleLib
         public CentralRoleNotSupportedException(string message) : base(message) { }
         public CentralRoleNotSupportedException(string message, Exception inner) : base(message, inner) { }
 
-        // A constructor is needed for serialization when an
-        // exception propagates from a remoting server to the client.
         protected CentralRoleNotSupportedException(System.Runtime.Serialization.SerializationInfo info,
             System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }

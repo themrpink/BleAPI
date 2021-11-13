@@ -23,8 +23,8 @@ namespace CosmedBleLib
 
     public class CosmedBleAdvertisedDevice : IAdvertisedDevice<CosmedBleAdvertisedDevice>
     {
-        private AdvertisementContent scanResponseAdvertisementContent;// { get; private set; }
-        private AdvertisementContent advertisementContent;// { get; private set; }
+        private AdvertisementContent scanResponseAdvertisementContent;
+        private AdvertisementContent advertisementContent;
 
 
         #region Device Properties
@@ -88,11 +88,7 @@ namespace CosmedBleLib
         {
             get
             {
-                if (advertisementContent.Advertisement == null)
-                {
-                    Console.WriteLine();
-                }
-                return advertisementContent.Advertisement == null ? scanResponseAdvertisementContent.Advertisement.Flags : advertisementContent.Advertisement.Flags;
+                return advertisementContent.Advertisement == null ? null : advertisementContent.Advertisement.Flags;
             }
         }
 

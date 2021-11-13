@@ -25,11 +25,11 @@ namespace CosmedBleLib
 
                 connectionProcess = new ConnectionProcess(connectedDeviceTemp, watcher, advDevice);
 
-                if (connectedDevice != null)
-                {
-                    connectedDevice.BluetoothLeDevice?.Dispose();
-                    connectedDevice.GattSession?.Dispose();
-                }
+                //if (connectedDevice != null)
+                //{
+                //    connectedDevice.BluetoothLeDevice?.Dispose();
+                //    connectedDevice.GattSession?.Dispose();
+                //}
 
                 connectedDevice = connectedDeviceTemp;   
             }

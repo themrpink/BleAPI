@@ -17,7 +17,7 @@ namespace CosmedBleLib
     /// <summary>
     /// wrapper class for the BleAdvertisementWatcher
     /// </summary>
-    public class CosmedBluetoothLEAdvertisementWatcher
+    public class CosmedBluetoothLEAdvertisementWatcher : IScanAdvertisement
     {
         //private ObservableCollection<CosmedBleAdvertisedDevice> KnownDevices = new ObservableCollection<CosmedBleAdvertisedDevice>();
         //private List<DeviceInformation> UnknownDevices = new List<DeviceInformation>();
@@ -26,9 +26,8 @@ namespace CosmedBleLib
         #region Private fields
 
         private BluetoothLEAdvertisementWatcher watcher;
-        private StateMachine Status;
 
-        public string numb { get; set; } = "0";
+        private StateMachine Status;
 
         //the structure where the discovered devices are saved
         private Dictionary<ulong, CosmedBleAdvertisedDevice> discoveredDevices;
@@ -36,24 +35,12 @@ namespace CosmedBleLib
         //the structure where the last discovered devices are saved
         private Dictionary<ulong, CosmedBleAdvertisedDevice> lastDiscoveredDevices; 
 
-        //auto updating collections
-        private IAdvertisedDevicesCollection AutoUpdatedDevices;
-
         //filter to apply to the discovered devices
         private CosmedBluetoothLEAdvertisementFilter filter;
 
         //lock for safe access to shared resources:
         //dictionary
         private readonly object DevicesThreadLock = new object();
-        private readonly object WatcherThreadLock = new object();
-        //isCollectingDevices (protected because accessed by different threads. The solution developed prevents from undesidered behaviours, i.e. updating the collections after the scan has been stopped, or duplicate the updating thread, etc
-        //private readonly object LockUpdateDevices = new object();
-
-        //used to send updated device collections
-        //private Thread updatingThread;
-
-        //tells if the devices is actually collecting updated device collections and sending them
-        //private bool isCollectingDevices = false;
 
         //max number of discoverable devices before auto-cleaning of the dictionary
         private int MaxScanResults = 128;
@@ -78,14 +65,31 @@ namespace CosmedBleLib
         //questi potrebbero non servire
         public event TypedEventHandler<CosmedBluetoothLEAdvertisementWatcher, BluetoothLEScanningMode> StartedListening;
         public event Action ScanModeChanged;
-        public event TypedEventHandler<CosmedBluetoothLEAdvertisementWatcher, BluetoothLEAdvertisementReceivedEventArgs> DeviceNameChanged;
 
         #endregion
 
 
         #region Properties
+        public int ScanTimeout
+        {
+            get { return ScanTimeout; }
+            set
+            {
+                if (value > 0)
+                {
+                    ScanTimeout = value;
+                    HasScanTimeout = true;
 
+                }
+                else
+                {
+                    ScanTimeout = 0;
+                    HasScanTimeout = false;
+                }
+            }
+        }
 
+        public bool HasScanTimeout { get; private set; }
         //seconds, used for the update of the RecentlyDiscoveredDevices
         public double timeoutSeconds { get; set; } = 10;
         
@@ -100,7 +104,7 @@ namespace CosmedBleLib
             }
         }
 
-        //allows to set wether the watcher returns only discoverable devices or nor
+        //allows to set wether the watcher returns only Connectable devices
         public bool ShowOnlyConnectableDevices { get; set; } = true;
 
         /// <summary>
@@ -262,7 +266,11 @@ namespace CosmedBleLib
                         lastScanningMode = watcher.ScanningMode;
                         watcher.Start();
                         Status = StateMachine.Started;
-                    }             
+                    }
+                    if (HasScanTimeout)
+                    {
+                        await Task.Run(() => OnScanTimeout());
+                    }
                 }
 
                 StartedListening?.Invoke(this, watcher.ScanningMode);                 
@@ -507,13 +515,7 @@ namespace CosmedBleLib
                         discoveredDevices[args.BluetoothAddress] = device;
                     }
                     else
-                    {
-                        string name = discoveredDevices[args.BluetoothAddress].DeviceName;
-                        if(!name.Equals(args.Advertisement.LocalName))
-                        {
-                            DeviceNameChanged?.Invoke(this, args);
-                        }
-                        
+                    {                        
                         discoveredDevices[args.BluetoothAddress].SetAdvertisement(args);
                     }
 
@@ -559,7 +561,12 @@ namespace CosmedBleLib
         }
 
 
-    #endregion
+        private void OnScanTimeout()
+        {
+            Task.Delay(ScanTimeout * 1000);
+            StopScanning();
+        }
+        #endregion
 
     }
 
@@ -577,6 +584,7 @@ namespace CosmedBleLib
     }
 
 
+    //questo posso eliminarlo
     public class PeriodicTask
     {
         public static async Task Run(Action action, TimeSpan period, CancellationToken cancellationToken)
