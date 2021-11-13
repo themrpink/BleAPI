@@ -189,13 +189,13 @@ namespace CosmedBleLib
             }
             catch(Exception e)
             {
-                throw new BleDeviceNotFoundException("Impossible to connect to device", e);
+                throw new BleDeviceConnectionException("Impossible to connect to device", e);
             }
 
 
             if (bluetoothLeDevice == null)
             {
-                throw new BleDeviceNotFoundException("Impossible to connect to device");
+                throw new BleDeviceConnectionException("Impossible to connect to device");
             }
 
             
@@ -217,11 +217,11 @@ namespace CosmedBleLib
             }
             catch(Exception e)
             {
-                throw new GattCommunicationFailureException("Impossible to open the Gatt Session", e);
+                throw new GattCommunicationException("Impossible to open the Gatt Session", e);
             }
             if(GattSession == null)
             {
-                throw new GattCommunicationFailureException("Impossible to open the Gatt Session");
+                throw new GattCommunicationException("Impossible to open the Gatt Session");
             }
         }
 
@@ -340,7 +340,7 @@ namespace CosmedBleLib
             }
             catch (Exception e)
             {
-                throw new GattCommunicationFailureException("communication with Gatt failed", e);
+                throw new GattCommunicationException("communication with Gatt failed", e);
             }
         }
 
@@ -370,7 +370,7 @@ namespace CosmedBleLib
                     }
                     catch(Exception e)
                     {
-                        throw new GattCommunicationFailureException("communication with Gatt failed", e);
+                        throw new GattCommunicationException("communication with Gatt failed", e);
                     }
                 }
             }
@@ -398,7 +398,7 @@ namespace CosmedBleLib
                     }
                     catch (Exception e)
                     {
-                        throw new GattCommunicationFailureException("impossible to retrieve the characteristics from Gatt service", e);
+                        throw new GattCommunicationException("impossible to retrieve the characteristics from Gatt service", e);
                     }
 
                 });
@@ -435,7 +435,7 @@ namespace CosmedBleLib
                     }
                     catch (Exception e)
                     {
-                        throw new GattCommunicationFailureException("impossible to retrieve the characteristics from Gatt service", e);
+                        throw new GattCommunicationException("impossible to retrieve the characteristics from Gatt service", e);
                     }
 
                 });
@@ -455,7 +455,7 @@ namespace CosmedBleLib
             }
             catch (Exception e)
             {
-                throw new GattCommunicationFailureException("impossible to retrieve the services", e);
+                throw new GattCommunicationException("impossible to retrieve the services", e);
             }
         }
 

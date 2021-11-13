@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -40,10 +41,12 @@ namespace CosmedBleLib
 
         public bool IsConnected { get { return bluetoothLeDevice?.ConnectionStatus == BluetoothConnectionStatus.Connected; } }
 
+
         #endregion
 
 
         #region Public events
+        public event TypedEventHandler<DeviceAccessInformation, DeviceAccessChangedEventArgs> AccessChanged;
         public event TypedEventHandler<CosmedBleDevice, object> ConnectionStatusChanged;
         public event TypedEventHandler<CosmedBleDevice, object> NameChanged;
         #endregion
@@ -58,6 +61,11 @@ namespace CosmedBleLib
             Console.WriteLine("------------------------");
         }
 
+        //by disposal these 3 handler shall be unsubscribed
+        private void AccessChangedHanlder(DeviceAccessInformation accessInformation, DeviceAccessChangedEventArgs args)
+        {
+            AccessChanged?.Invoke(accessInformation, args);
+        }
 
         //these ones call the public event, to which the user can subscribe
         private void ConnectionStatusChangedHandler(BluetoothLEDevice device, object args)
@@ -109,7 +117,8 @@ namespace CosmedBleLib
             DeviceInformation = bluetoothLeDevice.DeviceInformation;
             DeviceAccessInformation = bluetoothLeDevice.DeviceAccessInformation;
             BluetoothDeviceId = bluetoothLeDevice.BluetoothDeviceId;
-            
+
+            bluetoothLeDevice.DeviceAccessInformation.AccessChanged += AccessChangedHanlder;
             bluetoothLeDevice.ConnectionStatusChanged += ConnectionStatusChangedHandler;
             bluetoothLeDevice.NameChanged += NameChangedHandler;
 
@@ -139,9 +148,51 @@ namespace CosmedBleLib
             return device;
         }
 
+
         #endregion
 
 
+        #region Dispose device
+
+        public void Disconnect()
+        {
+            ClearBluetoothLEDevice();
+        }
+
+        private void ClearBluetoothLEDevice()
+        {
+
+            // Need to clear the CCCD from the remote device so we stop receiving notifications
+            List<Task<GattCharacteristic>> removals = GattDiscoveryService.CharacteristicsChangedSubscriptions.Where(c => c.Key.Service.Session.DeviceId.Equals(bluetoothLeDevice.DeviceId)).Select(async d =>
+            {
+                var result = await d.Key.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
+                if (result == GattCommunicationStatus.Success)
+                {
+                    d.Key.ValueChanged -= d.Value;
+                }
+                return d.Key;
+
+            }).ToList();
+
+            TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> eventHandler;
+            foreach (var r in removals)
+            {
+                var result = GattDiscoveryService.CharacteristicsChangedSubscriptions.TryRemove(r.Result, out eventHandler);
+            }
+
+            
+
+
+            bluetoothLeDevice.ConnectionStatusChanged -= ConnectionStatusChangedHandler;
+            bluetoothLeDevice.NameChanged -= NameChangedHandler;
+            bluetoothLeDevice.DeviceAccessInformation.AccessChanged -= AccessChangedHanlder;
+
+            bluetoothLeDevice?.Dispose();
+            bluetoothLeDevice = null;
+
+        }
+
+        #endregion
 
     }
 
@@ -317,11 +368,17 @@ namespace CosmedBleLib
 
         #region Private members
         private GattDeviceServicesResult gattResult;
-        private GattCharacteristic selectedCharacteristic;
 
         // Only one registered characteristic at a time.
         private GattCharacteristic registeredCharacteristic;
         private GattPresentationFormat presentationFormat;
+
+        #endregion
+
+
+        #region Static Member
+
+        public static ConcurrentDictionary<GattCharacteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs>> CharacteristicsChangedSubscriptions = new ConcurrentDictionary<GattCharacteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs>>();
 
         #endregion
 
@@ -333,6 +390,7 @@ namespace CosmedBleLib
         public ushort MaxPduSize { get { return GattSession.MaxPduSize; } }
         public GattSessionStatus SessionStatus { get { return GattSession.SessionStatus; } }
 
+        public event TypedEventHandler<BluetoothLEDevice, object> GattServicesChanged;
         #endregion
 
 
@@ -359,7 +417,6 @@ namespace CosmedBleLib
             var accessStatus = await device.bluetoothLeDevice.RequestAccessAsync();
             if (accessStatus == DeviceAccessStatus.Allowed)
             {
-
                 gattResult = await GetGattServicesAsync();
                 //try
                 //{
@@ -377,7 +434,9 @@ namespace CosmedBleLib
                 {
                     throw new GattCommunicationException("Impossible to open the Gatt Session", e);
                 }
-            }
+
+                device.bluetoothLeDevice.GattServicesChanged += GattServicesChangedHandler;
+    }
 
             return accessStatus;
         }
@@ -407,6 +466,12 @@ namespace CosmedBleLib
             Console.WriteLine("(((((((((((((((( error found, called by the hanlder in CosmedBelConnectedDevices))))))))))))");
         };
 
+
+        //by disposal this must be unsubscribed
+        private void GattServicesChangedHandler(BluetoothLEDevice BleDevice, object arg)
+        {
+            GattServicesChanged?.Invoke(BleDevice, arg);
+        }
         #endregion
 
 
@@ -460,26 +525,37 @@ namespace CosmedBleLib
         }
 
 
-        //private async Task<bool> ClearBluetoothLEDeviceAsync()
-        //{
-        //    if (subscribedForNotifications)
-        //    {
-        //        // Need to clear the CCCD from the remote device so we stop receiving notifications
-        //        var result = await registeredCharacteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
-        //        if (result != GattCommunicationStatus.Success)
-        //        {
-        //            return false;
-        //        }
-        //        else
-        //        {
-        //            selectedCharacteristic.ValueChanged -= Characteristic_ValueChanged;
-        //            subscribedForNotifications = false;
-        //        }
-        //    }
-        //    bluetoothLeDevice?.Dispose();
-        //    bluetoothLeDevice = null;
-        //    return true;
-        //}
+        public async Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>> DiscoverAllGattServicesAndCharacteristics()
+        {
+            var emptyDictionary = new Dictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>();
+            IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>> servicesDictionary = new ReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>(emptyDictionary);
+
+            await GetGattServicesAsync(BluetoothCacheMode.Cached);
+
+            if (gattResult != null && gattResult.Status == GattCommunicationStatus.Success)
+            {
+                IReadOnlyList<GattDeviceService> resultServices = gattResult.Services;
+
+                var servicesDictionaryTemp = resultServices.ToDictionary(s => s, async (s) =>
+                {
+                    try
+                    {
+                        var tempResult = await s.GetCharacteristicsAsync().AsTask();
+                        var temp = tempResult.Characteristics.ToList().AsEnumerable().ToList().AsReadOnly();
+                        return temp;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new GattCommunicationException("impossible to retrieve the characteristics from Gatt service", e);
+                    }
+
+                });
+                var b = new ReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>(servicesDictionaryTemp);
+                servicesDictionary = b;
+            }
+
+            return servicesDictionary;
+        }
 
 
         public async Task<GattDeviceServicesResult> GetGattServicesAsync(BluetoothCacheMode bluetoothCacheMode = BluetoothCacheMode.Uncached)

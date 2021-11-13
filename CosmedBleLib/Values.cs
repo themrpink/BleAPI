@@ -285,9 +285,9 @@ namespace CosmedBleLib
         /// </summary>
         /// <param name="characteristic"></param>
         /// <returns>value as a string</returns>
-        public static string ConvertGattCharacteristicValueToString(GattCharacteristic characteristic)
+        public static string ConvertGattCharacteristicValueToString(GattCharacteristic characteristic, IBuffer value)
         {
-            if (characteristic..Value == null)
+            if (value == null)
             {
                 return String.Empty;
             }
@@ -299,7 +299,7 @@ namespace CosmedBleLib
                 format = characteristic.PresentationFormats[0];
             }
 
-            return ConvertValueBufferToString(characteristic.Value, format);
+            return ConvertValueBufferToString(value, format);
         }
 
         /// <summary>
