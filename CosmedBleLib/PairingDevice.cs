@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Background;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Enumeration;
@@ -127,6 +128,42 @@ namespace CosmedBleLib
 
         }
 
+        protected async Task InitializeAsync(string deviceId)
+        {
+            try
+            {
+                // Verificare: BT_Code: BluetoothLEDevice.FromIdAsync must be called from a UI thread because it may prompt for consent.
+                IAsyncOperation<BluetoothLEDevice> task = BluetoothLEDevice.FromIdAsync(deviceId);
+                this.bluetoothLeDevice = await task.AsTask().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                throw new BleDeviceConnectionException("Impossible to connect to device", e);
+            }
+
+
+            if (bluetoothLeDevice == null)
+            {
+                throw new BleDeviceConnectionException("Impossible to connect to device");
+            }
+
+            //DeviceId = bluetoothLeDevice.DeviceId;
+            BluetoothAddress = bluetoothLeDevice.BluetoothAddress;
+            Name = bluetoothLeDevice.Name;
+            Appearance = bluetoothLeDevice.Appearance;
+            BluetoothAddressType = bluetoothLeDevice.BluetoothAddressType;
+            DeviceInformation = bluetoothLeDevice.DeviceInformation;
+            DeviceAccessInformation = bluetoothLeDevice.DeviceAccessInformation;
+            BluetoothDeviceId = bluetoothLeDevice.BluetoothDeviceId;
+
+            bluetoothLeDevice.DeviceAccessInformation.AccessChanged += AccessChangedHanlder;
+            bluetoothLeDevice.ConnectionStatusChanged += ConnectionStatusChangedHandler;
+            bluetoothLeDevice.NameChanged += NameChangedHandler;
+
+            //this is for test purpose, the user can implement his own method
+            this.ConnectionStatusChanged += OnConnectionStatusChanged;
+
+        }
 
         public static async Task<CosmedBleDevice> CreateAsync(ulong deviceAddress)
         {
@@ -135,6 +172,12 @@ namespace CosmedBleLib
             return device;
         }
 
+        public static async Task<CosmedBleDevice> CreateAsync(string deviceId)
+        {
+            var device = new CosmedBleDevice();
+            await device.InitializeAsync(deviceId);
+            return device;
+        }
 
         public static async Task<CosmedBleDevice> CreateAsync(CosmedBleAdvertisedDevice advertisingDevice)
         {
@@ -204,9 +247,9 @@ namespace CosmedBleLib
 
         public bool IsDevicePaired { get { return DeviceInformation.Pairing.IsPaired; } }
 
-        public DevicePairingProtectionLevel ProtectionLevelUsed { get; }
+        public DevicePairingProtectionLevel ProtectionLevelUsed { get; set; }
 
-        public DevicePairingResultStatus PairingResultStatus { get; }
+        public DevicePairingResultStatus PairingResultStatus { get; set; }
 
         private PairedDevice(DevicePairingResult devicePairingResult)
         {
@@ -220,10 +263,18 @@ namespace CosmedBleLib
             await device.InitializeAsync(deviceAddress);
             return device;
         }
-    
+        
+        public static async Task<PairedDevice> CreateAsync(string deviceId, DevicePairingResult devicePairingResult)
+        {
+            var device = new PairedDevice(devicePairingResult);
+            await device.InitializeAsync(deviceId);
+            return device;
+        }
+
+
     }
 
-  
+
     //take a CosmedBleDevice and try to pair it. If pairing succeeds the return a PairedDevice
     public static class PairingService
     {
@@ -289,18 +340,19 @@ namespace CosmedBleLib
                     // on the target device. Response comes back and we set it on the PinComparePairingRequestedData
                     // then complete the deferral.
                     var displayMessageDeferral = args.GetDeferral();
-
+                    Console.WriteLine("pin: " + args.Pin);
                     Console.WriteLine("does the pin matches? Y/N");
                     string answer = Console.ReadLine();
-                    while (!answer.ToLower().Equals("y") || !answer.ToLower().Equals("n"))
+                    while (!answer.ToLower().Equals("y") && !answer.ToLower().Equals("n"))
                     {
                         Console.WriteLine("please answer y or n");
                         answer = Console.ReadLine();
                     }
-                    if (answer.ToLower().Equals("Y"))
+                    if (answer.ToLower().Equals("y"))
                     {
                         args.Accept();
                     }
+  
 
                     displayMessageDeferral.Complete();
                     break;
@@ -311,16 +363,25 @@ namespace CosmedBleLib
         public static async Task<PairedDevice> GetPairedDevice(CosmedBleDevice device, DevicePairingKinds ceremonySelection, DevicePairingProtectionLevel minProtectionLevel)
         {
             DeviceInformation deviceInformation = device.DeviceInformation;
+            string deviceId = deviceInformation.Id; //I reuse did to reload later.
+            device.Disconnect();
+            device = null;
+            var bledevice = await BluetoothLEDevice.FromIdAsync(deviceId);
+            //device = await CosmedBleDevice.CreateAsync(deviceId);
+
             try
             {
                 deviceInformation.Pairing.Custom.PairingRequested += PairingRequestedHandler;
-                DevicePairingResult devicePairingResult = await deviceInformation.Pairing.Custom.PairAsync(ceremonySelection, minProtectionLevel);
+                DevicePairingResult devicePairingResult = await bledevice.DeviceInformation.Pairing.Custom.PairAsync(ceremonySelection, minProtectionLevel);
                 deviceInformation.Pairing.Custom.PairingRequested -= PairingRequestedHandler;
-                
-                if (devicePairingResult.Status == DevicePairingResultStatus.AlreadyPaired || devicePairingResult.Status == DevicePairingResultStatus.Paired)
-                    return await PairedDevice.CreateAsync(device.BluetoothAddress, devicePairingResult);
-                else
-                    return null;
+
+                return await PairedDevice.CreateAsync(deviceId, devicePairingResult);
+
+
+                //if (devicePairingResult.Status == DevicePairingResultStatus.AlreadyPaired || devicePairingResult.Status == DevicePairingResultStatus.Paired)
+                //    return await PairedDevice.CreateAsync(deviceId, devicePairingResult);
+                //else
+                //    return device;
             }
             catch (Exception e)
             {

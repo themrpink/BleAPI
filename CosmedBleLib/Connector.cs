@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.GenericAttributeProfile;
+using Windows.Devices.Enumeration;
 
 namespace CosmedBleLib
 {
@@ -48,6 +50,7 @@ namespace CosmedBleLib
     }
 
 
+
     public sealed class ConnectionProcess
     {
         public CosmedBleConnectedDevice device { get; private set; }
@@ -70,26 +73,50 @@ namespace CosmedBleLib
 
 
 
+    public class ConnectionBuilder
+    {
+        private CosmedBluetoothLEAdvertisementWatcher watcher;
+        private CosmedBleAdvertisedDevice advDevice;
+        private CosmedBleDevice bleDevice;
 
-    /*
-     * potrei avere : o due oggetti diversi che implementano un interfaccia comune, sia per l´oggetto
-     * pieno che per quello vuoto
-     * se ci sono eccezioni ? 
-     * allora se raccolgo l´oggetto con una eccezione potrebbe non essere male.
-     * 
-     * 
-     * no interfaccia no.
-     * 
-     * oggetto + exception
-     * potrei fare una carrellata di exceptions e poi restituirle? no non ha senso, ne prendo solo una.
-     * quindi
-     * connection proccess ha una connection, il device e le exceptions. può sempre far comodo.
-     * forse anche il watcher, così da poter gestire le chiamate se serve.
-     * quindi
-    
-     * 
-     * 
-     * 
-     */
+        private DevicePairingKinds ceremonySelection = DevicePairingKinds.None |
+                                                        DevicePairingKinds.ConfirmOnly |
+                                                        DevicePairingKinds.ConfirmPinMatch |
+                                                        DevicePairingKinds.DisplayPin |
+                                                        DevicePairingKinds.ProvidePasswordCredential |
+                                                        DevicePairingKinds.ProvidePin;
+
+        private DevicePairingProtectionLevel minProtectionLevel = DevicePairingProtectionLevel.None |
+                                                                         DevicePairingProtectionLevel.Default |
+                                                                         DevicePairingProtectionLevel.Encryption |
+                                                                         DevicePairingProtectionLevel.EncryptionAndAuthentication;
+      
+        public ConnectionBuilder(CosmedBluetoothLEAdvertisementWatcher watcher, CosmedBleAdvertisedDevice advDevice)
+        {
+            this.watcher = watcher;
+            this.advDevice = advDevice;
+        }
+
+
+        public async Task<CosmedBleDevice> GetConnectableDevice()
+        {
+            watcher?.StopScanning();
+            bleDevice = await CosmedBleDevice.CreateAsync(advDevice);
+            return bleDevice;
+        }
+
+
+        public async Task<PairedDevice> TryPairDevice()
+        {
+            GattLocalCharacteristic a;
+            watcher?.StopScanning();
+            return await PairingService.GetPairedDevice(bleDevice, ceremonySelection, minProtectionLevel);
+        }
+
+
+    }
+
+
+
 }
 

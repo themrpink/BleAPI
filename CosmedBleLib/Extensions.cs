@@ -34,6 +34,19 @@ namespace CosmedBleLib
     }
 
 
+    public static class GattServiceExtensions
+    {
+        public static void Print(this GattDeviceService service)
+        {
+            Console.WriteLine("printing a service:");
+            Console.WriteLine("service handle: " + service.AttributeHandle.ToString("X2"));
+            Console.WriteLine("service uuid: " + service.Uuid.ToString());
+            Console.WriteLine("service device access information (current status): " + service.DeviceAccessInformation.CurrentStatus.ToString());
+            Console.WriteLine("service Gatt Session: " + service.Session);
+        }
+    }
+
+
     public static class GattCharacteristicExtensions
 
     {

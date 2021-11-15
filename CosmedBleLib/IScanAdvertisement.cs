@@ -21,8 +21,8 @@ namespace CosmedBleLib
         event TypedEventHandler<CosmedBluetoothLEAdvertisementWatcher, BluetoothLEScanningMode> StartedListening;
         event Action ScanModeChanged;
 
-        void StartPassiveScanning();
-        void StartActiveScanning();
+        Task StartPassiveScanning();
+        Task StartActiveScanning();
         void StopScanning();
         void PauseScanning();
         void ResumeScanning();

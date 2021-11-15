@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Threading;
 using Windows.Devices.Bluetooth.Advertisement;
 
 namespace CosmedBleLib.Test
@@ -49,6 +50,8 @@ namespace CosmedBleLib.Test
             Assert.IsTrue(Watcher.IsFilteringActive);
         }
 
+
+
         [TestMethod]
         [TestCategory("scanning.filter.state")]
         public void NewWatcher_WithoutFilter_FilteringIsNotActive()
@@ -59,15 +62,19 @@ namespace CosmedBleLib.Test
         }
 
 
+
         [TestMethod]
         [TestCategory("scanning.filter.state")]
         public void NewWatcherWithoutFilter_AddAFilter_FilteringIsActive()
         {
             Watcher = new CosmedBluetoothLEAdvertisementWatcher();
+
+            Watcher.StartActiveScanning();
             Watcher.SetFilter(Filter);
 
             Assert.IsTrue(Watcher.IsFilteringActive);
         }
+
 
 
         [TestMethod]
@@ -89,10 +96,10 @@ namespace CosmedBleLib.Test
         [TestCategory("scanning.filter.state")]
         public void NewWatcher_WithNullFilter_throwsException()
         {
-            Watcher = new CosmedBluetoothLEAdvertisementWatcher(null);
-            //Watcher.SetFilter(Filter);
-     
+            Watcher = new CosmedBluetoothLEAdvertisementWatcher(null);     
         }
+
+
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -116,6 +123,52 @@ namespace CosmedBleLib.Test
             Assert.IsNotNull(Watcher.GetWatcher().SignalStrengthFilter);
         }
 
+
+
+        [TestMethod]
+        [TestCategory("scanning.filter.state")]
+        public void ScanStarted_CheckUwpWatcherFilters_FilteringIsNotActive()
+        {
+            Watcher = new CosmedBluetoothLEAdvertisementWatcher();
+            
+            Watcher.StartActiveScanning();
+            Watcher.SetFilter(Filter);
+            Watcher.RemoveFilter();
+
+            Assert.IsFalse(Watcher.IsFilteringActive);
+        }
+
+
+
+        [TestMethod]
+        [TestCategory("scanning.filter.state")]
+        public void ScanStopped_RemoveFilter_FilteringIsNotActive()
+        {
+            Watcher = new CosmedBluetoothLEAdvertisementWatcher();
+
+            Watcher.StartActiveScanning();
+            Watcher.SetFilter(Filter);
+            Thread.Sleep(50);
+            Watcher.StopScanning();
+            Watcher.RemoveFilter();
+
+            Assert.IsFalse(Watcher.IsFilteringActive);
+        }
+
+
+
+        [TestMethod]
+        [TestCategory("scanning.filter.state")]
+        public void ScanStopped_FilterSet_FilteringIsActive()
+        {
+            Watcher = new CosmedBluetoothLEAdvertisementWatcher();
+
+            Watcher.StartActiveScanning();
+            Watcher.SetFilter(Filter);
+            Thread.Sleep(50);
+
+            Assert.IsTrue(Watcher.IsFilteringActive);
+        }
 
 
 

@@ -23,14 +23,45 @@ namespace CosmedBleLib
         #endregion
 
 
+        #region Constructor
+
+        private GattDiscoveryService()
+        {
+        }
+
+        public async static Task<GattDiscoveryService> CreateAsync(CosmedBleDevice device)
+        {
+            GattDiscoveryService service = new GattDiscoveryService();
+            await service.InitializeAsync(device);
+            return service;
+        }
+
+        private async Task InitializeAsync(CosmedBleDevice device)
+        {
+            if(device == null)
+            {
+                throw new ArgumentNullException("given device cannot be null");
+            }
+            Device = device;
+            GattSession = await GattSession.FromDeviceIdAsync(device.BluetoothDeviceId);
+
+            Device.bluetoothLeDevice.GattServicesChanged += GattServicesChangedHandler;
+            GattSession.SessionStatusChanged += SessionStatusChangedHandler;
+            GattSession.MaxPduSizeChanged += MaxPduSizeChangedHandler;
+        }
+        #endregion
+
+
         #region Properties
-        public CosmedBleDevice device { get; private set; }
+        public CosmedBleDevice Device { get; private set; }
         public DeviceAccessStatus DeviceAccessStatus { get; private set; }
         public GattSession GattSession { get; private set; }
         public ushort MaxPduSize { get { return GattSession.MaxPduSize; } }
         public GattSessionStatus SessionStatus { get { return GattSession.SessionStatus; } }
 
         public event TypedEventHandler<BluetoothLEDevice, object> GattServicesChanged;
+        public event TypedEventHandler<GattSession, object> MaxPduSizeChanged;
+        public event TypedEventHandler<GattSession, GattSessionStatusChangedEventArgs> SessionStatusChanged;
         #endregion
 
 
@@ -52,6 +83,16 @@ namespace CosmedBleLib
         {
             GattServicesChanged?.Invoke(BleDevice, arg);
         }
+
+        private void MaxPduSizeChangedHandler(GattSession gattSession, object obj)
+        {
+            MaxPduSizeChanged?.Invoke(gattSession, obj);
+        }
+
+        private void SessionStatusChangedHandler(GattSession gattSession, GattSessionStatusChangedEventArgs args)
+        {
+            SessionStatusChanged?.Invoke(gattSession, args);
+        }
         #endregion
 
 
@@ -62,7 +103,7 @@ namespace CosmedBleLib
         {
             try
             {
-                GattDeviceServicesResult services = await device.bluetoothLeDevice.GetGattServicesForUuidAsync(requestedUuid, cacheMode).AsTask();
+                GattDeviceServicesResult services = await Device.bluetoothLeDevice.GetGattServicesForUuidAsync(requestedUuid, cacheMode).AsTask();
                 return services;
             }
             catch (Exception e)
@@ -140,12 +181,12 @@ namespace CosmedBleLib
 
         public async Task<GattDeviceServicesResult> GetGattServicesAsync(BluetoothCacheMode bluetoothCacheMode = BluetoothCacheMode.Uncached)
         {
-            var accessStatus = await device.bluetoothLeDevice.RequestAccessAsync();
+            var accessStatus = await Device.bluetoothLeDevice.RequestAccessAsync();
             if (accessStatus == DeviceAccessStatus.Allowed)
             {
                 try
                 {
-                    return await device.bluetoothLeDevice.GetGattServicesAsync(bluetoothCacheMode).AsTask();
+                    return await Device.bluetoothLeDevice.GetGattServicesAsync(bluetoothCacheMode).AsTask();
                     //return gattResult;
                 }
                 catch (Exception e)

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace CosmedBleLib.MSTest.UnitTest
 {
@@ -45,9 +46,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartActiveScanning_startScan_ScanIsActive()
+        public async Task StartActiveScanning_startScan_ScanIsActive()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Assert.IsTrue(watcher.IsScanningActive);
         }
 
@@ -55,9 +56,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartActiveScanning_startScan_ScanIsNotPassive()
+        public async Task StartActiveScanning_startScan_ScanIsNotPassive()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Assert.IsFalse(watcher.IsScanningPassive);
         }
 
@@ -65,9 +66,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartActiveScanning_startScan_ScanIsStarting()
+        public async Task StartActiveScanning_startScan_ScanIsStarting()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Thread.Sleep(50);
              Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
@@ -76,12 +77,14 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartActiveScanning_stopAndStartScan_ScanIsStarted()
+        public async Task StartActiveScanning_stopAndStartScan_ScanIsStarted()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
+            Thread.Sleep(100);
             watcher.StopScanning();
-            watcher.StartActiveScanning();
-            Thread.Sleep(10);
+            Thread.Sleep(100);
+            await watcher.StartActiveScanning();
+             Thread.Sleep(100);
 
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
@@ -90,10 +93,10 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartActiveScanning_stopScan_ScanIsStopped()
+        public async Task StartActiveScanning_stopScan_ScanIsStopped()
         {
-            watcher.StartActiveScanning();
-            Thread.Sleep(50);
+            await watcher.StartActiveScanning();
+
             watcher.StopScanning();
 
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Stopped);
@@ -103,11 +106,11 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartActiveScanning_changeScanMode_ScanIsPassive()
+        public async Task StartActiveScanning_changeScanMode_ScanIsPassive()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Thread.Sleep(100);
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
             //delay must be added because every mode change has implicit scan stop in between, which is not instantaneous
             Thread.Sleep(100);
 
@@ -119,11 +122,11 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartPassiveScanning_changeScanMode_ScanIsActive()
+        public async Task StartPassiveScanning_changeScanMode_ScanIsActive()
         {
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
             Thread.Sleep(100);
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             //delay must be added because every mode change has implicit scan stop in between, which is not instantaneous
             Thread.Sleep(30);
 
@@ -135,9 +138,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartPassiveScanning_startScan_ScanIsPassive()
+        public async Task StartPassiveScanning_startScan_ScanIsPassive()
         {
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
             Assert.IsTrue(watcher.IsScanningPassive);
         }
 
@@ -145,9 +148,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartPassiveScanning_startScan_ScanIsNotActive()
+        public async Task StartPassiveScanning_startScan_ScanIsNotActive()
         {
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
             Assert.IsFalse(watcher.IsScanningActive);
         }
 
@@ -155,9 +158,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartPassiveScanning_startScan_ScanIsStarted()
+        public async Task StartPassiveScanning_startScan_ScanIsStarted()
         {
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
             Thread.Sleep(30);
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
@@ -166,12 +169,15 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartPassiveScanning_stopAndStartScan_ScanIsStarted()
+        public async Task StartPassiveScanning_stopAndStartScan_ScanIsStarted()
         {
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
+            Thread.Sleep(100);
             watcher.StopScanning();
-            watcher.StartPassiveScanning();
-            Thread.Sleep(10);
+            Thread.Sleep(100);
+            await watcher.StartPassiveScanning();
+            Thread.Sleep(100);
+
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
@@ -179,12 +185,12 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.mode")]
-        public void StartPassiveScanning_stopScan_ScanIsStopped()
+        public async Task StartPassiveScanning_stopScan_ScanIsStopped()
         {
-            watcher.StartPassiveScanning();
-            Thread.Sleep(50);
+            await watcher.StartPassiveScanning();
+
             watcher.StopScanning();
-            
+
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Stopped);
         }
 
@@ -246,13 +252,13 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.collections")]
-        public void StartScanning_newScanStartedinBothModes_DictionaryIsEmpty()
+        public async Task StartScanning_newScanStartedinBothModes_DictionaryIsEmpty()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
 
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
 
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
 
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
         }
@@ -261,42 +267,42 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.collections")]
-        public void StartScanning_scanStoppedAndStartedInAllCombinations_DictionaryIsEmpty()
+        public async Task StartScanning_scanStoppedAndStartedInAllCombinations_DictionaryIsEmpty()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Thread.Sleep(50);
             watcher.addDiscoveredDevices(device);
             Thread.Sleep(50);
             watcher.StopScanning();
             Thread.Sleep(50);
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Thread.Sleep(50);
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList());
-            
-            watcher.StartPassiveScanning();
+
+            await watcher.StartPassiveScanning();
             Thread.Sleep(50);
             watcher.addDiscoveredDevices(device);
             watcher.StopScanning();
             Thread.Sleep(50);
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
             
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
-            
-            watcher.StartActiveScanning();
+
+            await watcher.StartActiveScanning();
             Thread.Sleep(50);
             watcher.addDiscoveredDevices(device);
             watcher.StopScanning();
             Thread.Sleep(50);
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
 
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
 
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
             Thread.Sleep(50);
             watcher.addDiscoveredDevices(device);
             watcher.StopScanning();
             Thread.Sleep(50);
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
         }
@@ -352,12 +358,12 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.collections")]
-        public void RecentlyDevicesCollection_UpdateTimeElapsed_CollectionChanged()
+        public async Task RecentlyDevicesCollection_UpdateTimeElapsed_CollectionChanged()
         {
             IReadOnlyCollection<CosmedBleAdvertisedDevice> recent;
             watcher.timeoutSeconds = 1;
             double timeout = watcher.timeoutSeconds;
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
             watcher.addDiscoveredDevices(device);
             recent = watcher.RecentlyDiscoveredDevices;
             Thread.Sleep((int)timeout * 1000);
@@ -383,9 +389,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.collections.status")]
-        public void ResumeScanning_scanPausedAndResumedAndDeviceAdded_DeviceIsNotLost()
-        {           
-            watcher.StartActiveScanning();
+        public async Task ResumeScanning_scanPausedAndResumedAndDeviceAdded_DeviceIsNotLost()
+        {
+            await watcher.StartActiveScanning();
             //device added after start, otherwise would be deleted by the initialization
             watcher.addDiscoveredDevices(device);
             watcher.PauseScanning();
@@ -398,10 +404,10 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.collections.status")]
-        public void ResumeScanning_scanResumedAndStopped_ListIsEmpty()
+        public async Task ResumeScanning_scanResumedAndStopped_ListIsEmpty()
         {
             watcher.addDiscoveredDevices(device);
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             watcher.PauseScanning();
             watcher.ResumeScanning();
             watcher.StopScanning();
@@ -414,10 +420,10 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.collections.status")]
-        public void PauseScanning_scanPausedAndStopped_ListIsEmpty()
+        public async Task PauseScanning_scanPausedAndStopped_ListIsEmpty()
         {
             watcher.addDiscoveredDevices(device);
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             watcher.PauseScanning();
             watcher.StopScanning();
 
@@ -442,12 +448,12 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.collections.status")]
-        public void StartScanning_afterPause_DeviceDeleted()
+        public async Task StartScanning_afterPause_DeviceDeleted()
         {
             watcher.addDiscoveredDevices(device);
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             watcher.PauseScanning();
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
 
             CollectionAssert.DoesNotContain(watcher.AllDiscoveredDevices.ToList(), device);
         }
@@ -456,12 +462,12 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.collections.status")]
-        public void StartScanning_afterResume_ListIsEmpty()
+        public async Task StartScanning_afterResume_ListIsEmpty()
         {
             watcher.addDiscoveredDevices(device);
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             watcher.PauseScanning();
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
 
             CollectionAssert.DoesNotContain(watcher.AllDiscoveredDevices.ToList(), device);
             //CollectionAssert.AreNotEquivalent(watcher.AllDiscoveredDevices.ToList(), new List<CosmedBleAdvertisedDevice>());
@@ -471,9 +477,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.status")]
-        public void Resume_afterStop_StatusIsStopped()
+        public async Task Resume_afterStop_StatusIsStopped()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Thread.Sleep(50);
             watcher.StopScanning();
             watcher.ResumeScanning();
@@ -485,9 +491,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.status")]
-        public void Resume_afterPause_StatusIsStarted()
+        public async Task Resume_afterPause_StatusIsStarted()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             watcher.PauseScanning();
             watcher.ResumeScanning();
             Thread.Sleep(50);
@@ -498,9 +504,9 @@ namespace CosmedBleLib.MSTest.UnitTest
 
         [TestMethod]
         [TestCategory("scanning.status")]
-        public void Pause_afterPause_StatusIsStarted()
+        public async Task Pause_afterPause_StatusIsStarted()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Thread.Sleep(100);
             watcher.PauseScanning();
             watcher.PauseScanning();
@@ -509,11 +515,12 @@ namespace CosmedBleLib.MSTest.UnitTest
         }
 
 
+
         [TestMethod]
         [TestCategory("scanning.status")]
-        public void StopScan_afterPause_WatcherIsNull()
+        public async Task StopScan_afterPause_WatcherIsNull()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Thread.Sleep(50);
             watcher.PauseScanning();
             Thread.Sleep(50);
@@ -523,11 +530,12 @@ namespace CosmedBleLib.MSTest.UnitTest
         }
 
 
+
         [TestMethod]
         [TestCategory("scanning.status")]
-        public void StopScan_afterStart_WatcherIsNull()
+        public async Task StopScan_afterStart_WatcherIsNull()
         {
-            watcher.StartActiveScanning();
+            await watcher.StartActiveScanning();
             Thread.Sleep(50);
             watcher.StopScanning();
 
