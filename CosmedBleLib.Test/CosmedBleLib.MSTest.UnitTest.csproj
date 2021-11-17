@@ -75,6 +75,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CosmedBluetoothLEAdvertisementFilterTest.cs" />
     <Compile Include="EventsTest.cs" />
+    <Compile Include="CosmedBleAdvertisedDeviceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

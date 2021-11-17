@@ -43,9 +43,9 @@ namespace CosmedBleLib
                 throw new ArgumentNullException("given device cannot be null");
             }
             Device = device;
-            GattSession = await GattSession.FromDeviceIdAsync(device.BluetoothDeviceId);
+            GattSession = await GattSession.FromDeviceIdAsync(device.BluetoothLeDevice.BluetoothDeviceId);
 
-            Device.bluetoothLeDevice.GattServicesChanged += GattServicesChangedHandler;
+            Device.BluetoothLeDevice.GattServicesChanged += GattServicesChangedHandler;
             GattSession.SessionStatusChanged += SessionStatusChangedHandler;
             GattSession.MaxPduSizeChanged += MaxPduSizeChangedHandler;
         }
@@ -56,6 +56,7 @@ namespace CosmedBleLib
         public CosmedBleDevice Device { get; private set; }
         public DeviceAccessStatus DeviceAccessStatus { get; private set; }
         public GattSession GattSession { get; private set; }
+        public bool MaintainConnection { get { return GattSession.CanMaintainConnection; } set { GattSession.MaintainConnection = value; } }
         public ushort MaxPduSize { get { return GattSession.MaxPduSize; } }
         public GattSessionStatus SessionStatus { get { return GattSession.SessionStatus; } }
 
@@ -103,7 +104,7 @@ namespace CosmedBleLib
         {
             try
             {
-                GattDeviceServicesResult services = await Device.bluetoothLeDevice.GetGattServicesForUuidAsync(requestedUuid, cacheMode).AsTask();
+                GattDeviceServicesResult services = await Device.BluetoothLeDevice.GetGattServicesForUuidAsync(requestedUuid, cacheMode).AsTask();
                 return services;
             }
             catch (Exception e)
@@ -179,21 +180,30 @@ namespace CosmedBleLib
         }
 
 
+        //uncached here is used for development, for production cached mode should be preferred as default, because it allows lower power consumption
         public async Task<GattDeviceServicesResult> GetGattServicesAsync(BluetoothCacheMode bluetoothCacheMode = BluetoothCacheMode.Uncached)
         {
-            var accessStatus = await Device.bluetoothLeDevice.RequestAccessAsync();
+            var accessStatus = await Device.BluetoothLeDevice.RequestAccessAsync();
             if (accessStatus == DeviceAccessStatus.Allowed)
             {
                 try
                 {
-                    return await Device.bluetoothLeDevice.GetGattServicesAsync(bluetoothCacheMode).AsTask();
+                    //how to set cache mode:
+                    //https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.bluetoothcachemode?view=winrt-22000
+                    return await Device.BluetoothLeDevice.GetGattServicesAsync(bluetoothCacheMode).AsTask();
                     //return gattResult;
                 }
                 catch (Exception e)
                 {
-                    throw new GattCommunicationException("impossible to retrieve the services", e);
+                    Console.WriteLine("ERROR: " + e.Message + " --- device name: " + Device.Name);
+                    //throw new GattCommunicationException("impossible to retrieve the services", e);
                 }
             }
+            ////potrei lanciare un´eccezione se il device non é raggiungibile, invece di restituire null
+            //else
+            //{
+            //    throw expetion ??
+            //}
             return null;
         }
 
@@ -202,6 +212,13 @@ namespace CosmedBleLib
 
         public void ClearServices()
         {
+            Device.BluetoothLeDevice.GattServicesChanged -= GattServicesChangedHandler;
+            GattSession.SessionStatusChanged -= SessionStatusChangedHandler;
+            GattSession.MaxPduSizeChanged -= MaxPduSizeChangedHandler;
+
+            GattSession.Dispose();
+            GattSession = null;
+
             if (gattResult != null)
             {
                 foreach (var service in gattResult.Services)
@@ -209,6 +226,10 @@ namespace CosmedBleLib
                     service.Dispose();
                 }
             }
+
+            gattResult = null;
+
+            GC.Collect();
         }
 
     }

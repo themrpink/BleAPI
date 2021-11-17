@@ -116,6 +116,7 @@ namespace CosmedBleLib.Test
             watcher.ScanStopped += (s, a) => { count += 1; };
             
             await watcher.StartActiveScanning();
+            Thread.Sleep(100);
             watcher.StopScanning();
             Thread.Sleep(100);
             await watcher.StartActiveScanning();
@@ -159,7 +160,21 @@ namespace CosmedBleLib.Test
             Assert.IsTrue(count == 0);
         }
 
-        
+
+        [TestMethod]
+        [TestCategory("events.advertisingDevice")]
+        public void AdvDeviceEScanResponsevent_ScanResponseReceived_EventRaised()
+        {
+            //TODO with integration test
+
+
+            Assert.IsTrue(true);
+        }
+
+
+        /**
+         * the other events shall be tests with integration tests
+         */
 
         [TestCleanup]
         public void Cleanup()

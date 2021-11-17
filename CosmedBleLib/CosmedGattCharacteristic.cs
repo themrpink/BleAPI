@@ -132,172 +132,193 @@ namespace CosmedBleLib
         }
 
 
-        public async Task<CosmedCharacteristicSubscriptionResult> SubscribeToNotification(Action<CosmedGattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<CosmedGattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+        public async Task<CosmedCharacteristicSubscriptionResult> SubscribeToNotification(TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
-            if (IsNotificationAllowed)
+            if (!characteristic.IsNotificationAllowed())
             {
-                GattReadClientCharacteristicConfigurationDescriptorResult cccd;
-                try
-                {
-                    Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
-                  //  cccd = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
-
-                    //if not notifying yet, then subscribe
-                  //  if (cccd.Status == GattCommunicationStatus.Success && cccd.ClientCharacteristicConfigurationDescriptor != GattClientCharacteristicConfigurationDescriptorValue.Notify)
-                    {
-                        GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask().ConfigureAwait(false);
-                        if (status == GattCommunicationStatus.Success)
-                        {
-                            if (valueChangedAction != null)
-                            {
-                                ValueChanged -= CharacteristicValueChanged;
-                                ValueChanged += valueChangedAction;
-                                CharacteristicValueChanged = valueChangedAction;
-                            }
-                        }
-                        //gives the last status
-                        return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, null, status);
-                    }
-                    //gives the cccd
-                    //return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, cccd);
-                }
-                catch (Exception e)
-                {
-                    if (errorAction != null)
-                    {
-                        ErrorFound -= CharacteristicErrorFound;
-                        ErrorFound += errorAction;
-                        CharacteristicErrorFound = errorAction;
-                    }
-                    var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Notify);
-                    OnErrorFound(args);
-                    Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
-                    Console.WriteLine(e.Message);
-                }
+                return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Notify, CosmedGattCommunicationStatus.OperationNotSupported);
             }
-            return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, CosmedGattCommunicationStatus.OperationNotSupported);
 
-        }
-
-
-        /*
-         * sviluppare l´oggetto  CosmedGattCommunicationStatus in modo che contenga molte più informazioni:
-         * cio
-         * é tutto quello che può contenere ´l´error args:
-         *         public GattCharacteristicProperties Property { get; private set; }
-        public GattReadClientCharacteristicConfigurationDescriptorResult Result {get; private set;}
-
-        public classe CosmedCharacteristicCommunicationResult
-        {
-        public CosmedGattCommunicationStatus status;
-            public GattCharacteristicProperties Property { get; private set; }
-            public GattReadClientCharacteristicConfigurationDescriptorResult Result {get; private set;}
-        }
-         */
-        public async Task<CosmedCharacteristicSubscriptionResult> SubscribeToIndication(Action<CosmedGattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<CosmedGattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
-        {
-            if (IsIndicationAllowed)
+            GattReadClientCharacteristicConfigurationDescriptorResult cccd;
+            try
             {
-                GattReadClientCharacteristicConfigurationDescriptorResult cccd = null;
-                try
-                {
-                    Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
-                    //questa funzione serve solo per indicate e notify !!
-                   // cccd = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
-                    //if not indicating yet, then subscribe
-                    //if (cccd.Status == GattCommunicationStatus.Success && cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Indicate)
-                    {
-                        var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask().ConfigureAwait(false);
-                        if (status == GattCommunicationStatus.Success)
-                        {
-                            //if not null replace the old function with the new one, which will be automatically called by the characteristic.ValueChanged event through the onValueChanged method
-                            if(valueChangedAction != null)
-                            {
-                                CharacteristicValueChanged = valueChangedAction;
-                            }                          
-                        }
-                        //gives the last status
-                        return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, cccd, status);
-                    }
-                    //gives the cccd
-                   // return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, cccd);
-                }
-                catch (Exception e)
-                {
-                    if (errorAction != null)
-                    {
-                        ErrorFound -= CharacteristicErrorFound;
-                        ErrorFound += errorAction;
-                        CharacteristicErrorFound = errorAction;
-                    }
+                Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
+                cccd = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
 
-                    CosmedGattErrorFoundEventArgs args;
-                    if (cccd != null)
-                        args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate, cccd);
-                    else
-                        args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate);
-
-                    OnErrorFound(args);
-                    Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
-                    Console.WriteLine(e.Message);
+                //if not notifying yet, then subscribe
+                if (cccd.Status != GattCommunicationStatus.Success)
+                {
+                    return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Notify,
+                                                                                        ConvertStatus(cccd.Status),
+                                                                                        cccd.ClientCharacteristicConfigurationDescriptor,
+                                                                                        cccd.ProtocolError
+                                                                                        );
                 }
+
+                if (cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Notify)
+                {
+                    return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Notify,
+                                                                                        ConvertStatus(cccd.Status),
+                                                                                        cccd.ClientCharacteristicConfigurationDescriptor,
+                                                                                        cccd.ProtocolError
+                                                                                        );
+                }
+
+                GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask().ConfigureAwait(false);
+                if (status == GattCommunicationStatus.Success)
+                {
+                    if (valueChangedAction != null)
+                    {
+                        characteristic.ValueChanged += valueChangedAction;
+                    }
+                }
+                //gives the last status
+                return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Notify,
+                                                                    ConvertStatus(status)
+                                                                    );
+
             }
-            return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, CosmedGattCommunicationStatus.OperationNotSupported);
-
-        }
-
-
-        public async Task<CosmedCharacteristicSubscriptionResult> StopSubscription(Action<GattCharacteristic, GattValueChangedEventArgs> response, Action<CosmedGattCharacteristic, CosmedGattErrorFoundEventArgs> action = null)
-        {
-            if (IsIndicationAllowed)
+            catch (Exception e)
             {
-                GattReadClientCharacteristicConfigurationDescriptorResult cccd = null;
-                try
+                if (errorAction != null)
                 {
-                    Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
-                    if (cccd.Status == GattCommunicationStatus.Success && cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Indicate)
-                    {
-                        var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None).AsTask().ConfigureAwait(false);
-                        if (status == GattCommunicationStatus.Success)
-                        {
-                            //adrebbe tolta la giusta action
-                            characteristic.ValueChanged -= (sender, args) => response(sender, args);
-
-                        }
-                        //gives the last status
-                        return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, cccd, status);
-                    }
-                    //gives the cccd
-                    return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, cccd);
+                    ErrorFoundClass.ErrorFound += errorAction;
                 }
-                catch (Exception e)
-                {
-                    if (action != null)
-                    {
-                        CharacteristicErrorFound = action;
-                    }
+                var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Notify);
 
-                    CosmedGattErrorFoundEventArgs args;
-                    if (cccd != null)
-                        args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate, cccd);
-                    else
-                        args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate);
+                //it fires the event 
+                ErrorFoundClass.Call(characteristic, args);
 
-                    OnErrorFound(args);
-                    Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
-                    Console.WriteLine(e.Message);
-                }
+                ErrorFoundClass.ErrorFound -= errorAction;
+                Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
+                Console.WriteLine(e.Message);
             }
-            return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, CosmedGattCommunicationStatus.OperationNotSupported);
 
+            return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Notify,
+                                                    CosmedGattCommunicationStatus.OperationNotSupported
+                                                    );
         }
+
+
+        public async Task<CosmedCharacteristicSubscriptionResult> SubscribeToIndication(TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+        {
+            if (!characteristic.IsIndicationAllowed())
+            {
+                return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Indicate, CosmedGattCommunicationStatus.OperationNotSupported);
+            }
+
+            GattReadClientCharacteristicConfigurationDescriptorResult cccd;
+            try
+            {
+                Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
+                cccd = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
+
+                //if not notifying yet, then subscribe
+                if (cccd.Status != GattCommunicationStatus.Success)
+                {
+                    return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Indicate,
+                                                                                        ConvertStatus(cccd.Status),
+                                                                                        cccd.ClientCharacteristicConfigurationDescriptor,
+                                                                                        cccd.ProtocolError
+                                                                                        );
+                }
+
+                if (cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Indicate)
+                {
+                    return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Indicate,
+                                                                                        ConvertStatus(cccd.Status),
+                                                                                        cccd.ClientCharacteristicConfigurationDescriptor,
+                                                                                        cccd.ProtocolError
+                                                                                        );
+                }
+
+                GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask().ConfigureAwait(false);
+                if (status == GattCommunicationStatus.Success)
+                {
+                    if (valueChangedAction != null)
+                    {
+                        characteristic.ValueChanged += valueChangedAction;
+                    }
+                }
+                //gives the last status
+                return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Indicate,
+                                                                    ConvertStatus(status)
+                                                                    );
+
+            }
+            catch (Exception e)
+            {
+                if (errorAction != null)
+                {
+                    ErrorFoundClass.ErrorFound += errorAction;
+                }
+                var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate);
+
+                //it fires the event 
+                ErrorFoundClass.Call(characteristic, args);
+
+                ErrorFoundClass.ErrorFound -= errorAction;
+                Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
+                Console.WriteLine(e.Message);
+            }
+
+            return new CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties.Notify,
+                                                    CosmedGattCommunicationStatus.OperationNotSupported
+                                                    );
+        }
+
+
+        //public async Task<CosmedCharacteristicSubscriptionResult> StopSubscription(Action<GattCharacteristic, GattValueChangedEventArgs> response, Action<CosmedGattCharacteristic, CosmedGattErrorFoundEventArgs> action = null)
+        //{
+        //    if (IsIndicationAllowed)
+        //    {
+        //        GattReadClientCharacteristicConfigurationDescriptorResult cccd = null;
+        //        try
+        //        {
+        //            Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
+        //            if (cccd.Status == GattCommunicationStatus.Success && cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Indicate)
+        //            {
+        //                var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None).AsTask().ConfigureAwait(false);
+        //                if (status == GattCommunicationStatus.Success)
+        //                {
+        //                    //adrebbe tolta la giusta action
+        //                    characteristic.ValueChanged -= (sender, args) => response(sender, args);
+
+        //                }
+        //                //gives the last status
+        //                return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, cccd, status);
+        //            }
+        //            //gives the cccd
+        //            return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, cccd);
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            if (action != null)
+        //            {
+        //                CharacteristicErrorFound = action;
+        //            }
+
+        //            CosmedGattErrorFoundEventArgs args;
+        //            if (cccd != null)
+        //                args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate, cccd);
+        //            else
+        //                args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate);
+
+        //            OnErrorFound(args);
+        //            Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
+        //            Console.WriteLine(e.Message);
+        //        }
+        //    }
+        //    return new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties, CosmedGattCommunicationStatus.OperationNotSupported);
+
+        //}
 
         #endregion
 
 
         #region Helper Methods
 
-        public static CosmedGattCommunicationStatus ConvertStatus(GattCommunicationStatus status)
+        private CosmedGattCommunicationStatus ConvertStatus(GattCommunicationStatus status)
         {
             switch (status)
             {
@@ -321,7 +342,7 @@ namespace CosmedBleLib
         }
 
 
-        public void Print()
+        public void ToString()
         {
             Console.WriteLine("Characteristic  Uuid: " + Uuid.ToString());
             Console.WriteLine("ProtectionLevel :" + ProtectionLevel.ToString());
@@ -360,6 +381,7 @@ namespace CosmedBleLib
     }
 
 
+
     public class CosmedGattErrorFoundEventArgs : EventArgs
     {
         public Exception Exception { get; private set; }
@@ -379,6 +401,7 @@ namespace CosmedBleLib
     }
 
 
+
     public class CosmedCharacteristicSubscriptionResult : ICommunicationResult
     {
         public GattCharacteristicProperties Property { get; private set; }
@@ -386,40 +409,31 @@ namespace CosmedBleLib
         public CosmedGattCommunicationStatus Status { get; private set; }
         public byte? ProtocolError { get; private set; }
 
-
-
-        public CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties property, GattReadClientCharacteristicConfigurationDescriptorResult result)
-        {
-            this.Property = property;
-            if (result != null)
-            {
-                ClientCharacteristicConfigurationDescriptor = result.ClientCharacteristicConfigurationDescriptor;
-                Status = CosmedGattCharacteristic.ConvertStatus(result.Status);
-                ProtocolError = result.ProtocolError;
-            }
-        }
-
-
-        public CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties property, GattReadClientCharacteristicConfigurationDescriptorResult result, GattCommunicationStatus status) : this(property, result)
-        {
-            Status = CosmedGattCharacteristic.ConvertStatus(status);
-        }
-
-
         public CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties property, CosmedGattCommunicationStatus status)
         {
             Property = property;
             Status = status;
         }
+
+        public CosmedCharacteristicSubscriptionResult(GattCharacteristicProperties property, CosmedGattCommunicationStatus status, GattClientCharacteristicConfigurationDescriptorValue clientCharacteristicConfigurationDescriptor, byte? protocolError)
+        {
+            Property = property;
+            Status = status;
+            ClientCharacteristicConfigurationDescriptor = clientCharacteristicConfigurationDescriptor;
+            ProtocolError = protocolError;
+        }
     }
+
 
 
     public class CosmedCharacteristicReadResult : BufferReader, ICommunicationResult
     {
-        public byte? ProtocolError { get; }
-        public CosmedGattCommunicationStatus Status { get; }
+        public byte? ProtocolError { get; private set; }
+        public CosmedGattCommunicationStatus Status { get; private set; }
 
         public string ProtocolErrorString { get { return string.Format("X2", ProtocolError); } }
+
+        public GattCharacteristicProperties Property { get; private set; }
 
         public CosmedCharacteristicReadResult(IBuffer buffer, CosmedGattCommunicationStatus status, byte? protocolError) : base(buffer)
         {
@@ -430,8 +444,10 @@ namespace CosmedBleLib
     }
 
 
+
     public class CosmedCharacteristicWriteResult : ICommunicationResult
         {
+            public GattCharacteristicProperties Property { get; private set; }
             public byte? ProtocolError { get; }
 
             public CosmedGattCommunicationStatus Status { get; }

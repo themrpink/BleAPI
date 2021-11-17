@@ -51,12 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections.cs" />
-    <Compile Include="Connector.cs" />
     <Compile Include="PairingDevice.cs" />
     <Compile Include="CosmedGattCharacteristic.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="CosmedDataReader.cs" />
-    <Compile Include="CosmedBleConnectedDevice.cs" />
     <Compile Include="CosmedBluetoothLEAdapter.cs" />
     <Compile Include="CosmedBleAdvertisedDevice.cs" />
     <Compile Include="CosmedBluetoothLEAdvertisementFilter.cs" />

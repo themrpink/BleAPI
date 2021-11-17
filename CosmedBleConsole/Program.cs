@@ -73,48 +73,24 @@ namespace CosmedBleConsole
                      {
                         device.PrintAdvertisement();
 
-                        var conn = await Connector.StartConnectionProcessAsync(scanner, device);
-
-                        if (device.IsConnectable)  //&& device.DeviceName.Equals("myname")
+                        if (device.IsConnectable && device.DeviceName.Equals("myname"))
                         {
+
+                            //var p = await Connector.StartConnectionProcessAsync(scanner, device);
                             scanner.StopScanning();
  
-                            //get device
+                            //get device. it´s possible to set some event handler
                             CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
                             
-                            //pairing
-                            PairedDevice pairedDevice = await PairingService.GetPairedDevice(connectionDevice, ceremonySelection, minProtectionLevel);
-                            
-                            var guid = BluetoothUuidHelper.FromShortId(0x1800);
-                            BluetoothLEDevice bleDevice = await BluetoothLEDevice.FromIdAsync(pairedDevice.BluetoothDeviceId.Id).AsTask();
-                            //string selector = "(" + GattDeviceService.GetDeviceSelectorFromUuid(guid) + ")"
-                            //                    + " AND (System.DeviceInterface.Bluetooth.DeviceAddress:=\""
-                            //                    + bleDevice.BluetoothAddress.ToString("X") + "\")";
+                            //pairing. it´s possible to call an overload with custom event handler
+                            PairingResult pairedDevice = await PairingService.GetPairedDevice(connectionDevice, ceremonySelection, minProtectionLevel);
+
+                            //it´s possible to set some event handler
+                            GattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
 
 
-                            //var gattServiceWatcher = DeviceInformation.CreateWatcher(selector);
-
-                            
-                            //gattServiceWatcher.Added += (s, a) => { Console.WriteLine("trovato il device " + a.Name); Console.WriteLine("pairing: " + a.Pairing.IsPaired); Console.WriteLine("press enter"); goon = true; Console.ReadLine(); };
-                            ////create a discovery service for a paired device
-                            //gattServiceWatcher.Start();
-                      
-                            GattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(pairedDevice);
-
-
-                            //while (!goon) { }
                             //request the gatt result (collection of services)
                             GattDeviceServicesResult gattResult = await discoveryService.GetGattServicesAsync();
-
-                            //request all services and relative characteristics (dictionary)
-                            var allServicesAndCharacteristics = await discoveryService.DiscoverAllGattServicesAndCharacteristics();
-                            
-                            
-                   
-                            DeviceInformationCollection PairedBluetoothDevices = await DeviceInformation.FindAllAsync(BluetoothDevice.GetDeviceSelectorFromPairingState(true)).AsTask();
-                            //Connected bluetooth devices
-                            DeviceInformationCollection ConnectedBluetoothDevices = await DeviceInformation.FindAllAsync(BluetoothDevice.GetDeviceSelectorFromConnectionStatus(BluetoothConnectionStatus.Connected)).AsTask();
-                            Thread.Sleep(3000);
 
 
                             Console.WriteLine("stampa dal gatt results");
@@ -128,30 +104,20 @@ namespace CosmedBleConsole
                                 {
                                     Console.WriteLine("__characteristic__");
                                     characteristic.Print();
+                                    var read = await characteristic.Read();
+                                    var write = await characteristic.Write(0x001);
+                                    var notify = await characteristic.SubscribeToNotification(  
+                                                                                                (s, a) => Console.WriteLine(a.Timestamp.ToString()), 
+                                                                                                (s, e) => Console.WriteLine("error")
+                                                                                              );
+                                    var indicate = await characteristic.SubscribeToIndication();
+                                    var unsub = await characteristic.UnSubscribe();
                                 }
                             }
-
-
-                            Console.WriteLine("stampa dal dizionario");
-                            foreach (var service in allServicesAndCharacteristics.Keys)
-                            {
-                                Console.WriteLine("__service__");
-                                service.Print();
- 
-                                foreach (var characteristic in await allServicesAndCharacteristics[service])
-                                {
-                                    Console.WriteLine("__characteristic__");
-                                    characteristic.Print();
-                                }
-                            }
-
-
+                        
                             discoveryService.ClearServices();
-                            var r = await PairingService.Unpair(pairedDevice);
-                            pairedDevice.Disconnect();
-                            
-
-                            scanner.StartActiveScanning();
+                            var r = await PairingService.Unpair(connectionDevice);
+                            connectionDevice.Disconnect();                          
                         }
                     }
                 }
@@ -176,7 +142,26 @@ namespace CosmedBleConsole
 
     }
 
+    //var guid = BluetoothUuidHelper.FromShortId(0x1800);
+    //BluetoothLEDevice bleDevice = await BluetoothLEDevice.FromIdAsync(pairedDevice.BluetoothDeviceId.Id).AsTask();
+    //string selector = "(" + GattDeviceService.GetDeviceSelectorFromUuid(guid) + ")"
+    //                    + " AND (System.DeviceInterface.Bluetooth.DeviceAddress:=\""
+    //                    + bleDevice.BluetoothAddress.ToString("X") + "\")";
+    //00001800-0000-1000-8000-00805f9b34fb
 
+    //var gattServiceWatcher = DeviceInformation.CreateWatcher(selector);
+
+
+    //gattServiceWatcher.Added += (s, a) => { Console.WriteLine("trovato il device " + a.Name); Console.WriteLine("pairing: " + a.Pairing.IsPaired); Console.WriteLine("press enter"); goon = true; Console.ReadLine(); };
+    ////create a discovery service for a paired device
+    //gattServiceWatcher.Start();
+
+
+
+    //DeviceInformationCollection PairedBluetoothDevices = await DeviceInformation.FindAllAsync(BluetoothDevice.GetDeviceSelectorFromPairingState(true)).AsTask();
+    ////Connected bluetooth devices
+    //DeviceInformationCollection ConnectedBluetoothDevices = await DeviceInformation.FindAllAsync(BluetoothDevice.GetDeviceSelectorFromConnectionStatus(BluetoothConnectionStatus.Connected)).AsTask();
+    //Thread.Sleep(3000);
 
 }
 

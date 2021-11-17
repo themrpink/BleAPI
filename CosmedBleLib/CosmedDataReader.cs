@@ -246,7 +246,7 @@ namespace CosmedBleLib
     }
 
 
-    public class CharacteristicReader : BufferReader, ICommunicationResult
+    public class CharacteristicReader : BufferReader
     {
         public GattCharacteristic Sender { get; }
         public byte? ProtocolError { get;}

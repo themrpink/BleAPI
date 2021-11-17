@@ -24,12 +24,13 @@ namespace CosmedBleLib
     }
 
 
+    //offers an event to be raised when an exception is raised during a gatt operation
     public static class ErrorFoundClass
     {
         public static event Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> ErrorFound;
         public static void Call(GattCharacteristic sender, CosmedGattErrorFoundEventArgs args)
         {
-            ErrorFound.Invoke(sender, args);
+            ErrorFound?.Invoke(sender, args);
         }
     }
 
@@ -50,7 +51,7 @@ namespace CosmedBleLib
     public static class GattCharacteristicExtensions
 
     {
-
+        #region gatt operations
         public static async Task<CosmedGattCommunicationStatus> Write(this GattCharacteristic characteristic, byte value, ushort? maxPduSize = null)
         {
             GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
@@ -226,7 +227,10 @@ namespace CosmedBleLib
                     ErrorFoundClass.ErrorFound += errorAction;
                 }
                 var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Notify);
+
+                //it fires the event 
                 ErrorFoundClass.Call(characteristic, args);
+          
                 ErrorFoundClass.ErrorFound -= errorAction;
                 Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
                 Console.WriteLine(e.Message);
@@ -253,6 +257,18 @@ namespace CosmedBleLib
                 //if not notifying yet, then subscribe
                 if (cccd.Status != GattCommunicationStatus.Success)
                 {
+                    /*
+                     * TODO:
+                     * utilizzare questo tipo di oggetto per il return.
+                     * l´interfaccia serve per poterli restituire tutti dello stesso tipo, ma la property permette di
+                     * fare un cast appropriato se necessario
+                     */
+                    CosmedCharacteristicSubscriptionResult test = new CosmedCharacteristicSubscriptionResult(   characteristic.CharacteristicProperties, 
+                                                                                                                cccd.Status.ConvertStatus(), 
+                                                                                                                cccd.ClientCharacteristicConfigurationDescriptor, 
+                                                                                                                cccd.ProtocolError
+                                                                                                                );
+                    Console.WriteLine("impossibile leggere cccd");
                     return cccd.Status.ConvertStatus();
                 }
 
@@ -283,7 +299,7 @@ namespace CosmedBleLib
                 var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate);
                 ErrorFoundClass.Call(characteristic, args);
                 ErrorFoundClass.ErrorFound -= errorAction;
-                Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
+                Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString() + " name: " + characteristic.Service.Device.Name);
                 Console.WriteLine(e.Message);
             }
 
@@ -348,8 +364,9 @@ namespace CosmedBleLib
             }
             
         }
+        #endregion
 
-
+        #region helper methods
         public static void Print(this GattCharacteristic c)
         {
             Console.WriteLine("Characteristic  Uuid: " + c.Uuid.ToString());
@@ -380,7 +397,7 @@ namespace CosmedBleLib
 
 
 
-        private static CosmedGattCommunicationStatus ConvertStatus(this GattCommunicationStatus status)
+        public static CosmedGattCommunicationStatus ConvertStatus(this GattCommunicationStatus status)
         {
             switch (status)
             {
@@ -392,7 +409,7 @@ namespace CosmedBleLib
             }
         }
 
-        private static bool IsNotificationAllowed(this GattCharacteristic characteristic)
+        public static bool IsNotificationAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Notify);
         }
@@ -407,10 +424,12 @@ namespace CosmedBleLib
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Read);
         }
 
-        private static bool IsIndicationAllowed(this GattCharacteristic characteristic)
+        public static bool IsIndicationAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Indicate);
         }
+        #endregion
+
     }
 
 
