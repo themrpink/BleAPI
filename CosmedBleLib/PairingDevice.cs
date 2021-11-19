@@ -107,7 +107,7 @@ namespace CosmedBleLib
             try
             {
                 // Verificare: BT_Code: BluetoothLEDevice.FromIdAsync must be called from a UI thread because it may prompt for consent.
-                IAsyncOperation<BluetoothLEDevice> task = BluetoothLEDevice.FromBluetoothAddressAsync(deviceAddress, BluetoothAddressType.Random);
+                IAsyncOperation<BluetoothLEDevice> task = BluetoothLEDevice.FromBluetoothAddressAsync(deviceAddress);
                 this.bluetoothLeDevice = await task.AsTask().ConfigureAwait(false);
             }
             catch (Exception e)

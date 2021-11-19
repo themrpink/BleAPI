@@ -67,8 +67,5 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Values.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="temp.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

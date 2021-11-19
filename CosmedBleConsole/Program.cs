@@ -73,7 +73,7 @@ namespace CosmedBleConsole
                      {
                         device.PrintAdvertisement();
 
-                        if (device.IsConnectable && device.DeviceName.Equals("myname"))
+                        if (device.IsConnectable)// && device.DeviceName.Equals("myname"))
                         {
 
                             //var p = await Connector.StartConnectionProcessAsync(scanner, device);
@@ -107,14 +107,34 @@ namespace CosmedBleConsole
                                     var read = await characteristic.Read();
                                     var write = await characteristic.Write(0x001);
                                     var notify = await characteristic.SubscribeToNotification(  
-                                                                                                (s, a) => Console.WriteLine(a.Timestamp.ToString()), 
+                                                                                                (s, a) => 
+                                                                                                
+                                                                                                {
+                                                                                                    Console.WriteLine("notification:");
+                                                                                                    Console.WriteLine(a.Timestamp.ToString());
+                                                                                                    IBuffer CharacteristicValue = a.CharacteristicValue;
+                                                                                                    string val = GattFromBufferReader.ToUTF8String(CharacteristicValue);
+                                                                                                    Console.WriteLine("buffer content: " + val);
+
+                                                                                                    }, 
                                                                                                 (s, e) => Console.WriteLine("error")
                                                                                               );
-                                    var indicate = await characteristic.SubscribeToIndication();
+                                    //var indicate = await characteristic.SubscribeToIndication(
+                                    //                                                                       (s, a) =>
+
+                                    //                                                                       {
+                                    //                                                                           Console.WriteLine("indication:");
+                                    //                                                                           Console.WriteLine(a.Timestamp.ToString());
+                                    //                                                                           IBuffer CharacteristicValue = a.CharacteristicValue;
+                                    //                                                                           string val = GattFromBufferReader.ToUTF8String(CharacteristicValue);
+                                    //                                                                           Console.WriteLine("buffer content: " + val);
+
+                                    //                                                                       },
+                                    //                                                            (s, e) => Console.WriteLine("error"));
                                     var unsub = await characteristic.UnSubscribe();
                                 }
                             }
-                        
+                            Thread.Sleep(10000);
                             discoveryService.ClearServices();
                             var r = await PairingService.Unpair(connectionDevice);
                             connectionDevice.Disconnect();                          

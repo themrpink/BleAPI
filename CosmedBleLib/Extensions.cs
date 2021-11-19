@@ -194,19 +194,19 @@ namespace CosmedBleLib
             GattReadClientCharacteristicConfigurationDescriptorResult cccd;
             try
             {
-                Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
-                cccd = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
+                //Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
+                //cccd = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
 
-                //if not notifying yet, then subscribe
-                if (cccd.Status != GattCommunicationStatus.Success)
-                {
-                    return cccd.Status.ConvertStatus();
-                }
+                ////if not notifying yet, then subscribe
+                //if (cccd.Status != GattCommunicationStatus.Success)
+                //{
+                //    return cccd.Status.ConvertStatus();
+                //}
 
-                if (cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Notify)
-                {
-                    return CosmedGattCommunicationStatus.OperationAlreadyRegistered;
-                }
+                //if (cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Notify)
+                //{
+                //    return CosmedGattCommunicationStatus.OperationAlreadyRegistered;
+                //}
 
                 GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask().ConfigureAwait(false);
                 if (status == GattCommunicationStatus.Success)
@@ -269,13 +269,13 @@ namespace CosmedBleLib
                                                                                                                 cccd.ProtocolError
                                                                                                                 );
                     Console.WriteLine("impossibile leggere cccd");
-                    return cccd.Status.ConvertStatus();
+                   // return cccd.Status.ConvertStatus();
                 }
 
-                if (cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Indicate)
-                {
-                    return CosmedGattCommunicationStatus.OperationAlreadyRegistered;
-                }
+                //if (cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Indicate)
+                //{
+                //    return CosmedGattCommunicationStatus.OperationAlreadyRegistered;
+                //}
 
 
                 GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask().ConfigureAwait(false);
