@@ -13,7 +13,24 @@ using Windows.Foundation;
 namespace CosmedBleLib
 {
 
-    public sealed class GattDiscoveryService
+    public interface IGattDiscoveryService
+    {
+        Task<GattDeviceServicesResult> FindGattServicesByUuidAsync(Guid requestedUuid, BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached);
+        Task<IReadOnlyList<GattCharacteristic>> FindGattCharacteristicsByUuidAsync(Guid requestedUuid);
+        Task<GattDeviceServicesResult> GetGattServicesAsync(BluetoothCacheMode bluetoothCacheMode = BluetoothCacheMode.Uncached);
+
+        Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>> DiscoverAllGattServicesAndCharacteristics();
+
+        void ClearServices();
+
+        event TypedEventHandler<BluetoothLEDevice, object> GattServicesChanged;
+        event TypedEventHandler<GattSession, object> MaxPduSizeChanged;
+        event TypedEventHandler<GattSession, GattSessionStatusChangedEventArgs> SessionStatusChanged;
+
+    }
+
+
+    public sealed class GattDiscoveryService : IGattDiscoveryService
     {
 
         #region Private members
@@ -25,8 +42,10 @@ namespace CosmedBleLib
 
         #region Constructor
 
+ 
         private GattDiscoveryService()
         {
+
         }
 
         public async static Task<GattDiscoveryService> CreateAsync(CosmedBleDevice device)
@@ -35,6 +54,7 @@ namespace CosmedBleLib
             await service.InitializeAsync(device);
             return service;
         }
+
 
         private async Task InitializeAsync(CosmedBleDevice device)
         {

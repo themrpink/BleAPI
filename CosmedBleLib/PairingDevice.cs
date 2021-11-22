@@ -231,6 +231,7 @@ namespace CosmedBleLib
     }
 
 
+
     public sealed class PairingResult
     {
         public bool WasSecureConnectionUsedForPairing { get; private set; }
@@ -247,6 +248,7 @@ namespace CosmedBleLib
             WasSecureConnectionUsedForPairing = wasSecureConnectionUsedForPairing;
         }
     }
+
 
 
     //take a CosmedBleDevice and try to pair it. If pairing succeeds the return a PairedDevice

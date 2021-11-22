@@ -37,7 +37,7 @@ namespace CosmedBleLib
         private Dictionary<ulong, CosmedBleAdvertisedDevice> lastDiscoveredDevices; 
 
         //filter to apply to the discovered devices
-        private CosmedBluetoothLEAdvertisementFilter filter;
+        private IFilter filter;
 
         //lock for safe access to shared resources:
         //dictionary
@@ -182,7 +182,7 @@ namespace CosmedBleLib
         /// constructor setting the filter
         /// </summary>
         /// <param name="advertisementFilter"></param>
-        public CosmedBluetoothLEAdvertisementWatcher(CosmedBluetoothLEAdvertisementFilter filter) : this()
+        public CosmedBluetoothLEAdvertisementWatcher(IFilter filter) : this()
         {            
             SetFilter(filter ?? throw new ArgumentNullException(nameof(filter)));
             IsFilteringActive = true;
@@ -375,7 +375,7 @@ namespace CosmedBleLib
         }
         
         
-        public void SetFilter(CosmedBluetoothLEAdvertisementFilter filter)
+        public void SetFilter(IFilter filter)
         {
             filter = filter ?? throw new ArgumentNullException(nameof(filter));
 
@@ -398,7 +398,6 @@ namespace CosmedBleLib
             {
                 watcher.AdvertisementFilter = new BluetoothLEAdvertisementFilter();
                 watcher.SignalStrengthFilter = new BluetoothSignalStrengthFilter();
-                CosmedBluetoothLEAdvertisementFilter filterTemp = filter;
                 filter = null;              
             }
             IsFilteringActive = false;

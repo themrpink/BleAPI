@@ -27,7 +27,9 @@ namespace CosmedBleLib
     //offers an event to be raised when an exception is raised during a gatt operation
     public static class ErrorFoundClass
     {
+
         public static event Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> ErrorFound;
+
         public static void Call(GattCharacteristic sender, CosmedGattErrorFoundEventArgs args)
         {
             ErrorFound?.Invoke(sender, args);
@@ -501,4 +503,7 @@ namespace CosmedBleLib
     }
 
 
+
+
+    }
 }

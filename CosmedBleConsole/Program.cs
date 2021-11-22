@@ -39,6 +39,9 @@ namespace CosmedBleConsole
                                                                          DevicePairingProtectionLevel.EncryptionAndAuthentication;
         public async static Task Main(String[] args)
         {
+            FilterBuilder cfb = FilterBuilder.Init(true);
+            IFilter f = cfb.ClearAdvertisementFilter().BuildFilter();
+           
             //to use the other implementation option
             // DeviceEnumeration.StartDeviceEnumeration();
 
@@ -83,7 +86,7 @@ namespace CosmedBleConsole
                             CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
                             
                             //pairing. it´s possible to call an overload with custom event handler
-                            PairingResult pairedDevice = await PairingService.GetPairedDevice(connectionDevice, ceremonySelection, minProtectionLevel);
+                           // PairingResult pairedDevice = await PairingService.GetPairedDevice(connectionDevice, ceremonySelection, minProtectionLevel);
 
                             //it´s possible to set some event handler
                             GattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
@@ -134,7 +137,7 @@ namespace CosmedBleConsole
                                     var unsub = await characteristic.UnSubscribe();
                                 }
                             }
-                            Thread.Sleep(10000);
+
                             discoveryService.ClearServices();
                             var r = await PairingService.Unpair(connectionDevice);
                             connectionDevice.Disconnect();                          
