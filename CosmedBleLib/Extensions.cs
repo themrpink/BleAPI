@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Foundation;
@@ -43,9 +45,16 @@ namespace CosmedBleLib
         {
             Console.WriteLine("printing a service:");
             Console.WriteLine("service handle: " + service.AttributeHandle.ToString("X2"));
-            Console.WriteLine("service uuid: " + service.Uuid.ToString());
+            Console.WriteLine("service uuid: " + service.Uuid.ToString() + " " + GattServiceUuidHelper.ConvertUuidToName(service.Uuid));
             Console.WriteLine("service device access information (current status): " + service.DeviceAccessInformation.CurrentStatus.ToString());
-            Console.WriteLine("service Gatt Session: " + service.Session);
+            Console.WriteLine("service Gatt CanMaintainConnection: " + service.Session.CanMaintainConnection);
+            Console.WriteLine("service Gatt Device Id: " + service.Session.DeviceId.Id);
+            Console.WriteLine("service Gatt Is classic device: " + service.Session.DeviceId.IsClassicDevice);
+            Console.WriteLine("service Gatt IsLowEnergyDevice: " + service.Session.DeviceId.IsLowEnergyDevice);
+            Console.WriteLine("service Gatt MaintainConnection: " + service.Session.MaintainConnection);
+            Console.WriteLine("service Gatt MaxPduSize: " + service.Session.MaxPduSize);
+            Console.WriteLine("service Gatt SessionStatus: " + service.Session.SessionStatus.ToString());
+            Console.WriteLine("service Gatt SharingMode: " + service.SharingMode.ToString());
         }
     }
 
@@ -54,47 +63,132 @@ namespace CosmedBleLib
 
     {
         #region gatt operations
-        public static async Task<CosmedGattCommunicationStatus> Write(this GattCharacteristic characteristic, byte value, ushort? maxPduSize = null)
+
+
+        //public static async Task<GattDescriptorsResult> GetDescriptorValue(this GattCharacteristic characteristic)
+        //{
+        //    var result = await characteristic.GetDescriptorsAsync().AsTask();
+        //    return result;
+
+        //}
+
+        //allows from each characteristic to add a value to a reliable write instance
+        public static void AddCharacteristicToReliableWrite(this GattCharacteristic characteristic, GattReliableWriteTransaction reliableWriteTransaction, IBuffer value)
+        {
+            reliableWriteTransaction.WriteValue(characteristic, value);
+        }
+
+
+
+        public static async Task<CosmedCharacteristicWriteResult> WriteWithResult(this GattCharacteristic characteristic, byte[] value, GattWriteOption writeOption, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null) 
         {
             GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
-            if (characteristic.IsWriteAllowed()) 
+
+            if(writeOption == GattWriteOption.WriteWithoutResponse)
             {
-                if(maxPduSize != null)
-                {
-                    //check byte size
-                }
+                properties = GattCharacteristicProperties.WriteWithoutResponse;
+            }
+            else if(writeOption == GattWriteOption.WriteWithResponse)
+            {
+                properties = GattCharacteristicProperties.Write;
+            }
+            //what about reliable writes ???
+
+            
+            if (characteristic.IsWriteAllowed())
+            {
                 //check MaxPduSize from GattSession before use
                 var writer = new DataWriter();
                 // WriteByte used for simplicity. Other common functions - WriteInt16 and WriteSingle
 
                 try
                 {
-                    writer.WriteByte(value);
+                    writer.WriteBytes(value);
 
                     if (characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Write))
                     {
-                        var statusResultValue = await characteristic.WriteValueAsync(writer.DetachBuffer(), GattWriteOption.WriteWithResponse).AsTask().ConfigureAwait(false);
-                        return statusResultValue.ConvertStatus();
+                        var statusResultValue = await characteristic.WriteValueWithResultAsync(writer.DetachBuffer(), writeOption).AsTask().ConfigureAwait(false);
+                        return new CosmedCharacteristicWriteResult(statusResultValue.ProtocolError, statusResultValue.Status.ConvertStatus());
                     }
 
                     // write without response cannot write values larger than MTU as per spec. Any longer writes can only be handled with response.
                     else if (characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.WriteWithoutResponse))
                     {
-                        var statusResultValue = await characteristic.WriteValueAsync(writer.DetachBuffer(), GattWriteOption.WriteWithoutResponse).AsTask().ConfigureAwait(false);
-                        return statusResultValue.ConvertStatus();
+                        var statusResultValue = await characteristic.WriteValueWithResultAsync(writer.DetachBuffer(), GattWriteOption.WriteWithoutResponse).AsTask().ConfigureAwait(false);
+                        return new CosmedCharacteristicWriteResult(statusResultValue.ProtocolError, statusResultValue.Status.ConvertStatus());
                     }
+
+                    writer.Dispose();
                 }
                 catch (Exception e)
                 {
+                    if (errorAction != null)
+                    {
+                        ErrorFoundClass.ErrorFound += errorAction;
+                    }
+                    var args = new CosmedGattErrorFoundEventArgs(e, properties);
+
+                    //it fires the event 
+                    ErrorFoundClass.Call(characteristic, args);
+
+                    ErrorFoundClass.ErrorFound -= errorAction;
                     Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
                     Console.WriteLine(e.Message);
+                    
+                    return new CosmedCharacteristicWriteResult(null, CosmedGattCommunicationStatus.Unreachable);
                 }
             }
-           return CosmedGattCommunicationStatus.OperationNotSupported;
+            return new CosmedCharacteristicWriteResult(null, CosmedGattCommunicationStatus.OperationNotSupported);
         }
 
+        //public static async Task<CosmedGattCommunicationStatus> Write(this GattCharacteristic characteristic, byte[] value)
+        //{
+        //    GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
+        //    if (characteristic.IsWriteAllowed()) 
+        //    {
+        //        //check MaxPduSize from GattSession before use
+        //        var writer = new DataWriter();
+        //        // WriteByte used for simplicity. Other common functions - WriteInt16 and WriteSingle
 
-        public static async Task<CosmedCharacteristicReadResult> Read(this GattCharacteristic characteristic)
+        //        try
+        //        {
+        //            writer.WriteBytes(value);
+
+        //            if (characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Write))
+        //            {
+        //                var statusResultValue = await characteristic.WriteValueAsync(writer.DetachBuffer(), GattWriteOption.WriteWithResponse).AsTask().ConfigureAwait(false);
+        //                return statusResultValue.ConvertStatus();
+        //            }
+
+        //            // write without response cannot write values larger than MTU as per spec. Any longer writes can only be handled with response.
+        //            else if (characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.WriteWithoutResponse))
+        //            {
+        //                var statusResultValue = await characteristic.WriteValueAsync(writer.DetachBuffer(), GattWriteOption.WriteWithoutResponse).AsTask().ConfigureAwait(false);
+        //                return statusResultValue.ConvertStatus();
+        //            }
+        //            writer.Dispose();
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            if (errorAction != null)
+        //            {
+        //                ErrorFoundClass.ErrorFound += errorAction;
+        //            }
+        //            var args = new CosmedGattErrorFoundEventArgs(e, properties);
+
+        //            //it fires the event 
+        //            ErrorFoundClass.Call(characteristic, args);
+
+        //            ErrorFoundClass.ErrorFound -= errorAction;
+        //            Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
+        //            Console.WriteLine(e.Message);
+        //        }
+        //    }
+        //   return CosmedGattCommunicationStatus.OperationNotSupported;
+        //}
+
+
+        public static async Task<CosmedCharacteristicReadResult> Read(this GattCharacteristic characteristic, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
             GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
 
@@ -111,6 +205,16 @@ namespace CosmedBleLib
                 }
                 catch (Exception e)
                 {
+                    if (errorAction != null)
+                    {
+                        ErrorFoundClass.ErrorFound += errorAction;
+                    }
+                    var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Read);
+
+                    //it fires the event 
+                    ErrorFoundClass.Call(characteristic, args);
+
+                    ErrorFoundClass.ErrorFound -= errorAction;
                     Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
                     Console.WriteLine(e.Message);
                 }
@@ -181,8 +285,6 @@ namespace CosmedBleLib
 
                 return CosmedGattCommunicationStatus.Unreachable;
             }
-
-
         }
 
 
@@ -196,20 +298,6 @@ namespace CosmedBleLib
             GattReadClientCharacteristicConfigurationDescriptorResult cccd;
             try
             {
-                //Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
-                //cccd = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
-
-                ////if not notifying yet, then subscribe
-                //if (cccd.Status != GattCommunicationStatus.Success)
-                //{
-                //    return cccd.Status.ConvertStatus();
-                //}
-
-                //if (cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Notify)
-                //{
-                //    return CosmedGattCommunicationStatus.OperationAlreadyRegistered;
-                //}
-
                 GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask().ConfigureAwait(false);
                 if (status == GattCommunicationStatus.Success)
                 {
@@ -236,10 +324,9 @@ namespace CosmedBleLib
                 ErrorFoundClass.ErrorFound -= errorAction;
                 Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
                 Console.WriteLine(e.Message);
+
+                return CosmedGattCommunicationStatus.Unreachable;
             }
-
-
-            return CosmedGattCommunicationStatus.OperationNotSupported;
         }
 
 
@@ -303,6 +390,8 @@ namespace CosmedBleLib
                 ErrorFoundClass.ErrorFound -= errorAction;
                 Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString() + " name: " + characteristic.Service.Device.Name);
                 Console.WriteLine(e.Message);
+
+                return CosmedGattCommunicationStatus.Unreachable;
             }
 
 
@@ -371,28 +460,44 @@ namespace CosmedBleLib
         #region helper methods
         public static void Print(this GattCharacteristic c)
         {
-            Console.WriteLine("Characteristic  Uuid: " + c.Uuid.ToString());
+            var b = BluetoothLEAppearanceCategories.BarcodeScanner;
+            var d = BluetoothAppearanceTypeUuid.AudioSink;
+            var e = BluetoothLEAppearanceSubcategories.BarcodeScanner;
+            //var f = BluetoothLEAppearance.
+            var shortId = BluetoothUuidHelper.TryGetShortId(c.Uuid);
+            if (shortId == (ushort)GattCharacteristicUuid.Appearance)
+            {
+                var array = c.Uuid.ToByteArray();
+                byte[] temp = new byte[4];
+                for(int i=0; i<4; i++)
+                {
+                    temp[i] = array[i + 8];
+                }
+                //var value = BitConverter.ToUInt16(temp, 0);
+                Console.WriteLine("appearance: " + AppearenceDataTypeHelper.ConvertAppearenceTypeToString(temp));
+            }
+            Console.WriteLine("Characteristic  Uuid: " + c.Uuid.ToString() + " " + GattCharacteristicUuidHelper.ConvertUuidToName(c.Uuid)); 
             Console.WriteLine("ProtectionLevel :" + c.ProtectionLevel.ToString());
             Console.WriteLine("Attribute Handle :" + c.AttributeHandle);
+            Console.WriteLine("Attribute Handle hex:" + String.Format("{0:X}", c.AttributeHandle));
             Console.WriteLine("CharacteristicProperties :" + c.CharacteristicProperties.ToString());
-            Console.WriteLine("user description: " + c.UserDescription);
+            Console.WriteLine("user description:" + c.UserDescription);
             Console.WriteLine("_________Gatt presentation format:________");
             try
             {
                 foreach (var pres in c.PresentationFormats)
                 {
-
                     Console.WriteLine("Description: " + pres.Description);
                     Console.WriteLine("Exponent: " + pres.Exponent);
-                    Console.WriteLine("FormatType: " + pres.FormatType.ToString("X2"));
-                    Console.WriteLine("namepsace: " + pres.Namespace.ToString("X2"));
-                    Console.WriteLine("unit: " + pres.Unit);
+                    Console.WriteLine("FormatType: " +    pres.FormatType.ToString("X2") + " " + PresentationFormatTypeHelper.ConvertFormatTypeToString(pres.FormatType));
+                    Console.WriteLine("namepsace: " + pres.Namespace.ToString("X2") + " " + NamespaceTypeHelper.ConvertNamespaceTypeToString(pres.Namespace));
+                    Console.WriteLine("unit: " + pres.Unit + " " +  PresentationFormatUnitsHelper.ConvertUnitTypeToString(pres.Unit));
                     Console.WriteLine("BluetoothSigAssignedNumbers: " + GattPresentationFormat.BluetoothSigAssignedNumbers);
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("PresentationFormat error: " + e.Message);
             }
             Console.WriteLine("______________________");
         }
@@ -503,7 +608,94 @@ namespace CosmedBleLib
     }
 
 
+    /// <summary>
+    /// Extension class for byte
+    /// </summary>
+    public static class HelperExtensions
+    {
+        /// <summary>
+        /// Converts byte array to string
+        /// </summary>
+        /// <param name="array">Byte array to covert</param>
+        /// <returns>string equivalent of the byte array</returns>
+        public static string BytesToString(this byte[] array)
+        {
+            var result = new StringBuilder();
 
+            for (int i = 0; i < array.Length; i++)
+            {
+                result.Append($"{array[i]:X2}");
+                if (i < array.Length - 1)
+                {
+                    result.Append(" ");
+                }
+            }
 
+            return result.ToString();
+        }
     }
+
+
+
+    //    public static class Inkoke
+    //    {
+    //        [DllImport("irprops.cpl", SetLastError = true)]
+    //        static extern uint BluetoothAuthenticateDeviceEx(IntPtr hwndParentIn, IntPtr hRadioIn, ref BLUETOOTH_DEVICE_INFO pbtdiInout, BLUETOOTH_OOB_DATA pbtOobData, uint authenticationRequirement);
+    //    }
+
+    //    public enum AUTHENTICATION_REQUIREMENTS : uint 
+    //    {
+    //        MITMProtectionNotRequired = 0x00,
+    //        MITMProtectionRequired = 0x01,
+    //        MITMProtectionNotRequiredBonding = 0x02,
+    //        MITMProtectionRequiredBonding = 0x03,
+    //        MITMProtectionNotRequiredGeneralBonding = 0x04,
+    //        MITMProtectionRequiredGeneralBonding = 0x05,
+    //        MITMProtectionNotDefined = 0xff
+    //    }
+
+
+    //    typedef struct _BLUETOOTH_DEVICE_INFO
+    //    {
+    //        DWORD dwSize;
+    //        BLUETOOTH_ADDRESS Address;
+    //        ULONG ulClassofDevice;
+    //        BOOL fConnected;
+    //        BOOL fRemembered;
+    //        BOOL fAuthenticated;
+    //        SYSTEMTIME stLastSeen;
+    //        SYSTEMTIME stLastUsed;
+    //        WCHAR szName[BLUETOOTH_MAX_NAME_SIZE];
+    //    }
+    //    BLUETOOTH_DEVICE_INFO_STRUCT;
+
+    //
+}
+
+namespace Wintellect.Interop.Sound { 
+    using System; 
+    using System.Runtime.InteropServices; 
+    using System.ComponentModel; 
+    
+    sealed class Sound { 
+        public static void MessageBeep(BeepTypes type) { 
+            if (!MessageBeep((UInt32)type)) { 
+                Int32 err = Marshal.GetLastWin32Error(); 
+                throw new Win32Exception(err); 
+            } 
+        }
+        
+        [DllImport("User32.dll", SetLastError = true)] 
+        static extern Boolean MessageBeep(UInt32 beepType); 
+        private Sound() { } 
+    } 
+    
+    enum BeepTypes { 
+        Simple = -1, 
+        Ok = 0x00000000, 
+        IconHand = 0x00000010, 
+        IconQuestion = 0x00000020, 
+        IconExclamation = 0x00000030, 
+        IconAsterisk = 0x00000040 
+    } 
 }

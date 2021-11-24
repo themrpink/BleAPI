@@ -28,7 +28,7 @@ namespace CosmedBleLib
             filter = new CosmedBluetoothLEAdvertisementFilter();
         }
 
-        private FilterBuilder(bool ShowOnlyConnectableDevices) : base()
+        private FilterBuilder(bool ShowOnlyConnectableDevices) : this()
         {
             filter.ShowOnlyConnectableDevices = ShowOnlyConnectableDevices;
         }

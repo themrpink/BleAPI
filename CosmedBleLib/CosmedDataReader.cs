@@ -236,19 +236,19 @@ namespace CosmedBleLib
 
     public class ManufacturerDataReader : BufferReader
     {
-        public string CompanyId { get; private set; }
-        public string CompanyIdHex { get { return string.Format("X", CompanyId); } }
+        public ushort CompanyId { get; private set; }
+        public string CompanyIdHex { get { return string.Format("{0:X}", CompanyId); } }
 
         public ManufacturerDataReader(IBuffer buffer, ushort CompanyId) : base(buffer)
         {
-            this.CompanyId = CompanyId.ToString("X");
+            this.CompanyId = CompanyId;
         }
     }
 
 
     public class CharacteristicReader : BufferReader
     {
-        public GattCharacteristic Sender { get; }
+        public GattCharacteristic Characteristic { get; }
         public byte? ProtocolError { get;}
 
         public CosmedGattCommunicationStatus Status { get; }
@@ -257,8 +257,8 @@ namespace CosmedBleLib
 
         public CharacteristicReader(IBuffer buffer, DateTimeOffset timestamp, GattCharacteristic sender) : base(buffer)
         {
-            timestamp = Timestamp;
-            Sender = sender;
+            Timestamp = timestamp;
+            Characteristic = sender;
            // ProtocolError = protocolError;
            // Status = status;
         }
@@ -270,10 +270,10 @@ namespace CosmedBleLib
         public byte RawDataType { get; }
         public string DataType { get; }
 
-        public DataSectionReader(IBuffer buffer,  byte DataType) : base(buffer)
+        public DataSectionReader(IBuffer buffer,  byte dataType) : base(buffer)
         {
-            this.RawDataType = DataType;
-            this.DataType = DataType.ToString("X");
+            this.RawDataType = dataType;
+            this.DataType = string.Format("{0:X}", dataType);  //DataType.ToString("X");
         }
 
     }
@@ -288,7 +288,7 @@ namespace CosmedBleLib
     }
 
 
-    public static class GattToBufferWriter
+    public static class ServerGattToBufferWriter
     {
         /// <summary>
         /// Get Characteristics from the Characteristics Result
@@ -361,7 +361,7 @@ namespace CosmedBleLib
     }
 
 
-    public static class GattFromBufferReader
+    public static class ClientGattBufferReaderWriter
     {
         public static IBuffer ToIBufferFromHexString(string data)
         {
@@ -485,10 +485,22 @@ namespace CosmedBleLib
 
         public static string ToUTF8String(IBuffer buffer)
         {
+            //var data = new byte[buffer.Length];
+            //using (var reader = DataReader.FromBuffer(buffer))
+            //{
+
+            //    reader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+            //    reader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
+            //    reader.ReadBytes(data);
+            //}
+
+            //string result;
+            //return result = Encoding.UTF8.GetString(data);
             DataReader reader = DataReader.FromBuffer(buffer);
             reader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
             reader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
             return reader.ReadString(buffer.Length);
+
         }
 
         public static string ToUTF16String(IBuffer buffer)

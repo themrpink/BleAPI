@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections.cs" />
+    <Compile Include="HelperMethods.cs" />
     <Compile Include="PairingDevice.cs" />
     <Compile Include="CosmedGattCharacteristic.cs" />
     <Compile Include="Extensions.cs" />

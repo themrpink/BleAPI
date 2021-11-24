@@ -16,10 +16,11 @@ namespace CosmedBleLib
     public interface IGattDiscoveryService
     {
         Task<GattDeviceServicesResult> FindGattServicesByUuidAsync(Guid requestedUuid, BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached);
-        Task<IReadOnlyList<GattCharacteristic>> FindGattCharacteristicsByUuidAsync(Guid requestedUuid);
-        Task<GattDeviceServicesResult> GetGattServicesAsync(BluetoothCacheMode bluetoothCacheMode = BluetoothCacheMode.Uncached);
+        Task<GattCharacteristicsResult> FindGattCharacteristicsByUuidAsync(GattDeviceService service, Guid requestedUuid, BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached);
+        Task<GattDeviceServicesResult> GetAllGattServicesAsync(BluetoothCacheMode bluetoothCacheMode = BluetoothCacheMode.Uncached);
+        Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>> DiscoverAllGattServicesAndCharacteristics(BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached);
 
-        Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>> DiscoverAllGattServicesAndCharacteristics();
+        GattReliableWriteTransaction StartReliableWrite();
 
         void ClearServices();
 
@@ -34,15 +35,13 @@ namespace CosmedBleLib
     {
 
         #region Private members
-
-        private GattDeviceServicesResult gattResult;
-
+        private List<GattDeviceServicesResult> gattResults = new List<GattDeviceServicesResult>();
         #endregion
 
 
         #region Constructor
 
- 
+
         private GattDiscoveryService()
         {
 
@@ -58,7 +57,7 @@ namespace CosmedBleLib
 
         private async Task InitializeAsync(CosmedBleDevice device)
         {
-            if(device == null)
+            if (device == null)
             {
                 throw new ArgumentNullException("given device cannot be null");
             }
@@ -125,6 +124,10 @@ namespace CosmedBleLib
             try
             {
                 GattDeviceServicesResult services = await Device.BluetoothLeDevice.GetGattServicesForUuidAsync(requestedUuid, cacheMode).AsTask();
+                if (services != null)
+                {
+                    gattResults.Add(services);
+                }
                 return services;
             }
             catch (Exception e)
@@ -134,48 +137,68 @@ namespace CosmedBleLib
         }
 
 
-        public async Task<IReadOnlyList<GattCharacteristic>> FindGattCharacteristicsByUuidAsync(Guid requestedUuid)
+        //se voglio invece usare CosmedGattCharacteristic allora devo creare una classe che wrappe il GattCharacteristicsResult
+        public async Task<GattCharacteristicsResult> FindGattCharacteristicsByUuidAsync(GattDeviceService service, Guid requestedUuid, BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached)
         {
-            List<GattCharacteristic> tempList = new List<GattCharacteristic>();
+            // List<GattCharacteristic> tempList = new List<GattCharacteristic>();
+            //  var gattResult = await Device.BluetoothLeDevice.GetGattServicesAsync(cacheMode).AsTask(); 
 
-            if (gattResult != null && gattResult.Status == GattCommunicationStatus.Success)
+            try
             {
-                foreach (var service in gattResult.Services)
-                {
-                    try
-                    {
-                        GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsAsync().AsTask().ConfigureAwait(false);
-
-                        if (resultCharacteristics.Status == GattCommunicationStatus.Success)
-                        {
-                            foreach (GattCharacteristic characteristic in resultCharacteristics.Characteristics)
-                            {
-                                if (characteristic.Uuid.Equals(requestedUuid))
-                                {
-                                    tempList.Add(characteristic);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        throw new GattCommunicationException("communication with Gatt failed", e);
-                    }
-                }
+                GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsForUuidAsync(requestedUuid, cacheMode).AsTask().ConfigureAwait(false);
+                return resultCharacteristics;
             }
-            return tempList.AsReadOnly();
+            catch (Exception e)
+            {
+                throw new GattCommunicationException("communication with Gatt failed", e);
+            }
         }
 
 
-        public async Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>> DiscoverAllGattServicesAndCharacteristics()
+        /*
+                public async Task<IReadOnlyList<GattCharacteristic>> FindGattCharacteristicsByUuidAsync(Guid requestedUuid, BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached)
+                {
+                    List<GattCharacteristic> tempList = new List<GattCharacteristic>();
+
+                    if (gattResult != null && gattResult.Status == GattCommunicationStatus.Success)
+                    {
+                        foreach (var service in gattResult.Services)
+                        {
+                            try
+                            {
+                                GattCharacteristicsResult resultCharacteristics = await service.GetCharacteristicsForUuidAsync(requestedUuid, cacheMode).AsTask().ConfigureAwait(false);
+
+                                if (resultCharacteristics.Status == GattCommunicationStatus.Success)
+                                {
+                                    foreach (GattCharacteristic characteristic in resultCharacteristics.Characteristics)
+                                    {
+                                        if (characteristic.Uuid.Equals(requestedUuid))
+                                        {
+                                            tempList.Add(characteristic);
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                throw new GattCommunicationException("communication with Gatt failed", e);
+                            }
+                        }
+                    }
+                    return tempList.AsReadOnly();
+                }
+        */
+
+        public async Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>> DiscoverAllGattServicesAndCharacteristics(BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached)
         {
             var emptyDictionary = new Dictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>();
             IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>> servicesDictionary = new ReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>(emptyDictionary);
 
-            await GetGattServicesAsync(BluetoothCacheMode.Cached);
+            var gattResult = await Device.BluetoothLeDevice.GetGattServicesAsync(cacheMode).AsTask();
 
             if (gattResult != null && gattResult.Status == GattCommunicationStatus.Success)
             {
+                gattResults.Add(gattResult);
                 IReadOnlyList<GattDeviceService> resultServices = gattResult.Services;
 
                 var servicesDictionaryTemp = resultServices.ToDictionary(s => s, async (s) =>
@@ -201,7 +224,7 @@ namespace CosmedBleLib
 
 
         //uncached here is used for development, for production cached mode should be preferred as default, because it allows lower power consumption
-        public async Task<GattDeviceServicesResult> GetGattServicesAsync(BluetoothCacheMode bluetoothCacheMode = BluetoothCacheMode.Uncached)
+        public async Task<GattDeviceServicesResult> GetAllGattServicesAsync(BluetoothCacheMode bluetoothCacheMode = BluetoothCacheMode.Uncached)
         {
             var accessStatus = await Device.BluetoothLeDevice.RequestAccessAsync();
             if (accessStatus == DeviceAccessStatus.Allowed)
@@ -210,8 +233,9 @@ namespace CosmedBleLib
                 {
                     //how to set cache mode:
                     //https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.bluetoothcachemode?view=winrt-22000
-                    return await Device.BluetoothLeDevice.GetGattServicesAsync(bluetoothCacheMode).AsTask();
-                    //return gattResult;
+                    var gattResult = await Device.BluetoothLeDevice.GetGattServicesAsync(bluetoothCacheMode).AsTask();
+                    gattResults.Add(gattResult);
+                    return gattResult;
                 }
                 catch (Exception e)
                 {
@@ -227,31 +251,46 @@ namespace CosmedBleLib
             return null;
         }
 
+        //very useful
+        public GattReliableWriteTransaction StartReliableWrite()
+        {
+            GattReliableWriteTransaction grwt = new GattReliableWriteTransaction();
+            return grwt;
+        }
+
         #endregion 
 
 
         public void ClearServices()
         {
-            Device.BluetoothLeDevice.GattServicesChanged -= GattServicesChangedHandler;
-            GattSession.SessionStatusChanged -= SessionStatusChangedHandler;
-            GattSession.MaxPduSizeChanged -= MaxPduSizeChangedHandler;
+            //Device.BluetoothLeDevice.GattServicesChanged -= GattServicesChangedHandler;
+            //GattSession.SessionStatusChanged -= SessionStatusChangedHandler;
+            //GattSession.MaxPduSizeChanged -= MaxPduSizeChangedHandler;
 
             GattSession.Dispose();
             GattSession = null;
 
-            if (gattResult != null)
+            foreach (var gattResult in gattResults)
             {
-                foreach (var service in gattResult.Services)
+                if (gattResult != null)
                 {
-                    service.Dispose();
+                    foreach (var service in gattResult.Services)
+                    {
+                        if (service != null)
+                        {
+                            service.Dispose();
+                        }
+                    }
                 }
             }
 
-            gattResult = null;
+            gattResults = null;
 
             GC.Collect();
         }
 
     }
 
+
+    
 }

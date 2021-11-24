@@ -240,7 +240,6 @@ namespace CosmedBleLib
 
         public DevicePairingResultStatus PairingResultStatus { get; private set; }
 
-
         public PairingResult(DevicePairingProtectionLevel protectionLevelUsed, DevicePairingResultStatus pairingResultStatus, bool wasSecureConnectionUsedForPairing)
         {
             ProtectionLevelUsed = protectionLevelUsed;

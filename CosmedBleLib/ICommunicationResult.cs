@@ -9,8 +9,20 @@ namespace CosmedBleLib
 {
     public interface ICommunicationResult
     {
-        GattCharacteristicProperties Property { get; }
         byte? ProtocolError { get; }
-        CosmedGattCommunicationStatus Status { get; }  
+        CosmedGattCommunicationStatus Status { get; }
     }
+
+    public interface ICharacteristicCommunicationResult : ICommunicationResult
+    {
+        GattCharacteristicProperties Property { get; }
+        IReadOnlyList<GattCharacteristic> Characteristics { get; }
+    }
+
+    public interface IServiceCommunicationResult : ICommunicationResult
+    {
+        IReadOnlyList<GattDeviceService> Services { get; }
+    }
+
+
 }

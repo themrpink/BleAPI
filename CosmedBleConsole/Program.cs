@@ -93,7 +93,7 @@ namespace CosmedBleConsole
 
 
                             //request the gatt result (collection of services)
-                            GattDeviceServicesResult gattResult = await discoveryService.GetGattServicesAsync();
+                            GattDeviceServicesResult gattResult = await discoveryService.GetAllGattServicesAsync();
 
 
                             Console.WriteLine("stampa dal gatt results");
@@ -108,7 +108,11 @@ namespace CosmedBleConsole
                                     Console.WriteLine("__characteristic__");
                                     characteristic.Print();
                                     var read = await characteristic.Read();
-                                    var write = await characteristic.Write(0x001);
+                                    Console.WriteLine("read reselt hex: " + read.HexValue);
+                                    Console.WriteLine("read reselt ascii: " + read.ASCIIValue);
+                                    Console.WriteLine("read reselt utf8: " + read.UTF8Value);
+                                    byte[] value = { 0x001 };
+                                    var write = await characteristic.WriteWithResult(value, GattWriteOption.WriteWithResponse);
                                     var notify = await characteristic.SubscribeToNotification(  
                                                                                                 (s, a) => 
                                                                                                 
@@ -116,7 +120,7 @@ namespace CosmedBleConsole
                                                                                                     Console.WriteLine("notification:");
                                                                                                     Console.WriteLine(a.Timestamp.ToString());
                                                                                                     IBuffer CharacteristicValue = a.CharacteristicValue;
-                                                                                                    string val = GattFromBufferReader.ToUTF8String(CharacteristicValue);
+                                                                                                    string val = ClientGattBufferReaderWriter.ToUTF8String(CharacteristicValue);
                                                                                                     Console.WriteLine("buffer content: " + val);
 
                                                                                                     }, 

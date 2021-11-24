@@ -224,11 +224,11 @@ namespace CosmedBleLib
             Console.WriteLine("is scannable: " + IsScannable);
             Console.WriteLine("transmit powr level: " + TransmitPowerLevelInDBm);
             Console.WriteLine(" localname: " + DeviceName);
-            Console.WriteLine(" flags: " + Flags);
+            Console.WriteLine(" flags: " + Flags.ToString());
 
             foreach (Guid g in ServiceUuids)
             {
-                Console.WriteLine(" guid: " + g.ToString());
+                Console.WriteLine(" guid: " + g.ToString() + " " + GattServiceUuidHelper.ConvertUuidToName(g));
             }
 
             Console.WriteLine();
@@ -252,9 +252,10 @@ namespace CosmedBleLib
             foreach (DataSectionReader m in DataSections)
             {
                 Console.WriteLine(advType + " data type: " + m.DataType);
-
+                Console.WriteLine(advType + " data type --> " + AdvertisementDataTypeHelper.ConvertAdvertisementDataTypeToString(m.RawDataType));
                 Console.WriteLine(advType + " buffer: " + m.HexValue);
                 Console.WriteLine(advType + " buffer UTF8: " + m.UTF8Value);
+                //Console.WriteLine(advType + " buffer UTF8 --> " + ClientGattBufferReaderWriter.ToUTF8String(m.RawData));
                 Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIValue);
                 Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Value);
             }
@@ -275,6 +276,7 @@ namespace CosmedBleLib
 
                 Console.WriteLine(advType + " manufacturer buffer: " + m.HexValue);
                 Console.WriteLine(advType + " manufacturer buffer UTF8: " + m.UTF8Value);
+                //Console.WriteLine(advType + " manufacturer buffer UTF8 -->" + ClientGattBufferReaderWriter.ToUTF8String(m.RawData));
                 Console.WriteLine(advType + " manufacturer buffer ASCII: " + m.ASCIIValue);
                 Console.WriteLine(advType + " manufacturer buffer UTF16: " + m.UTF16Value);
             }
@@ -289,9 +291,11 @@ namespace CosmedBleLib
             foreach (DataSectionReader m in DataSectionsFromScanResponse)
             {
                 Console.WriteLine(advType + " data type: " + m.DataType);
+                Console.WriteLine(advType + " data type --> " + AdvertisementDataTypeHelper.ConvertAdvertisementDataTypeToString(m.RawDataType));
 
                 Console.WriteLine(advType + " buffer: " + m.HexValue);
                 Console.WriteLine(advType + " buffer UTF8: " + m.UTF8Value);
+                //Console.WriteLine(advType + " buffer UTF8 --> " + ClientGattBufferReaderWriter.ToUTF8String(m.RawData));
                 Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIValue);
                 Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Value);
             }

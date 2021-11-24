@@ -267,7 +267,7 @@ namespace CosmedBleLib
                                                     );
         }
 
-
+      
         //public async Task<CosmedCharacteristicSubscriptionResult> StopSubscription(Action<GattCharacteristic, GattValueChangedEventArgs> response, Action<CosmedGattCharacteristic, CosmedGattErrorFoundEventArgs> action = null)
         //{
         //    if (IsIndicationAllowed)
@@ -448,6 +448,7 @@ namespace CosmedBleLib
     public class CosmedCharacteristicWriteResult : ICommunicationResult
         {
             public GattCharacteristicProperties Property { get; private set; }
+
             public byte? ProtocolError { get; }
 
             public CosmedGattCommunicationStatus Status { get; }
