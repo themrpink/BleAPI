@@ -16,7 +16,7 @@ namespace CosmedBleLib
 
 
 
-        public enum BluetoothLEAdvertisementFlags : uint
+        public enum BluetoothLEAdvertisementFlags : byte
         {
             None = 0x00,
             LimitedDiscoverableMode = 0x01,
@@ -38,7 +38,7 @@ namespace CosmedBleLib
         /// The format field determines how a single value contained in the Characteristic Value is formatted.
         /// </summary>
         /// <remarks>Please refer https://www.bluetooth.com/specifications/assigned-numbers/format-types </remarks>
-        public enum FormatTypes : ushort
+        public enum FormatTypes : byte
         {
             ReservedForFutureUse = 0x00,
             Boolean = 0x01,
@@ -210,7 +210,7 @@ namespace CosmedBleLib
         /// <remarks>
         /// Please refer https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.characteristic_presentation_format.xml
         /// </remarks>
-        public enum NamespaceId : ushort
+        public enum NamespaceId : byte
         {
             BluetoothSigAssignedNumber = 0x01,
             ReservedForFutureUse = 0x00
@@ -805,7 +805,7 @@ namespace CosmedBleLib
     }
 
 
-    public enum BluetoothAppearanceTypeUuid : ushort
+    public enum BluetoothAppearanceType : ushort
     {
         Unknown = 0x000,
 
@@ -3480,13 +3480,13 @@ namespace CosmedBleLib
         Beats_Electronics = 0x09F8,
         Binauric_SE = 0x09F9,
         MC10 = 0x09F10,
-        //Evluma = 0x09EF,
-        //GeLo_Inc = 0x09EE,
+        Evluma = 0x09EF,
+        GeLo_Inc = 0x09EE,
         //​Quuppa_Oy = 0x09ED,
         //​Selfly_BV = 0x09EC,
         //​Onset_Computer_Corporation = 0x09EB,
-        ​​LG_Electronics​ = 0x09EA,
-        //​​adidas_AG = 0x09E1,
+        LG_Electronics = 0x09EA,
+        //​​AdidasAG = 0x09E1,
         //​​Geneq_Inc = 0x09E2,
         //​​Shenzhen_Excelsecu_Data_Technology_CoLtd = 0x09E3,
         //​​AMICCOM_Electronics_Corporation = 0x09E4,

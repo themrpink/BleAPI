@@ -26,6 +26,7 @@ namespace CosmedBleConsole
         public static bool goon = false;
         public static bool check = true;
         public static IReadOnlyCollection<CosmedBleAdvertisedDevice> dev;
+        
         public static DevicePairingKinds ceremonySelection =    DevicePairingKinds.None |
                                                                 DevicePairingKinds.ConfirmOnly |
                                                                 DevicePairingKinds.ConfirmPinMatch |
@@ -60,7 +61,6 @@ namespace CosmedBleConsole
 
 
 
-
             Console.WriteLine("_______________________scanning____________________");
 
             //start scanning
@@ -78,73 +78,86 @@ namespace CosmedBleConsole
 
                         if (device.IsConnectable)// && device.DeviceName.Equals("myname"))
                         {
-
                             //var p = await Connector.StartConnectionProcessAsync(scanner, device);
                             scanner.StopScanning();
- 
-                            //get device. it´s possible to set some event handler
-                            CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
-                            
-                            //pairing. it´s possible to call an overload with custom event handler
-                           // PairingResult pairedDevice = await PairingService.GetPairedDevice(connectionDevice, ceremonySelection, minProtectionLevel);
-
-                            //it´s possible to set some event handler
-                            GattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
-
-
-                            //request the gatt result (collection of services)
-                            GattDeviceServicesResult gattResult = await discoveryService.GetAllGattServicesAsync();
-
-
-                            Console.WriteLine("stampa dal gatt results");
-                            foreach(var service in gattResult.Services)
+                            try
                             {
-                                Console.WriteLine("__service__");
-                                service.Print();
-                                var characteristics = await service.GetCharacteristicsAsync().AsTask();
+                                //get device. it´s possible to set some event handler
+                                CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
 
-                                foreach(var characteristic in characteristics.Characteristics)
+                                //pairing. it´s possible to call an overload with custom event handler
+                                PairingResult pairedDevice = await PairingService.GetPairedDevice(connectionDevice, ceremonySelection, minProtectionLevel);
+
+                                //it´s possible to set some event handler
+                                GattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
+
+                                //request the gatt result (collection of services)
+                                GattDeviceServicesResult gattResult = await discoveryService.GetAllGattServicesAsync();
+
+                                Console.WriteLine("stampa dal gatt results");
+                                foreach (var service in gattResult.Services)
                                 {
-                                    Console.WriteLine("__characteristic__");
-                                    characteristic.Print();
-                                    var read = await characteristic.Read();
-                                    Console.WriteLine("read reselt hex: " + read.HexValue);
-                                    Console.WriteLine("read reselt ascii: " + read.ASCIIValue);
-                                    Console.WriteLine("read reselt utf8: " + read.UTF8Value);
-                                    byte[] value = { 0x001 };
-                                    var write = await characteristic.WriteWithResult(value, GattWriteOption.WriteWithResponse);
-                                    var notify = await characteristic.SubscribeToNotification(  
-                                                                                                (s, a) => 
-                                                                                                
-                                                                                                {
-                                                                                                    Console.WriteLine("notification:");
-                                                                                                    Console.WriteLine(a.Timestamp.ToString());
-                                                                                                    IBuffer CharacteristicValue = a.CharacteristicValue;
-                                                                                                    string val = ClientGattBufferReaderWriter.ToUTF8String(CharacteristicValue);
-                                                                                                    Console.WriteLine("buffer content: " + val);
+                                    Console.WriteLine("__service__");
+                                    service.Print();
 
-                                                                                                    }, 
-                                                                                                (s, e) => Console.WriteLine("error")
-                                                                                              );
-                                    //var indicate = await characteristic.SubscribeToIndication(
-                                    //                                                                       (s, a) =>
+                                    GattCharacteristicsResult characteristics;
 
-                                    //                                                                       {
-                                    //                                                                           Console.WriteLine("indication:");
-                                    //                                                                           Console.WriteLine(a.Timestamp.ToString());
-                                    //                                                                           IBuffer CharacteristicValue = a.CharacteristicValue;
-                                    //                                                                           string val = GattFromBufferReader.ToUTF8String(CharacteristicValue);
-                                    //                                                                           Console.WriteLine("buffer content: " + val);
+                                    characteristics = await service.GetCharacteristicsAsync().AsTask();
+                                    
+                                    foreach (var characteristic in characteristics.Characteristics)
+                                    {
+                                        Console.WriteLine("__characteristic__");
+                                        characteristic.Print();
+                                        var read = await characteristic.Read();
+                                        Console.WriteLine("read result hex: " + read.HexValue);           
+                                        Console.WriteLine("read result utf8: " + read.UTF8Value);
+                                        
+                                        byte[] value = { 0x001 };
+                                        
+                                        var write = await characteristic.WriteWithResult(value, GattWriteOption.WriteWithResponse);
+                                        
+                                        var notify = await characteristic.SubscribeToNotification(
+                                                                                                    (s, a) =>
 
-                                    //                                                                       },
-                                    //                                                            (s, e) => Console.WriteLine("error"));
-                                    var unsub = await characteristic.UnSubscribe();
+                                                                                                    {
+                                                                                                        Console.WriteLine("notification:");
+                                                                                                        Console.WriteLine(a.Timestamp.ToString());
+                                                                                                        IBuffer CharacteristicValue = a.CharacteristicValue;
+                                                                                                        string val = ClientGattBufferReaderWriter.ToUTF8String(CharacteristicValue);
+                                                                                                        Console.WriteLine("buffer content: " + val);
+
+                                                                                                    },
+                                                                                                    (s, e) => Console.WriteLine("error")
+                                                                                                  );
+                                        
+                                        var indicate = await characteristic.SubscribeToIndication(
+                                                                                                    (s, a) =>
+
+                                                                                                               {
+                                                                                                                   Console.WriteLine("indication:");
+                                                                                                                   Console.WriteLine(a.Timestamp.ToString());
+                                                                                                                   IBuffer CharacteristicValue = a.CharacteristicValue;
+                                                                                                                   string val = ClientGattBufferReaderWriter.ToUTF8String(CharacteristicValue);
+                                                                                                                   Console.WriteLine("buffer content: " + val);
+
+                                                                                                               },
+                                                                                                    (s, e) => Console.WriteLine("error")
+                                                                                                  );
+                                        var unsub = await characteristic.UnSubscribe();
+                                    }
                                 }
-                            }
 
-                            discoveryService.ClearServices();
-                            var r = await PairingService.Unpair(connectionDevice);
-                            connectionDevice.Disconnect();                          
+                                discoveryService.ClearServices();
+                                var r = await PairingService.Unpair(connectionDevice);
+                                connectionDevice.ClearBluetoothLEDevice();
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                                //throw new GattCommunicationException("impossible to access the Service " + service.Uuid.ToString(), e);
+                            }
+                                                       
+                         
                         }
                     }
                 }

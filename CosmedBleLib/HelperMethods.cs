@@ -107,9 +107,9 @@ namespace CosmedBleLib
 
     public static class AppearenceDataTypeHelper
     {
-        public static string ConvertAppearenceTypeToString(byte dataType)
+        public static string ConvertAppearenceTypeToString(ushort dataType)
         {
-            BluetoothAppearanceTypeUuid appearenceType;
+            BluetoothAppearanceType appearenceType;
             if (Enum.TryParse(dataType.ToString(), out appearenceType))
             {
                 return appearenceType.ToString();

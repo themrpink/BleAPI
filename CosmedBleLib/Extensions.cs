@@ -41,6 +41,24 @@ namespace CosmedBleLib
 
     public static class GattServiceExtensions
     {
+
+        //non la uso perchè come questa ce ne sono molte altre che l´utente può usare e non ha senso usarle tutte
+        //meglio fare un try catch per i metodi del Service
+        //public static async Task<GattCharacteristicsResult> GetCharacteristicsAsync(this GattDeviceService service)
+        //{
+        //    GattCharacteristicsResult characteristics;
+        //    try
+        //    {
+        //        characteristics = await service.GetCharacteristicsAsync().AsTask();
+        //        return characteristics;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine("eccezione durante il GetCharacteristic: " + e.Message);
+        //        throw new BleDeviceConnectionException("impossible to access the characteristics", e);
+        //    }
+        //}
+
         public static void Print(this GattDeviceService service)
         {
             Console.WriteLine("printing a service:");
@@ -458,24 +476,15 @@ namespace CosmedBleLib
         #endregion
 
         #region helper methods
-        public static void Print(this GattCharacteristic c)
+        public static async void Print(this GattCharacteristic c)
         {
-            var b = BluetoothLEAppearanceCategories.BarcodeScanner;
-            var d = BluetoothAppearanceTypeUuid.AudioSink;
-            var e = BluetoothLEAppearanceSubcategories.BarcodeScanner;
-            //var f = BluetoothLEAppearance.
-            var shortId = BluetoothUuidHelper.TryGetShortId(c.Uuid);
-            if (shortId == (ushort)GattCharacteristicUuid.Appearance)
+
+            if (c.IsAppearanceValue())
             {
-                var array = c.Uuid.ToByteArray();
-                byte[] temp = new byte[4];
-                for(int i=0; i<4; i++)
-                {
-                    temp[i] = array[i + 8];
-                }
-                //var value = BitConverter.ToUInt16(temp, 0);
-                Console.WriteLine("appearance: " + AppearenceDataTypeHelper.ConvertAppearenceTypeToString(temp));
+                var appearance = await c.GetAppearanceValue();
+                Console.WriteLine("appearance: " + appearance.ToString());
             }
+
             Console.WriteLine("Characteristic  Uuid: " + c.Uuid.ToString() + " " + GattCharacteristicUuidHelper.ConvertUuidToName(c.Uuid)); 
             Console.WriteLine("ProtectionLevel :" + c.ProtectionLevel.ToString());
             Console.WriteLine("Attribute Handle :" + c.AttributeHandle);
@@ -502,6 +511,47 @@ namespace CosmedBleLib
             Console.WriteLine("______________________");
         }
 
+        public static async Task<BluetoothAppearanceType> GetAppearanceValue(this GattCharacteristic characteristic)
+        {
+            var result = await characteristic.Read();
+
+            var data = new byte[result.RawData.Length];
+            using (var reader = DataReader.FromBuffer(result.RawData))
+            {
+                reader.ReadBytes(data);
+            }
+            if(data.Length > 0)
+            {
+                ushort dataType = BitConverter.ToUInt16(data, 0);
+
+                BluetoothAppearanceType appearenceType;
+                if (Enum.TryParse(dataType.ToString(), out appearenceType))
+                {
+                    return appearenceType;
+                }
+            }
+
+
+            return BluetoothAppearanceType.Unknown;
+        }
+
+
+        public static bool IsAppearanceValue(this GattCharacteristic characteristic)
+        {
+            var shortId = BluetoothUuidHelper.TryGetShortId(characteristic.Uuid);
+            
+            if(!shortId.HasValue)
+            {
+                return false;
+            }
+            
+            if(shortId.Value == 0x2A01)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
 
         public static CosmedGattCommunicationStatus ConvertStatus(this GattCommunicationStatus status)

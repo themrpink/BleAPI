@@ -243,8 +243,6 @@ namespace CosmedBleLib
 
                 Console.WriteLine(advType + " manufacturer buffer: " + m.HexValue);
                 Console.WriteLine(advType + " manufacturer buffer UTF8: " + m.UTF8Value);
-                Console.WriteLine(advType + " manufacturer buffer ASCII: " + m.ASCIIValue);
-                Console.WriteLine(advType + " manufacturer buffer UTF16: " + m.UTF16Value);
             }
 
             Console.WriteLine();
@@ -256,8 +254,6 @@ namespace CosmedBleLib
                 Console.WriteLine(advType + " buffer: " + m.HexValue);
                 Console.WriteLine(advType + " buffer UTF8: " + m.UTF8Value);
                 //Console.WriteLine(advType + " buffer UTF8 --> " + ClientGattBufferReaderWriter.ToUTF8String(m.RawData));
-                Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIValue);
-                Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Value);
             }
 
             Console.WriteLine();
@@ -277,8 +273,6 @@ namespace CosmedBleLib
                 Console.WriteLine(advType + " manufacturer buffer: " + m.HexValue);
                 Console.WriteLine(advType + " manufacturer buffer UTF8: " + m.UTF8Value);
                 //Console.WriteLine(advType + " manufacturer buffer UTF8 -->" + ClientGattBufferReaderWriter.ToUTF8String(m.RawData));
-                Console.WriteLine(advType + " manufacturer buffer ASCII: " + m.ASCIIValue);
-                Console.WriteLine(advType + " manufacturer buffer UTF16: " + m.UTF16Value);
             }
 
             
@@ -296,8 +290,6 @@ namespace CosmedBleLib
                 Console.WriteLine(advType + " buffer: " + m.HexValue);
                 Console.WriteLine(advType + " buffer UTF8: " + m.UTF8Value);
                 //Console.WriteLine(advType + " buffer UTF8 --> " + ClientGattBufferReaderWriter.ToUTF8String(m.RawData));
-                Console.WriteLine(advType + " buffer ASCII: " + m.ASCIIValue);
-                Console.WriteLine(advType + " buffer UTF16: " + m.UTF16Value);
             }
 
             Console.WriteLine("--------------------- end advertisement -----------------------");

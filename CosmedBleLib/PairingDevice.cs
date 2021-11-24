@@ -15,8 +15,20 @@ using Windows.Security.Credentials;
 namespace CosmedBleLib
 {
 
+    public interface ICosmedBleDevice
+    {
+        BluetoothLEDevice BluetoothLeDevice { get; }
+
+        event TypedEventHandler<DeviceAccessInformation, DeviceAccessChangedEventArgs> AccessChanged;
+        event TypedEventHandler<CosmedBleDevice, object> ConnectionStatusChanged;
+        event TypedEventHandler<CosmedBleDevice, object> NameChanged;
+
+        void ClearBluetoothLEDevice();
+    }
+    
+    
     //wrap a BluetoothLEDevice, which is obtained with a unpaired connection (therefore the device is reachable, otherwise the object is null)
-    public class CosmedBleDevice
+    public class CosmedBleDevice: ICosmedBleDevice
     {
        
         private BluetoothLEDevice bluetoothLeDevice;
@@ -191,12 +203,8 @@ namespace CosmedBleLib
 
         #region Dispose device
 
-        public void Disconnect()
-        {
-            ClearBluetoothLEDevice();
-        }
-
-        private void ClearBluetoothLEDevice()
+     
+        public void ClearBluetoothLEDevice()
         {
             // Need to clear the CCCD from the remote device to stop receiving notifications
             List<Task<GattCharacteristic>> removals = GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions.Where(c => c.Key.Service.Session.DeviceId.Equals(bluetoothLeDevice.DeviceId)).Select(async d =>
@@ -231,7 +239,6 @@ namespace CosmedBleLib
     }
 
 
-
     public sealed class PairingResult
     {
         public bool WasSecureConnectionUsedForPairing { get; private set; }
@@ -253,6 +260,19 @@ namespace CosmedBleLib
     //take a CosmedBleDevice and try to pair it. If pairing succeeds the return a PairedDevice
     public static class PairingService
     {
+
+        public static DevicePairingKinds ceremonySelection { get; } =   DevicePairingKinds.None |
+                                                                        DevicePairingKinds.ConfirmOnly |
+                                                                        DevicePairingKinds.ConfirmPinMatch |
+                                                                        DevicePairingKinds.DisplayPin |
+                                                                        DevicePairingKinds.ProvidePasswordCredential |
+                                                                        DevicePairingKinds.ProvidePin;
+
+        public static DevicePairingProtectionLevel minProtectionLevel { get; } = DevicePairingProtectionLevel.None |
+                                                                                 DevicePairingProtectionLevel.Default |
+                                                                                 DevicePairingProtectionLevel.Encryption |
+                                                                                 DevicePairingProtectionLevel.EncryptionAndAuthentication;
+
         private static void PairingRequestedHandler(DeviceInformationCustomPairing sender, DevicePairingRequestedEventArgs args)
         {
             switch (args.PairingKind)
@@ -358,33 +378,9 @@ namespace CosmedBleLib
                 
                 return new PairingResult(devicePairingResult.ProtectionLevelUsed, devicePairingResult.Status, bledevice.WasSecureConnectionUsedForPairing);
             }
-            ////saves the device information
-            //DeviceInformation deviceInformation = device.DeviceInformation;
-
-            ////saves the device id
-            //string deviceId = deviceInformation.Id; //I reuse did to reload later.
-
-            ////dispose the device
-            //device.Disconnect();
-            //device = null;
-
-            //try
-            //{
-            //    //create a new device from deviceId (necessary to recognize previously paired devices)
-            //    var bledevice = await BluetoothLEDevice.FromIdAsync(deviceId);
-
-            //    //try the pairing process
-            //    bledevice.DeviceInformation.Pairing.Custom.PairingRequested += PairingRequestedHandler;
-            //    DevicePairingResult devicePairingResult = await bledevice.DeviceInformation.Pairing.Custom.PairAsync(ceremonySelection, minProtectionLevel);
-            //    bledevice.DeviceInformation.Pairing.Custom.PairingRequested -= PairingRequestedHandler;
-            //    //this is needed to have an updated state (i.e. isPaired = true) ?? verificare con test precisi
-            //    bledevice = await BluetoothLEDevice.FromIdAsync(deviceId);
-
-            //    //create a paired device with the pairing results
-            //    return PairedDevice.Create(bledevice, devicePairingResult);
-            //}
             catch (Exception e)
             {
+                //system exceptions
                 throw;
             }
         }

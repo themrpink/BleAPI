@@ -14,15 +14,25 @@ using Windows.Storage.Streams;
 namespace CosmedBleLib
 {
 
+    public  enum DataConversionType
+    {
+        Hex,
+        ASCII,
+        Utf8,
+        Utf16,
+    }
+
 
     public abstract class BufferReader
     {
 
+
+
         #region Properties
         public string HexValue { get; set; }
-        public string ASCIIValue { get; set; }
+        //public string ASCIIValue { get; set; }
         public string UTF8Value { get; set; }
-        public string UTF16Value { get; set; }
+        //public string UTF16Value { get; set; }
         public IBuffer RawData { get; set; }
         #endregion
 
@@ -35,8 +45,8 @@ namespace CosmedBleLib
             {
                 HexValue = convertBufferData(buffer, DataConversionType.Hex);
                 UTF8Value = convertBufferData(buffer, DataConversionType.Utf8);
-                ASCIIValue = convertBufferData(buffer, DataConversionType.ASCII);
-                UTF16Value = convertBufferData(buffer, DataConversionType.Utf16);
+                //ASCIIValue = convertBufferData(buffer, DataConversionType.ASCII);
+                //UTF16Value = convertBufferData(buffer, DataConversionType.Utf16);
             }
         }
 
@@ -279,34 +289,11 @@ namespace CosmedBleLib
     }
 
 
-    public enum DataConversionType
-    {
-        Hex,
-        ASCII,
-        Utf8,
-        Utf16
-    }
+    
 
 
     public static class ServerGattToBufferWriter
     {
-        /// <summary>
-        /// Get Characteristics from the Characteristics Result
-        /// </summary>
-        /// <param name="result">Gatt Characteristics Result</param>
-        /// <param name="characteristics">Gatt characteristics</param>
-        public static void GetCharacteristicsFromResult(GattLocalCharacteristicResult result, ref GattLocalCharacteristic characteristics)
-        {
-            if (result.Error == BluetoothError.Success)
-            {
-                characteristics = result.Characteristic;
-            }
-            else
-            {
-                Debug.WriteLine(result.Error.ToString());
-            }
-        }
-
         /// <summary>
         /// Converts byte value into Buffer
         /// </summary>
@@ -314,6 +301,7 @@ namespace CosmedBleLib
         /// <returns>Data writer buffer</returns>
         public static IBuffer ConvertValueToBuffer(byte byteValue)
         {
+
             //TODO: User GattConvert here
             DataWriter writer = new DataWriter();
             writer.WriteByte(byteValue);
@@ -485,22 +473,10 @@ namespace CosmedBleLib
 
         public static string ToUTF8String(IBuffer buffer)
         {
-            //var data = new byte[buffer.Length];
-            //using (var reader = DataReader.FromBuffer(buffer))
-            //{
-
-            //    reader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
-            //    reader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
-            //    reader.ReadBytes(data);
-            //}
-
-            //string result;
-            //return result = Encoding.UTF8.GetString(data);
             DataReader reader = DataReader.FromBuffer(buffer);
             reader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
             reader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
             return reader.ReadString(buffer.Length);
-
         }
 
         public static string ToUTF16String(IBuffer buffer)

@@ -20,7 +20,7 @@ namespace CosmedBleLib
         Task<GattDeviceServicesResult> GetAllGattServicesAsync(BluetoothCacheMode bluetoothCacheMode = BluetoothCacheMode.Uncached);
         Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>> DiscoverAllGattServicesAndCharacteristics(BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached);
 
-        GattReliableWriteTransaction StartReliableWrite();
+        GattReliableWriteTransaction StartReliableWriteTransaction();
 
         void ClearServices();
 
@@ -243,16 +243,12 @@ namespace CosmedBleLib
                     //throw new GattCommunicationException("impossible to retrieve the services", e);
                 }
             }
-            ////potrei lanciare un´eccezione se il device non é raggiungibile, invece di restituire null
-            //else
-            //{
-            //    throw expetion ??
-            //}
             return null;
         }
 
-        //very useful
-        public GattReliableWriteTransaction StartReliableWrite()
+
+        //very useful, see https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattreliablewritetransaction?view=winrt-22000
+        public GattReliableWriteTransaction StartReliableWriteTransaction()
         {
             GattReliableWriteTransaction grwt = new GattReliableWriteTransaction();
             return grwt;
