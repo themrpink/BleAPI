@@ -155,8 +155,7 @@ namespace CosmedBleConsole
                             {
                                 Console.WriteLine(e.Message);
                                 //throw new GattCommunicationException("impossible to access the Service " + service.Uuid.ToString(), e);
-                            }
-                                                       
+                            }                                                      
                          
                         }
                     }

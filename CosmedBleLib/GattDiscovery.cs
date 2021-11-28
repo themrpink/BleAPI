@@ -248,6 +248,10 @@ namespace CosmedBleLib
 
 
         //very useful, see https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattreliablewritetransaction?view=winrt-22000
+        /// <summary>
+        /// Performs GATT reliable writes on the Bluetooth LE device, in the form of a transaction write operation.
+        /// </summary>
+        /// <returns></returns>
         public GattReliableWriteTransaction StartReliableWriteTransaction()
         {
             GattReliableWriteTransaction grwt = new GattReliableWriteTransaction();

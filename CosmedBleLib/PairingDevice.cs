@@ -31,12 +31,12 @@ namespace CosmedBleLib
     public class CosmedBleDevice: ICosmedBleDevice
     {
        
-        private BluetoothLEDevice bluetoothLeDevice;
+        internal BluetoothLEDevice bluetoothLeDevice;
 
 
         #region Public Properties
 
-        public BluetoothLEDevice BluetoothLeDevice { get { return bluetoothLeDevice; } set { bluetoothLeDevice = value; } }
+        public BluetoothLEDevice BluetoothLeDevice { get { return bluetoothLeDevice; }  }
 
         public ulong BluetoothAddress { get { return bluetoothLeDevice.BluetoothAddress; } }
 
@@ -363,7 +363,7 @@ namespace CosmedBleLib
             try
             {
                 //create a new device from deviceId (necessary to recognize previously paired devices)
-                var bledevice = device.BluetoothLeDevice;
+                var bledevice = await BluetoothLEDevice.FromIdAsync(deviceInformation.Id);//device.BluetoothLeDevice;
 
                 //try the pairing process
                 bledevice.DeviceInformation.Pairing.Custom.PairingRequested += PairingRequestedHandler;
@@ -374,7 +374,7 @@ namespace CosmedBleLib
                 bledevice = await BluetoothLEDevice.FromIdAsync(deviceId);
 
                 //update the device 
-                device.BluetoothLeDevice = bledevice;
+                device.bluetoothLeDevice = bledevice;
                 
                 return new PairingResult(devicePairingResult.ProtectionLevelUsed, devicePairingResult.Status, bledevice.WasSecureConnectionUsedForPairing);
             }
@@ -403,7 +403,7 @@ namespace CosmedBleLib
                 bledevice = await BluetoothLEDevice.FromIdAsync(deviceId);
 
                 //update the device 
-                device.BluetoothLeDevice = bledevice;
+                device.bluetoothLeDevice = bledevice;
 
                 return new PairingResult(devicePairingResult.ProtectionLevelUsed, devicePairingResult.Status, bledevice.WasSecureConnectionUsedForPairing);
             }

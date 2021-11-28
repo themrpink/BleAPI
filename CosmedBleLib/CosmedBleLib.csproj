@@ -68,5 +68,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Values.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Advertisement\" />
+    <Folder Include="BleAdapter\" />
+    <Folder Include="Collections\" />
+    <Folder Include="ConnectionServices\" />
+    <Folder Include="CustomExceptions\" />
+    <Folder Include="DeviceDiscovery\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Filter\" />
+    <Folder Include="GattDiscovery\" />
+    <Folder Include="GattOpertations\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Values\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

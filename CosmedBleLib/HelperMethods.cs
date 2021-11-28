@@ -70,7 +70,26 @@ namespace CosmedBleLib
         }
     }
 
-
+    public static class GattDeclarationHelper
+    {
+        /// <summary>
+        /// Helper function to convert a UUID to a name
+        /// </summary>
+        /// <param name="uuid"></param>
+        /// <returns>Name of the UUID</returns>
+        public static string ConvertUuidToName(Guid uuid)
+        {
+            var shortId = BluetoothUuidHelper.TryGetShortId(uuid);
+            if (shortId.HasValue &&
+                Enum.TryParse(shortId.Value.ToString(), out GattDeclarationUuid name) == true)
+            {
+                return name.ToString();
+            }
+            return uuid.ToString();
+        }
+    }
+   
+    
     public static class GattDescriptorUuidHelper
     {
         /// <summary>

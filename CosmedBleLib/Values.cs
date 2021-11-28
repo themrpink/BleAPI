@@ -14,8 +14,6 @@ namespace CosmedBleLib
     public class BluetoothLEAdvertisementFlagsValues
     {
 
-
-
         public enum BluetoothLEAdvertisementFlags : byte
         {
             None = 0x00,

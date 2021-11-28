@@ -81,5 +81,14 @@ namespace CosmedBleLib
     }
 
 
+    [Serializable]
+    public class BlePairingException : Exception
+    {
+        public BlePairingException() : base() { }
+        public BlePairingException(string message) : base(message) { }
+        public BlePairingException(string message, Exception inner) : base(message, inner) { }
 
+        protected BlePairingException(System.Runtime.Serialization.SerializationInfo info,
+            System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    }
 }
