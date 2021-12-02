@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\CosmedBleLib.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,15 +52,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collections.cs" />
+    <Compile Include="Collections\Collections.cs" />
+    <Compile Include="ConnectionServices\PairingDevice.cs" />
+    <Compile Include="CosmedBleAdvertisedDevice.cs" />
+    <Compile Include="CosmedBluetoothLEAdapter.cs" />
+    <Compile Include="CosmedBluetoothLEAdvertisementFilter.cs" />
+    <Compile Include="CosmedBluetoothLEAdvertisementWatcher.cs" />
+    <Compile Include="CustomExceptions\CosmedLibExceptions.cs" />
+    <Compile Include="DeviceDiscovery\CosmedBleAdvertisedDevice.cs" />
+    <Compile Include="DeviceDiscovery\CosmedBluetoothLEAdvertisementFilter.cs" />
+    <Compile Include="DeviceDiscovery\IAdvertisedDevice.cs" />
+    <Compile Include="DeviceDiscovery\IScanAdvertisement.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="GattDiscovery\GattDiscovery.cs" />
+    <Compile Include="GattOpertations\CosmedGattCharacteristic.cs" />
+    <Compile Include="GattOpertations\ICommunicationResult.cs" />
     <Compile Include="HelperMethods.cs" />
+    <Compile Include="Helpers\CosmedDataReader.cs" />
+    <Compile Include="Helpers\HelperMethods.cs" />
     <Compile Include="PairingDevice.cs" />
     <Compile Include="CosmedGattCharacteristic.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="CosmedDataReader.cs" />
-    <Compile Include="CosmedBluetoothLEAdapter.cs" />
-    <Compile Include="CosmedBleAdvertisedDevice.cs" />
-    <Compile Include="CosmedBluetoothLEAdvertisementFilter.cs" />
-    <Compile Include="CosmedBluetoothLEAdvertisementWatcher.cs" />
+    <Compile Include="BleAdapter\CosmedBluetoothLEAdapter.cs" />
+    <Compile Include="DeviceDiscovery\CosmedBluetoothLEAdvertisementWatcher.cs" />
     <Compile Include="CosmedLibExceptions.cs" />
     <Compile Include="GattDiscovery.cs" />
     <Compile Include="IAdvertisedDevice.cs" />
@@ -67,20 +83,12 @@
     <Compile Include="IScanAdvertisement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Values.cs" />
+    <Compile Include="Values\Values.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Advertisement\" />
-    <Folder Include="BleAdapter\" />
-    <Folder Include="Collections\" />
-    <Folder Include="ConnectionServices\" />
-    <Folder Include="CustomExceptions\" />
-    <Folder Include="DeviceDiscovery\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Filter\" />
-    <Folder Include="GattDiscovery\" />
-    <Folder Include="GattOpertations\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Values\" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

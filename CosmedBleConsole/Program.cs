@@ -123,7 +123,7 @@ namespace CosmedBleConsole
                                                                                                         Console.WriteLine("notification:");
                                                                                                         Console.WriteLine(a.Timestamp.ToString());
                                                                                                         IBuffer CharacteristicValue = a.CharacteristicValue;
-                                                                                                        string val = ClientGattBufferReaderWriter.ToUTF8String(CharacteristicValue);
+                                                                                                        string val = ClientBufferReader.ToUTF8String(CharacteristicValue);
                                                                                                         Console.WriteLine("buffer content: " + val);
 
                                                                                                     },
@@ -137,7 +137,7 @@ namespace CosmedBleConsole
                                                                                                                    Console.WriteLine("indication:");
                                                                                                                    Console.WriteLine(a.Timestamp.ToString());
                                                                                                                    IBuffer CharacteristicValue = a.CharacteristicValue;
-                                                                                                                   string val = ClientGattBufferReaderWriter.ToUTF8String(CharacteristicValue);
+                                                                                                                   string val = ClientBufferReader.ToUTF8String(CharacteristicValue);
                                                                                                                    Console.WriteLine("buffer content: " + val);
 
                                                                                                                },

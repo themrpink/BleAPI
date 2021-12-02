@@ -313,8 +313,8 @@ namespace CosmedBleLib.MSTest.UnitTest
         [TestCategory("scanning.collections")]
         public void recentlyDiscoveredDevices_AddDeviceAndWaitTimeout_DeviceRemoved()
         {
-            watcher.timeoutSeconds = 1;
-            double timeout = watcher.timeoutSeconds;
+            watcher.TimeoutSeconds = 1;
+            double timeout = watcher.TimeoutSeconds;
             //IAdvertisedDevicesCollection collections = watcher.GetUpdatedDiscoveredDevices();
 
             watcher.addDiscoveredDevices(device);
@@ -332,7 +332,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         [TestCategory("scanning.collections")]
         public void lastDiscoveredDevices_AddDeviceAndRead_DeviceRemoved()
         {
-            double timeout = watcher.timeoutSeconds;
+            double timeout = watcher.TimeoutSeconds;
             //IAdvertisedDevicesCollection collections = watcher.GetUpdatedDiscoveredDevices();
 
             watcher.addDiscoveredDevices(device);
@@ -361,8 +361,8 @@ namespace CosmedBleLib.MSTest.UnitTest
         public async Task RecentlyDevicesCollection_UpdateTimeElapsed_CollectionChanged()
         {
             IReadOnlyCollection<CosmedBleAdvertisedDevice> recent;
-            watcher.timeoutSeconds = 1;
-            double timeout = watcher.timeoutSeconds;
+            watcher.TimeoutSeconds = 1;
+            double timeout = watcher.TimeoutSeconds;
             await watcher.StartPassiveScanning();
             watcher.addDiscoveredDevices(device);
             recent = watcher.RecentlyDiscoveredDevices;
@@ -378,10 +378,10 @@ namespace CosmedBleLib.MSTest.UnitTest
         public void RecentlyDiscoveredDevicesCollection_CollectionsUpdateTimeNotElapsedYet_CollectionNotChanged()
         {
             IReadOnlyCollection<CosmedBleAdvertisedDevice> recent;
-            watcher.timeoutSeconds = 1;
+            watcher.TimeoutSeconds = 1;
             watcher.addDiscoveredDevices(device);
             recent = watcher.RecentlyDiscoveredDevices;
-            Thread.Sleep((int)watcher.timeoutSeconds * 1000 / 2);
+            Thread.Sleep((int)watcher.TimeoutSeconds * 1000 / 2);
             CollectionAssert.AreEquivalent(watcher.RecentlyDiscoveredDevices.ToList(), recent.ToList());
         }
 
