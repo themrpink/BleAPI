@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Storage.Streams;
-using System.Runtime.InteropServices.WindowsRuntime;
+using CosmedBleLib.Values;
 
 /// <summary>
 /// Filter 
 /// </summary>
-namespace CosmedBleLib
+namespace CosmedBleLib.DeviceDiscovery
 {
 
     /// <summary>
@@ -67,7 +67,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Init the builder to start building the filter object
+        /// Inits the builder to start building the filter object
         /// </summary>
         /// <returns>an empty FilterBuilder</returns>
         public static FilterBuilder Init()
@@ -78,7 +78,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Init the builder to start building the filter object
+        /// Inits the builder to start building the filter object
         /// </summary>
         /// <param name="showOnlyConnectableDevices">True to filter by connectable devices</param>
         /// <returns>an empty FilterBuilder</returns>
@@ -89,7 +89,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Add filtering by service UUID
+        /// Adds filtering by service UUID
         /// </summary>
         /// <param name="serviceUUID">UUID to be filtered</param>
         /// <returns>An instance of the builder in the updated state</returns>
@@ -102,7 +102,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Add to the filter the property of filtering by connectable devices
+        /// Adds to the filter the property of filtering by connectable devices
         /// </summary>
         /// <param name="connectable">True to activate this filter option, false to deactivate</param>
         /// <returns>An instance of the builder in its udapted state</returns>
@@ -114,7 +114,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Add to the filter the property of filtering by flags. Flags indicate the kind of advertising device 
+        /// Adds to the filter the property of filtering by flags. Flags indicate the kind of advertising device 
         /// related to its connectivity properties
         /// </summary>
         /// <param name="flag">The kind of device</param>
@@ -127,7 +127,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Add to the filter the property of filtering by the local name of the device
+        /// Adds to the filter the property of filtering by the local name of the device
         /// </summary>
         /// <param name="localName">The requested local name </param>
         /// <exception cref="System.ArgumentNullException">
@@ -146,7 +146,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Add to the filter the property of filtering by company ID
+        /// Adds to the filter the property of filtering by company ID
         /// </summary>
         /// <param name="companyId">The company id. </param>
         /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
@@ -164,10 +164,10 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Add to the filter the property of filtering by company ID.
+        /// Adds to the filter the property of filtering by company ID.
         /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
         /// </summary>
-        /// <param name="companyIdHexString">The company id, expressed as hexadecimal String. </param>
+        /// <param name="companyIdHexString">The company id, expressed as string representation of the hexadecimal value. </param>
         /// <returns>An instance of the builder in its updated state</returns>
         public FilterBuilder SetCompanyID(string companyIdHexString)
         {
@@ -185,7 +185,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Add to the filter the property of filtering by company ID and Manufacturer Data.
+        /// Adds to the filter the property of filtering by company ID and Manufacturer Data.
         /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
         /// </summary>
         /// <remarks>Make sure that the buffer length can fit within an advertisement payload (20 bytes)</remarks>
@@ -201,7 +201,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Add to the filter the property of filtering by company ID and Manufacturer Data.
+        /// Adds to the filter the property of filtering by company ID and Manufacturer Data.
         /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
         /// </summary>
         /// <remarks>Make sure that the buffer length can fit within an advertisement payload (20 bytes)</remarks>
@@ -232,7 +232,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Add to the filter the property of filtering by data and its type,
+        /// Adds to the filter the property of filtering by data and its type,
         /// as defined by the Bluetooth Special Interest Group (SIG).
         /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
         /// </summary>
@@ -261,7 +261,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Clear and reset the AdvertisementFilter
+        /// Clears and resets the AdvertisementFilter
         /// </summary>
         /// <returns>An instance of the builder in its updated state</returns>
         public FilterBuilder ClearAdvertisementFilter()
@@ -272,7 +272,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Clear and reset the SignalStrengthFilter
+        /// Clears and resets the SignalStrengthFilter
         /// </summary>
         /// <returns>An instance of the builder in its updated state</returns>
         public FilterBuilder ClearSignalStrengthFilter()
@@ -283,13 +283,13 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Set the signal strength filter
+        /// Sets the signal strength filter
         /// </summary>
         /// <param name="InRangeThresholdInDBm">the in-range threshold in dBm(RSSI)</param>
         /// <param name="OutOfRangeThresholdInDBm">the out-of-range threshold in dBm. Used in conjunction with OutOfRangeTimeout
         ///to determine when an advertisement is no longer considered "in-range</param>
         /// <param name="OutOfRangeTimeout">Timeout. Used in conjunction with OutOfRangeThresholdInDBm to determine when an advertisement is no longer considered "in-range</param>
-        /// <returns>cdcddcdc</returns>
+        /// <returns>An instance of the builder in its updated state</returns>
         public FilterBuilder SetSignalStrengthFilter(short InRangeThresholdInDBm, short OutOfRangeThresholdInDBm, TimeSpan OutOfRangeTimeout)
         {
             {
@@ -311,7 +311,7 @@ namespace CosmedBleLib
 
 
         /// <summary>
-        /// Finalize the filter construction
+        /// Finalizes the filter construction
         /// </summary>
         /// <returns>The built filter instance</returns>
         public IFilter BuildFilter()
@@ -324,15 +324,31 @@ namespace CosmedBleLib
 
 
     /// <summary>
-    /// 
+    /// Represents a Ble Advertisement Filter
     /// </summary>
     public sealed class CosmedBluetoothLEAdvertisementFilter : IFilter
     {
+        /// <value>
+        /// Gets and sets an AdvertisementFilter
+        /// </value>
         public BluetoothLEAdvertisementFilter AdvertisementFilter { get; set; }
+
+
+        /// <value>
+        /// Gets and sets a SignalStrengthFilter
+        /// </value>
         public BluetoothSignalStrengthFilter SignalStrengthFilter { get; set; }
 
+
+        /// <value>
+        /// Gets and sets the boolean indicating that only connectable devices should be showed
+        /// </value>
         public bool ShowOnlyConnectableDevices { get; set; }
 
+
+        /// <summary>
+        /// Constructor of the class
+        /// </summary>
         public CosmedBluetoothLEAdvertisementFilter()
         {
             AdvertisementFilter = new BluetoothLEAdvertisementFilter();
@@ -340,7 +356,14 @@ namespace CosmedBleLib
         }
 
 
-        //set Signal Strength Filter
+        /// <summary>
+        /// Sets the signal strength filter
+        /// </summary>
+        /// <param name="InRangeThresholdInDBm">the in-range threshold in dBm(RSSI)</param>
+        /// <param name="OutOfRangeThresholdInDBm">the out-of-range threshold in dBm. Used in conjunction with OutOfRangeTimeout
+        ///to determine when an advertisement is no longer considered "in-range</param>
+        /// <param name="OutOfRangeTimeout">Timeout. Used in conjunction with OutOfRangeThresholdInDBm to determine when an advertisement is no longer considered "in-range</param>
+        /// <returns>An instance of the filter in its updated state</returns>
         public CosmedBluetoothLEAdvertisementFilter SetSignalStrengthFilter(short InRangeThresholdInDBm, short OutOfRangeThresholdInDBm, TimeSpan OutOfRangeTimeout)
         {
             //Set the in-range threshold to -70dBm. This means advertisements with RSSI >= -70dBm 
@@ -359,53 +382,90 @@ namespace CosmedBleLib
         }
 
 
-        //add advertisement service UUID element: 
-        public CosmedBluetoothLEAdvertisementFilter SetServiceUUID(Guid ServiceUUID)
+        /// <summary>
+        /// Adds filtering by service UUID
+        /// </summary>
+        /// <param name="serviceUUID">UUID to be filtered</param>
+        /// <returns>An instance of the Filter in the updated state</returns>
+        public CosmedBluetoothLEAdvertisementFilter SetServiceUUID(Guid serviceUUID)
         {
             //checkAdvertisementFilter();
-            AdvertisementFilter.Advertisement.ServiceUuids.Add(ServiceUUID);
+            AdvertisementFilter.Advertisement.ServiceUuids.Add(serviceUUID);
             return this;
         }
 
+
+        /// <summary>
+        /// Adds to the filter the property of filtering by connectable devices
+        /// </summary>
+        /// <param name="connectable">True to activate this filter option, false to deactivate</param>
+        /// <returns>An instance of the Filter in its udapted state</returns>
         public CosmedBluetoothLEAdvertisementFilter SetShowOnlyConnectableDevices(bool connectable)
         {
             ShowOnlyConnectableDevices = connectable;
             return this;
         }
 
+
+        /// <summary>
+        /// Adds to the filter the property of filtering by flags. Flags indicate the kind of advertising device 
+        /// related to its connectivity properties
+        /// </summary>
+        /// <param name="flag">The kind of device</param>
+        /// <returns>An instance of the Filter in its updated state</returns>
         public CosmedBluetoothLEAdvertisementFilter SetFlags(BluetoothLEAdvertisementFlags flag)
         {
             AdvertisementFilter.Advertisement.Flags = flag;
             return this;
         }
-        
 
-        public CosmedBluetoothLEAdvertisementFilter SetLocalName(string LocalName)
+
+        /// <summary>
+        /// Adds to the filter the property of filtering by the local name of the device
+        /// </summary>
+        /// <param name="localName">The requested local name </param>
+        /// <exception cref="System.ArgumentNullException">
+        /// Thrown if argument is null
+        /// </exception>
+        /// <returns>An instance of the filter in its updated state</returns>
+        public CosmedBluetoothLEAdvertisementFilter SetLocalName(string localName)
         {
-            if(LocalName == null)
+            if(localName == null)
             {
                 throw new ArgumentNullException("argument was null");
             }
-            AdvertisementFilter.Advertisement.LocalName = LocalName;
+            AdvertisementFilter.Advertisement.LocalName = localName;
             return this;
         }
 
 
-        public CosmedBluetoothLEAdvertisementFilter SetCompanyID(ushort CompanyId)
+        /// <summary>
+        /// Adds to the filter the property of filtering by company ID
+        /// </summary>
+        /// <param name="companyId">The company id expressed as string representation of the hexadecimal value.</param>
+        /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
+        /// <returns>An instance of the Filter in its updated state</returns>
+        public CosmedBluetoothLEAdvertisementFilter SetCompanyID(ushort companyId)
         {
             var manufacturerData = new BluetoothLEManufacturerData();
-
             // set the company ID for the manufacturer data
-            manufacturerData.CompanyId = CompanyId;
+            manufacturerData.CompanyId = companyId;
             AdvertisementFilter.Advertisement.ManufacturerData.Add(manufacturerData);
 
             return this;
         }
 
-        public CosmedBluetoothLEAdvertisementFilter SetCompanyID(string CompanyIdHexString)
+
+        /// <summary>
+        /// Adds to the filter the property of filtering by company ID
+        /// </summary>
+        /// <param name="companyIdHexString">The company id expressed as string representation of the hexadecimal value</param>
+        /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
+        /// <returns>An instance of the Filter in its updated state</returns>
+        public CosmedBluetoothLEAdvertisementFilter SetCompanyID(string companyIdHexString)
         {
             //checkAdvertisementFilter();
-            ushort companyID = Convert.ToUInt16(CompanyIdHexString, 16);
+            ushort companyID = Convert.ToUInt16(companyIdHexString, 16);
             var manufacturerData = new BluetoothLEManufacturerData();
 
             // Then, set the company ID for the manufacturer data. Here we picked an unused value: 0xFFFE
@@ -415,37 +475,72 @@ namespace CosmedBleLib
             return this;
         }
 
-        public CosmedBluetoothLEAdvertisementFilter AddManufacturerData(ushort CompanyId, ushort ManufacturerData)
+
+        /// <summary>
+        /// Adds to the filter the property of filtering by company ID and Manufacturer Data.
+        /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
+        /// </summary>
+        /// <remarks>Make sure that the buffer length can fit within an advertisement payload (20 bytes)</remarks>
+        /// <param name="manufacturerData">Instance of the BluetoothLEManufacturerData class</param>
+        /// <returns>An instance of the Filter in its updated state</returns>
+        public CosmedBluetoothLEAdvertisementFilter AddManufacturerData(BluetoothLEManufacturerData manufacturerData)
         {
-            //create a manufacturer data section we wanted to match for
-            var manufacturerData = new BluetoothLEManufacturerData();
-
-            // Then, set the company ID for the manufacturer data. (For testing: 0xFFFE)
-            manufacturerData.CompanyId = CompanyId;
-
-            // Finally set the data payload within the manufacturer-specific section
-            // Here, use a 16-bit UUID: 0x1234 -> {0x34, 0x12} (little-endian)
-            var writer = new DataWriter();
-            writer.WriteUInt16(ManufacturerData);
-
-            // Make sure that the buffer length can fit within an advertisement payload (20 bytes). Otherwise you will get an exception.
-            manufacturerData.Data = writer.DetachBuffer();
-
             // Add the manufacturer data to the advertisement filter on the watcher:
             AdvertisementFilter.Advertisement.ManufacturerData.Add(manufacturerData);
 
             return this;
         }
 
-        //same as above
-        public CosmedBluetoothLEAdvertisementFilter SetDataBuffer(byte dataType, ushort data)
+
+        /// <summary>
+        /// Adds to the filter the property of filtering by company ID and Manufacturer Data.
+        /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
+        /// </summary>
+        /// <remarks>Make sure that the buffer length can fit within an advertisement payload (20 bytes)</remarks>
+        /// <param name="companyId">The company id</param>
+        /// <param name="manufacturerData">Byte array containing the manufacturer data</param>
+        /// <returns>An instance of the Filter in its updated state</returns>
+        public CosmedBluetoothLEAdvertisementFilter AddManufacturerData(ushort companyId, byte[] manufacturerData)
+        {
+            //create a manufacturer data section we wanted to match for
+            var _manufacturerData = new BluetoothLEManufacturerData();
+
+            // Then, set the company ID for the manufacturer data. (For testing: 0xFFFE)
+            _manufacturerData.CompanyId = companyId;
+
+            // Finally set the data payload within the manufacturer-specific section
+            // Here, use a 16-bit UUID: 0x1234 -> {0x34, 0x12} (little-endian)
+            var writer = new DataWriter();
+            writer.WriteBytes(manufacturerData);
+
+            // Make sure that the buffer length can fit within an advertisement payload (20 bytes). Otherwise you will get an exception.
+            _manufacturerData.Data = writer.DetachBuffer();
+
+            // Add the manufacturer data to the advertisement filter on the watcher:
+            AdvertisementFilter.Advertisement.ManufacturerData.Add(_manufacturerData);
+
+            return this;
+        }
+
+
+        /// <summary>
+        /// Adds to the filter the property of filtering by data and its type,
+        /// as defined by the Bluetooth Special Interest Group (SIG).
+        /// <see href="https://www.bluetooth.com/specifications/assigned-numbers">See Bluetooth Assigned Numbers</see>
+        /// </summary>
+        /// <remarks>Make sure that the data length can fit within an advertisement payload (20 bytes)</remarks>
+        /// <param name="dataType">The data type</param>
+        /// <param name="data">The data value</param>
+        /// <exception cref="System.ArgumentException">Thrown in case of data overlflow</exception>
+        /// <returns>An instance of the Filter in its updated state</returns>
+        public CosmedBluetoothLEAdvertisementFilter SetDataBuffer(AdvertisementSectionType dataType, byte[] data)
         {
             BluetoothLEAdvertisementDataSection dataSection = new BluetoothLEAdvertisementDataSection();
             try
             {
-                dataSection.DataType = dataType;
+                dataSection.DataType = ((byte)dataType);
                 var writer = new DataWriter();
-                writer.WriteUInt16(data);
+                writer.WriteBytes(data);
                 dataSection.Data = writer.DetachBuffer();
                 AdvertisementFilter.Advertisement.DataSections.Add(dataSection);
             }
@@ -454,33 +549,24 @@ namespace CosmedBleLib
                 throw new ArgumentException("data size too big", e);
             }
             return this;
-            }
-
-        public CosmedBluetoothLEAdvertisementFilter SetDataBuffer(uint dataType, ushort data)
-        {
-            var dataSection = new BluetoothLEAdvertisementDataSection();
-            try
-            {
-                byte ADType = Convert.ToByte(dataType);
-                dataSection.DataType = ADType;
-                var writer = new DataWriter();
-                writer.WriteUInt16(data);
-                dataSection.Data = writer.DetachBuffer();
-            }
-            catch (OverflowException e)
-            {
-                throw new ArgumentException("data size too big", e);
-            }
-
-            return this;
         }
 
+
+        /// <summary>
+        /// Clears and resets the AdvertisementFilter
+        /// </summary>
+        /// <returns>An instance of the Filter in its updated state</returns>
         public CosmedBluetoothLEAdvertisementFilter ClearAdvertisementFilter()
         {
             AdvertisementFilter = new BluetoothLEAdvertisementFilter(); ;
             return this;
         }
 
+
+        /// <summary>
+        /// Clears and resets the SignalStrengthFilter
+        /// </summary>
+        /// <returns>An instance of the Filter in its updated state</returns>
         public CosmedBluetoothLEAdvertisementFilter ClearSignalStrengthFilter()
         {
             SignalStrengthFilter = new BluetoothSignalStrengthFilter();

@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-using CosmedBleLib;
-using System.Text.RegularExpressions;
 using Windows.Devices.Enumeration;
-using Windows.Foundation;
+using System.Runtime;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Storage.Streams;
-using Windows.Devices.Bluetooth;
-using Windows.Devices.Radios;
-using System.Management;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
+using CosmedBleLib.DeviceDiscovery;
+using CosmedBleLib.ConnectionServices;
+using CosmedBleLib.GattCommunication;
+using CosmedBleLib.Extensions;
+using CosmedBleLib.Helpers;
+
 
 namespace CosmedBleConsole
 {
@@ -102,7 +101,7 @@ namespace CosmedBleConsole
 
                                     GattCharacteristicsResult characteristics;
 
-                                    characteristics = await service.GetCharacteristicsAsync().AsTask();
+                                    characteristics = await service.GetCharacteristicsAsync().ToTask();
                                     
                                     foreach (var characteristic in characteristics.Characteristics)
                                     {

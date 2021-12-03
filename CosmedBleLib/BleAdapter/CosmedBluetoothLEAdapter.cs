@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Radios;
 using Windows.Foundation;
+using CosmedBleLib.CustomExceptions;
 
-namespace CosmedBleLib
+namespace CosmedBleLib.Adapter
 {
-
+    /// <summary>
+    /// Represents the bluetooth adapter
+    /// </summary>
     public sealed class CosmedBluetoothLEAdapter
     {
         private BluetoothAdapter adapter;
@@ -22,13 +25,52 @@ namespace CosmedBleLib
         private bool isExtendedAdvertisingSupported;
         private bool isCentralRoleSupported;
 
+
+        /// <value>
+        /// The address of the adapter expressed as decimal value
+        /// </value>
         public ulong DecimalAddress { get {return decimalAddress; } }
+
+
+        /// <value>
+        /// The address of the adapter expressed as hexidecimal value
+        /// </value>
         public string HexAddress { get { return hexAddress; }  }
+
+
+        /// <value>
+        /// Gets or sets a value indicating whether Secure Connections are supported for paired Bluetooth LE devices
+        /// </value>
         public bool AreLowEnergySecureConnectionsSupported { get { return areLowEnergySecureConnectionsSupported; } }
+
+
+        /// <value>
+        /// Indicates the maximum length of an advertisement that can be published by this adapter.
+        /// </value>
         public uint MaxAdvertisementDataLength { get { return maxAdvertisementDataLength; }  }
+
+
+        /// <value>
+        /// Indicates whether the adapter supports the 5.0 Extended Advertising format.
+        /// </value>
         public bool IsExtendedAdvertisingSupported { get { return isExtendedAdvertisingSupported; } }
+
+
+        /// <value>
+        /// Gets a boolean indicating if the adapater supports LowEnergy central role.
+        /// </value>
         public bool IsCentralRoleSupported { get { return isCentralRoleSupported; }  }
+
+
+        /// <value>
+        /// Gets a boolean indicating if the adapater supports LowEnergy Bluetooth Transport type.
+        /// </value>
         public bool IsLowEnergySupported { get { return isLowEnergySupported; } }
+
+
+        /// <value>
+        /// Gets a boolean incating the the adapter is turned on 
+        /// </value>
         public bool IsAdapterOn => IsBluetoothLEOn();
         
 
@@ -59,6 +101,10 @@ namespace CosmedBleLib
         }
 
 
+        /// <summary>
+        /// Instatiates the Adapter
+        /// </summary>
+        /// <returns>an instance of the Bluetooth Adapter</returns>
         public static async Task<CosmedBluetoothLEAdapter> CreateAsync()
         {
             var adapter = new CosmedBluetoothLEAdapter();
@@ -67,7 +113,10 @@ namespace CosmedBleLib
         }
 
 
-        //controlla la compatibilità di questa soluzione
+        /// <summary>
+        /// Checks if the bluetooth apapter is turned on
+        /// </summary>
+        /// <returns>True if the adapter is on</returns>
         public static bool IsBluetoothLEOn()
         {
             SelectQuery sq = new SelectQuery("SELECT DeviceId FROM Win32_PnPEntity WHERE service='BthLEEnum'");
@@ -76,6 +125,11 @@ namespace CosmedBleLib
         }
 
 
+        /// <summary>
+        /// Gets an instance of the required remote Ble device
+        /// </summary>
+        /// <param name="deviceAddress">The address of the remote device</param>
+        /// <returns>An instance of the remote Ble device</returns>
         public static async Task<BluetoothLEDevice> GetRemoteDeviceAsync(ulong deviceAddress)
         {
             BluetoothLEDevice device = await BluetoothLEDevice.FromBluetoothAddressAsync(deviceAddress).AsTask().ConfigureAwait(false);
@@ -83,6 +137,11 @@ namespace CosmedBleLib
         }
 
 
+        /// <summary>
+        /// Gets an instance of the required remote Ble device
+        /// </summary>
+        /// <param name="deviceId">The ID of the remote device</param>
+        /// <returns>An instance of the remote Ble device</returns>
         public static async Task<BluetoothLEDevice> GetRemoteDeviceAsync(string deviceId)
         {
             BluetoothLEDevice device = await BluetoothLEDevice.FromIdAsync(deviceId).AsTask().ConfigureAwait(false);

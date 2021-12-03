@@ -1,0 +1,286 @@
+\hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{}\doxysection{Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device Class Reference}
+\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+
+
+Represents a remote devices with its received advertisement and, if available, scan response  
+
+
+Inheritance diagram for Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a0be9146029809c40ca3a9a3c436f6744}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a0be9146029809c40ca3a9a3c436f6744}} 
+{\bfseries Cosmed\+Ble\+Advertised\+Device} ()
+\begin{DoxyCompactList}\small\item\em Constructor of the class \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a25af8f6bc848c962fe4b7a1cdf364496}{Cosmed\+Ble\+Advertised\+Device}} (ulong address, Date\+Time\+Offset timestamp, bool is\+Connectable, Bluetooth\+LEAdvertisement adv, Bluetooth\+LEAdvertisement\+Type adv\+Type)
+\begin{DoxyCompactList}\small\item\em Constructor of the class \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a18f5e55883215b16f75681a299270cbd}{Cosmed\+Ble\+Advertised\+Device}} (Bluetooth\+LEAdvertisement\+Received\+Event\+Args args)
+\begin{DoxyCompactList}\small\item\em Constructor of the class \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}} \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a95ee56d2f0cbd9aa89815be66f53f63a}{Set\+Advertisement}} (Bluetooth\+LEAdvertisement\+Received\+Event\+Args args)
+\begin{DoxyCompactList}\small\item\em Sets an advertisement received from the device \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a762238cee04291d6ff04e2b90bdb73a2}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a762238cee04291d6ff04e2b90bdb73a2}} 
+void {\bfseries Print\+Advertisement} ()
+\begin{DoxyCompactList}\small\item\em Prints the advertisement and scan response data \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab880bc79ec57192ae06327221c910fbf}{Device\+Name}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+bool \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab18cafdf6c97476987cc9a99eabb5edb}{Has\+Scan\+Response}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+ulong \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_aca618f066687b4466b8a65a4b0a2b3d0}{Device\+Address}}\hspace{0.3cm}{\ttfamily  \mbox{[}getset\mbox{]}}
+\item 
+string \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a9f961c69d0bf0b21e3813ad2ecbf93ce}{Hex\+Device\+Address}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+Bluetooth\+Address\+Type \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ac4b284cb7f4784905fb50eaf9a60e89f}{Bluetooth\+Address\+Type}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+Date\+Time\+Offset \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a3a43fa27c4924840a9051b022f669f51}{Timestamp}}\hspace{0.3cm}{\ttfamily  \mbox{[}getset\mbox{]}}
+\item 
+bool \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a1e74a6e956e78044d776c6878e6a7acc}{Is\+Connectable}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+short \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a2a51c8a56a5c7c0fef284d3a1aa0d2e3}{Raw\+Signal\+Strength\+In\+DBm}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+bool \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_afd8bcf5f953293525a3ec0e793c03783}{Is\+Anonymous}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+bool \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a907d4594073dff3c517381fed9190d34}{Is\+Directed}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+bool \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_adb6fed893ad2222468da033a8ed0bd80}{Is\+Scannable}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+short? \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a6a518af342b86088250c25d3ad78a4f1}{Transmit\+Power\+Level\+In\+DBm}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\hyperlink{struct_cosmed_ble_lib_1_1_advertisement_content}{Advertisement\+Content}} \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a4e5e50a7c8d6d57e6e1df0022a87805e}{Get\+Advertisement\+Content}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\hyperlink{struct_cosmed_ble_lib_1_1_advertisement_content}{Advertisement\+Content}} \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a923ea14edb6a629688487659c832d0a1}{Get\+Scan\+Response\+Advertisement\+Content}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+IRead\+Only\+Collection$<$ Guid $>$? \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a4cebb57384930975cb1cec0df36b0d11}{Service\+Uuids}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+IRead\+Only\+Collection$<$ Guid $>$? \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_aa3638eed3be6fa590fc03f73f115f0fb}{Service\+Uuids\+From\+Scan\+Response}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+Bluetooth\+LEAdvertisement\+Flags?? \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_aa05a8e5acb14caff11848b461ec60f39}{Flags}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\hyperlink{class_cosmed_ble_lib_1_1_manufacturer_data_collection}{Manufacturer\+Data\+Collection}}? \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a9be35a821a2b98e892af5cab86c8e9bf}{Manufacturer\+Data}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\hyperlink{class_cosmed_ble_lib_1_1_manufacturer_data_collection}{Manufacturer\+Data\+Collection}}? \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab1fcb1cdb6574bdc8118311208ce37c5}{Manufacturer\+Data\+From\+Scan\+Response}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\hyperlink{class_cosmed_ble_lib_1_1_data_section_collection}{Data\+Section\+Collection}}? \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a2e1bacbb04b298063641d1aa228903c4}{Data\+Sections}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\hyperlink{class_cosmed_ble_lib_1_1_data_section_collection}{Data\+Section\+Collection}}? \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab5d401c1a3dc6c942d8481b761237227}{Data\+Sections\+From\+Scan\+Response}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a1a9caf35bfa5bdc8ed1682faca174f6e}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a1a9caf35bfa5bdc8ed1682faca174f6e}} 
+Action$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}} $>$ {\bfseries Scan\+Response\+Received}
+\begin{DoxyCompactList}\small\item\em Fired when a scan response is received \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a remote devices with its received advertisement and, if available, scan response 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a25af8f6bc848c962fe4b7a1cdf364496}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a25af8f6bc848c962fe4b7a1cdf364496}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!CosmedBleAdvertisedDevice@{CosmedBleAdvertisedDevice}}
+\index{CosmedBleAdvertisedDevice@{CosmedBleAdvertisedDevice}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{CosmedBleAdvertisedDevice()}{CosmedBleAdvertisedDevice()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Cosmed\+Ble\+Advertised\+Device (\begin{DoxyParamCaption}\item[{ulong}]{address,  }\item[{Date\+Time\+Offset}]{timestamp,  }\item[{bool}]{is\+Connectable,  }\item[{Bluetooth\+LEAdvertisement}]{adv,  }\item[{Bluetooth\+LEAdvertisement\+Type}]{adv\+Type }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor of the class 
+
+
+\begin{DoxyParams}{Parameters}
+{\em address} & The device address\\
+\hline
+{\em timestamp} & Timestamp of the advertisement\\
+\hline
+{\em is\+Connectable} & Boolean indicating if the device is connectable\\
+\hline
+{\em adv} & The received advertisement\\
+\hline
+{\em adv\+Type} & Type of the received advertisement\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a18f5e55883215b16f75681a299270cbd}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a18f5e55883215b16f75681a299270cbd}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!CosmedBleAdvertisedDevice@{CosmedBleAdvertisedDevice}}
+\index{CosmedBleAdvertisedDevice@{CosmedBleAdvertisedDevice}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{CosmedBleAdvertisedDevice()}{CosmedBleAdvertisedDevice()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Cosmed\+Ble\+Advertised\+Device (\begin{DoxyParamCaption}\item[{Bluetooth\+LEAdvertisement\+Received\+Event\+Args}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor of the class 
+
+
+\begin{DoxyParams}{Parameters}
+{\em args} & \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a95ee56d2f0cbd9aa89815be66f53f63a}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a95ee56d2f0cbd9aa89815be66f53f63a}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!SetAdvertisement@{SetAdvertisement}}
+\index{SetAdvertisement@{SetAdvertisement}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{SetAdvertisement()}{SetAdvertisement()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}} Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Set\+Advertisement (\begin{DoxyParamCaption}\item[{Bluetooth\+LEAdvertisement\+Received\+Event\+Args}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets an advertisement received from the device 
+
+
+\begin{DoxyParams}{Parameters}
+{\em args} & The arguments containing all the data about a received advertisement\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An instance of the class
+\end{DoxyReturn}
+
+
+\doxysubsection{Property Documentation}
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ac4b284cb7f4784905fb50eaf9a60e89f}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ac4b284cb7f4784905fb50eaf9a60e89f}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!BluetoothAddressType@{BluetoothAddressType}}
+\index{BluetoothAddressType@{BluetoothAddressType}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{BluetoothAddressType}{BluetoothAddressType}}
+{\footnotesize\ttfamily Bluetooth\+Address\+Type Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Bluetooth\+Address\+Type\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the type of address (public -\/ random) \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a2e1bacbb04b298063641d1aa228903c4}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a2e1bacbb04b298063641d1aa228903c4}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!DataSections@{DataSections}}
+\index{DataSections@{DataSections}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{DataSections}{DataSections}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_cosmed_ble_lib_1_1_data_section_collection}{Data\+Section\+Collection}}? Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Data\+Sections\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+
+
+Gets the collection of Data\+Sections if they exists, otherwise returns an empty collection \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab5d401c1a3dc6c942d8481b761237227}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab5d401c1a3dc6c942d8481b761237227}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!DataSectionsFromScanResponse@{DataSectionsFromScanResponse}}
+\index{DataSectionsFromScanResponse@{DataSectionsFromScanResponse}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{DataSectionsFromScanResponse}{DataSectionsFromScanResponse}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_cosmed_ble_lib_1_1_data_section_collection}{Data\+Section\+Collection}}? Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Data\+Sections\+From\+Scan\+Response\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the collection of Data\+Sections from the scan response if they exists, otherwise returns an empty collection \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_aca618f066687b4466b8a65a4b0a2b3d0}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_aca618f066687b4466b8a65a4b0a2b3d0}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!DeviceAddress@{DeviceAddress}}
+\index{DeviceAddress@{DeviceAddress}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{DeviceAddress}{DeviceAddress}}
+{\footnotesize\ttfamily ulong Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Device\+Address\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}}
+
+Gets and sets the device address value \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab880bc79ec57192ae06327221c910fbf}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab880bc79ec57192ae06327221c910fbf}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!DeviceName@{DeviceName}}
+\index{DeviceName@{DeviceName}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{DeviceName}{DeviceName}}
+{\footnotesize\ttfamily string Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Device\+Name\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the the name of the device \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_aa05a8e5acb14caff11848b461ec60f39}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_aa05a8e5acb14caff11848b461ec60f39}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!Flags@{Flags}}
+\index{Flags@{Flags}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{Flags}{Flags}}
+{\footnotesize\ttfamily Bluetooth\+LEAdvertisement\+Flags?? Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Flags\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the flags of the advertisement if it exists, otherwise returns null \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a4e5e50a7c8d6d57e6e1df0022a87805e}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a4e5e50a7c8d6d57e6e1df0022a87805e}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!GetAdvertisementContent@{GetAdvertisementContent}}
+\index{GetAdvertisementContent@{GetAdvertisementContent}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{GetAdvertisementContent}{GetAdvertisementContent}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_cosmed_ble_lib_1_1_advertisement_content}{Advertisement\+Content}} Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Get\+Advertisement\+Content\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the Advertisement\+Contect object \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a923ea14edb6a629688487659c832d0a1}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a923ea14edb6a629688487659c832d0a1}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!GetScanResponseAdvertisementContent@{GetScanResponseAdvertisementContent}}
+\index{GetScanResponseAdvertisementContent@{GetScanResponseAdvertisementContent}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{GetScanResponseAdvertisementContent}{GetScanResponseAdvertisementContent}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_cosmed_ble_lib_1_1_advertisement_content}{Advertisement\+Content}} Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Get\+Scan\+Response\+Advertisement\+Content\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the t\+Scan\+Response\+Advertisement\+Contect object \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab18cafdf6c97476987cc9a99eabb5edb}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab18cafdf6c97476987cc9a99eabb5edb}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!HasScanResponse@{HasScanResponse}}
+\index{HasScanResponse@{HasScanResponse}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{HasScanResponse}{HasScanResponse}}
+{\footnotesize\ttfamily bool Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Has\+Scan\+Response\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the boolean indicating if a scan response from the device has been received \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a9f961c69d0bf0b21e3813ad2ecbf93ce}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a9f961c69d0bf0b21e3813ad2ecbf93ce}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!HexDeviceAddress@{HexDeviceAddress}}
+\index{HexDeviceAddress@{HexDeviceAddress}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{HexDeviceAddress}{HexDeviceAddress}}
+{\footnotesize\ttfamily string Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Hex\+Device\+Address\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets and sets the device adress value expressed as string representation of the hexadecimal value \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_afd8bcf5f953293525a3ec0e793c03783}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_afd8bcf5f953293525a3ec0e793c03783}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!IsAnonymous@{IsAnonymous}}
+\index{IsAnonymous@{IsAnonymous}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{IsAnonymous}{IsAnonymous}}
+{\footnotesize\ttfamily bool Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Is\+Anonymous\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the boolean indicating whether a Bluetooth Address was omitted from the received advertisement. \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a1e74a6e956e78044d776c6878e6a7acc}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a1e74a6e956e78044d776c6878e6a7acc}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!IsConnectable@{IsConnectable}}
+\index{IsConnectable@{IsConnectable}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{IsConnectable}{IsConnectable}}
+{\footnotesize\ttfamily bool Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Is\+Connectable\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the boolean indicating whether the Bluetooth LE device is currently advertising a connectable advertisement. \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a907d4594073dff3c517381fed9190d34}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a907d4594073dff3c517381fed9190d34}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!IsDirected@{IsDirected}}
+\index{IsDirected@{IsDirected}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{IsDirected}{IsDirected}}
+{\footnotesize\ttfamily bool Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Is\+Directed\hspace{0.3cm}{\ttfamily [get]}}
+
+Indicates whether the received advertisement is directed. \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_adb6fed893ad2222468da033a8ed0bd80}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_adb6fed893ad2222468da033a8ed0bd80}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!IsScannable@{IsScannable}}
+\index{IsScannable@{IsScannable}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{IsScannable}{IsScannable}}
+{\footnotesize\ttfamily bool Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Is\+Scannable\hspace{0.3cm}{\ttfamily [get]}}
+
+Indicates whether the received advertisement is scannable. \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a9be35a821a2b98e892af5cab86c8e9bf}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a9be35a821a2b98e892af5cab86c8e9bf}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!ManufacturerData@{ManufacturerData}}
+\index{ManufacturerData@{ManufacturerData}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{ManufacturerData}{ManufacturerData}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_cosmed_ble_lib_1_1_manufacturer_data_collection}{Manufacturer\+Data\+Collection}}? Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Manufacturer\+Data\hspace{0.3cm}{\ttfamily [get]}}
+
+
+
+
+
+Gets the collection of Manufacturer\+Datae if they exists, otherwise returns an empty collection \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab1fcb1cdb6574bdc8118311208ce37c5}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_ab1fcb1cdb6574bdc8118311208ce37c5}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!ManufacturerDataFromScanResponse@{ManufacturerDataFromScanResponse}}
+\index{ManufacturerDataFromScanResponse@{ManufacturerDataFromScanResponse}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{ManufacturerDataFromScanResponse}{ManufacturerDataFromScanResponse}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_cosmed_ble_lib_1_1_manufacturer_data_collection}{Manufacturer\+Data\+Collection}}? Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Manufacturer\+Data\+From\+Scan\+Response\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the collection of Manufacturer\+Data from the scan response if they exists, otherwise returns an empty collection \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a2a51c8a56a5c7c0fef284d3a1aa0d2e3}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a2a51c8a56a5c7c0fef284d3a1aa0d2e3}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!RawSignalStrengthInDBm@{RawSignalStrengthInDBm}}
+\index{RawSignalStrengthInDBm@{RawSignalStrengthInDBm}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{RawSignalStrengthInDBm}{RawSignalStrengthInDBm}}
+{\footnotesize\ttfamily short Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Raw\+Signal\+Strength\+In\+DBm\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the Signal Strength in d\+Bm \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a4cebb57384930975cb1cec0df36b0d11}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a4cebb57384930975cb1cec0df36b0d11}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!ServiceUuids@{ServiceUuids}}
+\index{ServiceUuids@{ServiceUuids}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{ServiceUuids}{ServiceUuids}}
+{\footnotesize\ttfamily IRead\+Only\+Collection$<$Guid$>$? Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Service\+Uuids\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the colletion of services uuid if they exists, otherwise returns an empty collection \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_aa3638eed3be6fa590fc03f73f115f0fb}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_aa3638eed3be6fa590fc03f73f115f0fb}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!ServiceUuidsFromScanResponse@{ServiceUuidsFromScanResponse}}
+\index{ServiceUuidsFromScanResponse@{ServiceUuidsFromScanResponse}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{ServiceUuidsFromScanResponse}{ServiceUuidsFromScanResponse}}
+{\footnotesize\ttfamily IRead\+Only\+Collection$<$Guid$>$? Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Service\+Uuids\+From\+Scan\+Response\hspace{0.3cm}{\ttfamily [get]}}
+
+Gets the collection of services uuid from the scan response if they exists, otherwise returns an empty collection \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a3a43fa27c4924840a9051b022f669f51}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a3a43fa27c4924840a9051b022f669f51}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!Timestamp@{Timestamp}}
+\index{Timestamp@{Timestamp}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{Timestamp}{Timestamp}}
+{\footnotesize\ttfamily Date\+Time\+Offset Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Timestamp\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}}
+
+Gets and sets the Timestamp of the last received advertising \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a6a518af342b86088250c25d3ad78a4f1}\label{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device_a6a518af342b86088250c25d3ad78a4f1}} 
+\index{CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}!TransmitPowerLevelInDBm@{TransmitPowerLevelInDBm}}
+\index{TransmitPowerLevelInDBm@{TransmitPowerLevelInDBm}!CosmedBleLib.CosmedBleAdvertisedDevice@{CosmedBleLib.CosmedBleAdvertisedDevice}}
+\doxysubsubsection{\texorpdfstring{TransmitPowerLevelInDBm}{TransmitPowerLevelInDBm}}
+{\footnotesize\ttfamily short? Cosmed\+Ble\+Lib.\+Cosmed\+Ble\+Advertised\+Device.\+Transmit\+Power\+Level\+In\+DBm\hspace{0.3cm}{\ttfamily [get]}}
+
+Represents the received transmit power of the advertisement. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Cosmed\+Ble\+Advertised\+Device.\+cs\end{DoxyCompactItemize}

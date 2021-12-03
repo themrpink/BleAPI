@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Reflection;
 using System.Threading.Tasks;
+using CosmedBleLib.DeviceDiscovery;
 
 namespace CosmedBleLib.MSTest.UnitTest
 {

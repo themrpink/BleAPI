@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Storage.Streams;
-
+using CosmedBleLib.Values;
 
 /// <summary>
 /// Helper methods
 /// </summary>
-namespace CosmedBleLib
+namespace CosmedBleLib.Helpers
 {
 
     /// <summary>

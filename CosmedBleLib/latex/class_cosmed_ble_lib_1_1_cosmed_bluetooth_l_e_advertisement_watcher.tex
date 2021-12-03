@@ -1,0 +1,250 @@
+\hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher}{}\doxysection{Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher Class Reference}
+\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher}\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+
+
+Wrapper class for the Ble\+Advertisement\+Watcher, allows passive or active scanning and filtering  
+
+
+Inheritance diagram for Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_ae33e6b7d871a949dd9eda9bc82449199}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_ae33e6b7d871a949dd9eda9bc82449199}} 
+{\bfseries Cosmed\+Bluetooth\+LEAdvertisement\+Watcher} ()
+\begin{DoxyCompactList}\small\item\em Constructor\+: instatiate the watcher, the dictionary and add the internal handlers to private events of the watcher \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_aed0e4c204be66f8f781213c95ee28919}{Cosmed\+Bluetooth\+LEAdvertisement\+Watcher}} (\mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_filter}{IFilter}} filter)
+\begin{DoxyCompactList}\small\item\em Constructor setting the filter \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_ab3c118be632b240ceb26c197579ac3f4}{Start\+Passive\+Scanning}} ()
+\begin{DoxyCompactList}\small\item\em Initialize and start a passive scanning. If a passive scan is already running it just keep it going. If an active scanning is running, it switches to passive scanning and the Scan\+Mode\+Changed event is raised. \end{DoxyCompactList}\item 
+async Task \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a719ee43d6574bb55bb34bdb64b793382}{Start\+Active\+Scanning}} ()
+\begin{DoxyCompactList}\small\item\em Initialize and start an active scanning. If an active scan is already running it just keep it going. If a passive scanning is running, it switches to active scanning and the Scan\+Mode\+Changed event is raised. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a71b6f4b9ec380331fc64a147769356b7}{Stop\+Scanning}} ()
+\begin{DoxyCompactList}\small\item\em It stops the scanner. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a8efaa14dca86ef262ab20680a21898dd}{Pause\+Scanning}} ()
+\begin{DoxyCompactList}\small\item\em The scan is paused, saving the scanning mode and the discovered devices \end{DoxyCompactList}\item 
+async void \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a69e1321766592a89bb90eea84e223ccd}{Resume\+Scanning}} ()
+\begin{DoxyCompactList}\small\item\em Allows to resume the scan without loosing the peviously collected devices. In case the method is called as first scanning call, the default scanning mode is Passive \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a62b0cf123d19de09e9a136945bd98aa7}{Set\+Filter}} (\mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_filter}{IFilter}} filter)
+\begin{DoxyCompactList}\small\item\em Add a filter to the watcher, starting a filtered scan \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a9f0c1b785dbcf38ddca0e3381acc031d}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a9f0c1b785dbcf38ddca0e3381acc031d}} 
+void {\bfseries Remove\+Filter} ()
+\begin{DoxyCompactList}\small\item\em Remove the filter from the watcher, starting an unfiltered scan \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a4ba058b4f423e5596eeecbabe5349ac6}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a4ba058b4f423e5596eeecbabe5349ac6}} 
+void {\bfseries add\+Discovered\+Devices} (\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}} device)
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_af0ccfa88b597767f4c1287a5cad67188}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_af0ccfa88b597767f4c1287a5cad67188}} 
+Bluetooth\+LEAdvertisement\+Watcher {\bfseries Get\+Watcher} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a577150d04cbe72de07704a8b4d78655b}{Timeout\+Seconds}} = 10\hspace{0.3cm}{\ttfamily  \mbox{[}getset\mbox{]}}
+\item 
+bool \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a121f2f15be5666e33dcbd407ae541fe9}{Is\+Filtering\+Active}} = false\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+Bluetooth\+LEScanning\+Mode \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a170ced856a0a6c89293ac9d57931d056}{Scanning\+Mode}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+bool \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a6c7502e775031393cffb9bc14a2efab6}{Show\+Only\+Connectable\+Devices}} = true\hspace{0.3cm}{\ttfamily  \mbox{[}getset\mbox{]}}
+\item 
+IRead\+Only\+Collection$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}} $>$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a87bd9f23b49cad63d109fb52adb3cb42}{All\+Discovered\+Devices}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+IRead\+Only\+Collection$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}} $>$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a1a6eeb2b693aa1b87ff9da1d4c84fb00}{Recently\+Discovered\+Devices}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+IRead\+Only\+Collection$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}} $>$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_acf05fb27a4646b4c00a7f50d01f89c6b}{Last\+Discovered\+Devices}}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a4fbf8db42225cf26e90aa7b6c2c65b4c}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a4fbf8db42225cf26e90aa7b6c2c65b4c}} 
+Bluetooth\+LEAdvertisement\+Watcher\+Status {\bfseries Get\+Watcher\+Status}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em Get the watcher state \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_add0334e2b77d2c3194a7a4baf1c4b1f3}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_add0334e2b77d2c3194a7a4baf1c4b1f3}} 
+bool {\bfseries Is\+Scanning\+Started}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em Check if scan is running \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_aa4fec0a5681e61489f9e8b238f1cf2f0}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_aa4fec0a5681e61489f9e8b238f1cf2f0}} 
+bool {\bfseries Is\+Scanning\+Passive}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em Check if scanning is in passive mode \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a0d249d1826b2955c4112a8d42d7e1bef}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a0d249d1826b2955c4112a8d42d7e1bef}} 
+bool {\bfseries Is\+Scanning\+Active}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em Check if scanning is in active mode \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a61043f6c7292a614f7e194841229a81d}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a61043f6c7292a614f7e194841229a81d}} 
+Typed\+Event\+Handler$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher}{Cosmed\+Bluetooth\+LEAdvertisement\+Watcher}}, \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}} $>$ {\bfseries New\+Device\+Discovered}
+\begin{DoxyCompactList}\small\item\em Fired when a new device is discovered \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_adf9af432ff7d80ba21c961d60948ce6b}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_adf9af432ff7d80ba21c961d60948ce6b}} 
+Typed\+Event\+Handler$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher}{Cosmed\+Bluetooth\+LEAdvertisement\+Watcher}}, Bluetooth\+LEAdvertisement\+Watcher\+Stopped\+Event\+Args $>$ {\bfseries Scan\+Stopped}
+\begin{DoxyCompactList}\small\item\em Fired when the scan is stopped or aborted \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a5cd90e5e2806966561a9dd6d6604f67c}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a5cd90e5e2806966561a9dd6d6604f67c}} 
+Action$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher}{Cosmed\+Bluetooth\+LEAdvertisement\+Watcher}}, Exception $>$ {\bfseries Scan\+Interrupted}
+\begin{DoxyCompactList}\small\item\em Fired when the scan is interrupted \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_aa0d121c8a6f4eb471abd8c579116ed0c}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_aa0d121c8a6f4eb471abd8c579116ed0c}} 
+Typed\+Event\+Handler$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher}{Cosmed\+Bluetooth\+LEAdvertisement\+Watcher}}, Bluetooth\+LEScanning\+Mode $>$ {\bfseries Started\+Listening}
+\begin{DoxyCompactList}\small\item\em Fired when the watcher starts listening \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a34690fb5dcce6026fcb148f63ec01b5c}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a34690fb5dcce6026fcb148f63ec01b5c}} 
+Action {\bfseries Scan\+Mode\+Changed}
+\begin{DoxyCompactList}\small\item\em Fired when the scanning mode has been changed \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Wrapper class for the Ble\+Advertisement\+Watcher, allows passive or active scanning and filtering 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_aed0e4c204be66f8f781213c95ee28919}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_aed0e4c204be66f8f781213c95ee28919}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!CosmedBluetoothLEAdvertisementWatcher@{CosmedBluetoothLEAdvertisementWatcher}}
+\index{CosmedBluetoothLEAdvertisementWatcher@{CosmedBluetoothLEAdvertisementWatcher}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{CosmedBluetoothLEAdvertisementWatcher()}{CosmedBluetoothLEAdvertisementWatcher()}}
+{\footnotesize\ttfamily Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_filter}{IFilter}}}]{filter }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructor setting the filter 
+
+
+\begin{DoxyParams}{Parameters}
+{\em advertisement\+Filter} & The filter object\\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a8efaa14dca86ef262ab20680a21898dd}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a8efaa14dca86ef262ab20680a21898dd}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!PauseScanning@{PauseScanning}}
+\index{PauseScanning@{PauseScanning}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{PauseScanning()}{PauseScanning()}}
+{\footnotesize\ttfamily void Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Pause\+Scanning (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The scan is paused, saving the scanning mode and the discovered devices 
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_scan_advertisement}{Cosmed\+Ble\+Lib.\+IScan\+Advertisement}}.
+
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a69e1321766592a89bb90eea84e223ccd}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a69e1321766592a89bb90eea84e223ccd}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!ResumeScanning@{ResumeScanning}}
+\index{ResumeScanning@{ResumeScanning}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{ResumeScanning()}{ResumeScanning()}}
+{\footnotesize\ttfamily async void Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Resume\+Scanning (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Allows to resume the scan without loosing the peviously collected devices. In case the method is called as first scanning call, the default scanning mode is Passive 
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_scan_advertisement}{Cosmed\+Ble\+Lib.\+IScan\+Advertisement}}.
+
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a62b0cf123d19de09e9a136945bd98aa7}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a62b0cf123d19de09e9a136945bd98aa7}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!SetFilter@{SetFilter}}
+\index{SetFilter@{SetFilter}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{SetFilter()}{SetFilter()}}
+{\footnotesize\ttfamily void Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Set\+Filter (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_filter}{IFilter}}}]{filter }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Add a filter to the watcher, starting a filtered scan 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filter} & The filter object\\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a719ee43d6574bb55bb34bdb64b793382}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a719ee43d6574bb55bb34bdb64b793382}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!StartActiveScanning@{StartActiveScanning}}
+\index{StartActiveScanning@{StartActiveScanning}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{StartActiveScanning()}{StartActiveScanning()}}
+{\footnotesize\ttfamily async Task Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Start\+Active\+Scanning (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize and start an active scanning. If an active scan is already running it just keep it going. If a passive scanning is running, it switches to active scanning and the Scan\+Mode\+Changed event is raised. 
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_scan_advertisement}{Cosmed\+Ble\+Lib.\+IScan\+Advertisement}}.
+
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_ab3c118be632b240ceb26c197579ac3f4}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_ab3c118be632b240ceb26c197579ac3f4}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!StartPassiveScanning@{StartPassiveScanning}}
+\index{StartPassiveScanning@{StartPassiveScanning}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{StartPassiveScanning()}{StartPassiveScanning()}}
+{\footnotesize\ttfamily async Task Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Start\+Passive\+Scanning (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize and start a passive scanning. If a passive scan is already running it just keep it going. If an active scanning is running, it switches to passive scanning and the Scan\+Mode\+Changed event is raised. 
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_scan_advertisement}{Cosmed\+Ble\+Lib.\+IScan\+Advertisement}}.
+
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a71b6f4b9ec380331fc64a147769356b7}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a71b6f4b9ec380331fc64a147769356b7}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!StopScanning@{StopScanning}}
+\index{StopScanning@{StopScanning}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{StopScanning()}{StopScanning()}}
+{\footnotesize\ttfamily void Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Stop\+Scanning (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+It stops the scanner. 
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_scan_advertisement}{Cosmed\+Ble\+Lib.\+IScan\+Advertisement}}.
+
+
+
+\doxysubsection{Property Documentation}
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a87bd9f23b49cad63d109fb52adb3cb42}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a87bd9f23b49cad63d109fb52adb3cb42}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!AllDiscoveredDevices@{AllDiscoveredDevices}}
+\index{AllDiscoveredDevices@{AllDiscoveredDevices}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{AllDiscoveredDevices}{AllDiscoveredDevices}}
+{\footnotesize\ttfamily IRead\+Only\+Collection$<$\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}}$>$ Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+All\+Discovered\+Devices\hspace{0.3cm}{\ttfamily [get]}}
+
+Contains all the discovered devices since the scan has been started. The collection is created at every user request from the devices dictionary. Thread safe. \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a121f2f15be5666e33dcbd407ae541fe9}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a121f2f15be5666e33dcbd407ae541fe9}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!IsFilteringActive@{IsFilteringActive}}
+\index{IsFilteringActive@{IsFilteringActive}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{IsFilteringActive}{IsFilteringActive}}
+{\footnotesize\ttfamily bool Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Is\+Filtering\+Active = false\hspace{0.3cm}{\ttfamily [get]}}
+
+Check if the filter is active. Filter is active if is has been set to true. Default value is false. \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_acf05fb27a4646b4c00a7f50d01f89c6b}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_acf05fb27a4646b4c00a7f50d01f89c6b}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!LastDiscoveredDevices@{LastDiscoveredDevices}}
+\index{LastDiscoveredDevices@{LastDiscoveredDevices}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{LastDiscoveredDevices}{LastDiscoveredDevices}}
+{\footnotesize\ttfamily IRead\+Only\+Collection$<$\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}}$>$ Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Last\+Discovered\+Devices\hspace{0.3cm}{\ttfamily [get]}}
+
+Contains the recently discovered devices since the scan has been started. The user can set the time interval though the \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a577150d04cbe72de07704a8b4d78655b}{Timeout\+Seconds}} The collection is created at every user request from the devices dictionary. Thread safe. \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a1a6eeb2b693aa1b87ff9da1d4c84fb00}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a1a6eeb2b693aa1b87ff9da1d4c84fb00}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!RecentlyDiscoveredDevices@{RecentlyDiscoveredDevices}}
+\index{RecentlyDiscoveredDevices@{RecentlyDiscoveredDevices}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{RecentlyDiscoveredDevices}{RecentlyDiscoveredDevices}}
+{\footnotesize\ttfamily IRead\+Only\+Collection$<$\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device}{Cosmed\+Ble\+Advertised\+Device}}$>$ Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Recently\+Discovered\+Devices\hspace{0.3cm}{\ttfamily [get]}}
+
+Contains the recently discovered devices since the scan has been started. The user can set the time interval though the \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a577150d04cbe72de07704a8b4d78655b}{Timeout\+Seconds}} The collection is created at every user request from the devices dictionary. Thread safe. \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a170ced856a0a6c89293ac9d57931d056}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a170ced856a0a6c89293ac9d57931d056}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!ScanningMode@{ScanningMode}}
+\index{ScanningMode@{ScanningMode}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{ScanningMode}{ScanningMode}}
+{\footnotesize\ttfamily Bluetooth\+LEScanning\+Mode Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Scanning\+Mode\hspace{0.3cm}{\ttfamily [get]}}
+
+The actual scanning mode. It can be active, passive or none. \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a6c7502e775031393cffb9bc14a2efab6}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a6c7502e775031393cffb9bc14a2efab6}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!ShowOnlyConnectableDevices@{ShowOnlyConnectableDevices}}
+\index{ShowOnlyConnectableDevices@{ShowOnlyConnectableDevices}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{ShowOnlyConnectableDevices}{ShowOnlyConnectableDevices}}
+{\footnotesize\ttfamily bool Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Show\+Only\+Connectable\+Devices = true\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}}
+
+If set to true, the watcher select only Connectable devices \mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a577150d04cbe72de07704a8b4d78655b}\label{class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher_a577150d04cbe72de07704a8b4d78655b}} 
+\index{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}!TimeoutSeconds@{TimeoutSeconds}}
+\index{TimeoutSeconds@{TimeoutSeconds}!CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher@{CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher}}
+\doxysubsubsection{\texorpdfstring{TimeoutSeconds}{TimeoutSeconds}}
+{\footnotesize\ttfamily double Cosmed\+Ble\+Lib.\+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+Timeout\+Seconds = 10\hspace{0.3cm}{\ttfamily [get]}, {\ttfamily [set]}}
+
+then amount of time after which a device in Recently\+Discovered\+Devices can be updated. The default value is 10 seconds. 
+
+Time is expressed in seconds
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Cosmed\+Bluetooth\+LEAdvertisement\+Watcher.\+cs\end{DoxyCompactItemize}

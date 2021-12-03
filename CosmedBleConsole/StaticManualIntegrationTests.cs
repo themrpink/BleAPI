@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CosmedBleLib.Adapter;
+using CosmedBleLib.DeviceDiscovery;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -43,10 +45,10 @@ namespace CosmedBleLib
 
 
 
-        public static void TestBleOff()
+        public static async void TestBleOff()
         {
             CosmedBluetoothLEAdvertisementWatcher watcher = new CosmedBluetoothLEAdvertisementWatcher();
-            watcher.StartPassiveScanning();
+            await watcher.StartPassiveScanning();
             Thread.Sleep(1000);
             Console.WriteLine("now turn off ble and press a key");
             Console.ReadLine();

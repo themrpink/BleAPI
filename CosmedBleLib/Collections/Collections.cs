@@ -1,43 +1,60 @@
-﻿using System;
+﻿
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Foundation;
+using CosmedBleLib.Helpers;
 
-namespace CosmedBleLib
+namespace CosmedBleLib.Collections
 {
 
-    //valutare se farlo statico oppure come le altre collection
+    /// <summary>
+    /// Collections relative to the Characteristic events
+    /// </summary>
     public static class GattCharacteristicEventsCollector
     {
+        /// <summary>
+        /// Concurrent dictionary of Characteristics and their relative subscribed GattValueChanged events.
+        /// </summary>
         public static ConcurrentDictionary<GattCharacteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs>> CharacteristicsChangedSubscriptions = new ConcurrentDictionary<GattCharacteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs>>();
 
     }
 
 
+    /// <summary>
+    /// Iterable collection of ManufacturerData
+    /// </summary>
     public class ManufacturerDataCollection : IEnumerable<ManufacturerDataReader>
         {
-            public IReadOnlyList<ManufacturerDataReader> AdvertisedManufacturerData { get; }
+        /// <value>
+        /// Gets a ReadonlyList of ManufacturerDataReader
+        /// </value>
+        /// <see cref="ManufacturerDataReader"/>
+        public IReadOnlyList<ManufacturerDataReader> AdvertisedManufacturerData { get; }
 
-
-            public ManufacturerDataCollection(IList<BluetoothLEManufacturerData> list)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="list">List of BluetoothLEManufacturerData</param>
+        /// <see href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.advertisement.bluetoothlemanufacturerdata?view=winrt-22000"/>
+        public ManufacturerDataCollection(IList<BluetoothLEManufacturerData> list)
+        {
+            List<ManufacturerDataReader> listManufacturer = new List<ManufacturerDataReader>();
+            foreach (var l in list)
             {
-                List<ManufacturerDataReader> listManufacturer = new List<ManufacturerDataReader>();
-                foreach (var l in list)
-                {
-                    ManufacturerDataReader newData = new ManufacturerDataReader(l.Data, l.CompanyId);
-                    listManufacturer.Add(newData);
-                }
-                AdvertisedManufacturerData = listManufacturer.AsReadOnly();
+                ManufacturerDataReader newData = new ManufacturerDataReader(l.Data, l.CompanyId);
+                listManufacturer.Add(newData);
             }
+            AdvertisedManufacturerData = listManufacturer.AsReadOnly();
+        }
 
-
-            public IEnumerator<ManufacturerDataReader> GetEnumerator()
+        /// <summary>
+        /// Gets enumerator 
+        /// </summary>
+        /// <returns>Iterable enumerator</returns>
+        public IEnumerator<ManufacturerDataReader> GetEnumerator()
             {
                 return AdvertisedManufacturerData.GetEnumerator();
             }
@@ -49,25 +66,41 @@ namespace CosmedBleLib
         }
 
 
-        
+
+    /// <summary>
+    /// Iterable collection of DataSection
+    /// </summary>
     public class DataSectionCollection : IEnumerable<DataSectionReader>
         {
-            public IReadOnlyList<DataSectionReader> AdvertisedDataSection { get; }
+        /// <value>
+        /// Gets a ReadonlyList of advertised DataSections
+        /// </value>
+        public IReadOnlyList<DataSectionReader> AdvertisedDataSection { get; }
 
 
-            public DataSectionCollection(IList<BluetoothLEAdvertisementDataSection> list)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="list">List of BluetoothLEAdvertisementDataSection
+        /// <see href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.advertisement.bluetoothleadvertisementdatasection?view=winrt-22000">BluetoothLEAdvertisementDataSection</see>
+        /// </param>
+        public DataSectionCollection(IList<BluetoothLEAdvertisementDataSection> list)
+        {
+            List<DataSectionReader> listData = new List<DataSectionReader>();
+            foreach (var l in list)
             {
-                List<DataSectionReader> listData = new List<DataSectionReader>();
-                foreach (var l in list)
-                {
-                    DataSectionReader newData = new DataSectionReader(l.Data, l.DataType);
-                    listData.Add(newData);
-                }
-                AdvertisedDataSection = listData.AsReadOnly();
+                DataSectionReader newData = new DataSectionReader(l.Data, l.DataType);
+                listData.Add(newData);
             }
+            AdvertisedDataSection = listData.AsReadOnly();
+        }
 
 
-            public IEnumerator<DataSectionReader> GetEnumerator()
+        /// <summary>
+        /// Gets enumerator 
+        /// </summary>
+        /// <returns>Iterable enumerator</returns>
+        public IEnumerator<DataSectionReader> GetEnumerator()
             {
                 return AdvertisedDataSection.GetEnumerator();
             }
@@ -77,32 +110,5 @@ namespace CosmedBleLib
                 return GetEnumerator();
             }
         }
-
-
-    /*
-public class AdvertisemendDataCollection<T, R> where T : AdvertisementData
-{
-    public IReadOnlyList<T> AdvertisedDataSection { get; }
-
-    public AdvertisementDataCollection(IList<R> list)
-    {
-        List<T> listData = new List<T>();
-
-        foreach (var l in list)
-        {
-
-           // Type d1 = typeof(List<>);
-            Type typeArg = typeof(T);
-            //Type constructed = d1.MakeGenericType(typeArg);
-            object o = Activator.CreateInstance(typeArg);
-            listData.Add((T)o);
-        }
-
-        AdvertisedDataSection = listData.AsReadOnly();
-    }
-}
-*/
-
-
 
 }

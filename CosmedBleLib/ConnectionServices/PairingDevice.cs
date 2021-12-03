@@ -1,33 +1,50 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Background;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Security.Credentials;
+using CosmedBleLib.CustomExceptions;
+using CosmedBleLib.DeviceDiscovery;
+using CosmedBleLib.Collections;
 
-namespace CosmedBleLib
+namespace CosmedBleLib.ConnectionServices
 {
-
+    /// <summary>
+    /// This interface represents a remote Ble device
+    /// </summary>
     public interface ICosmedBleDevice
     {
+        /// <value>
+        /// Ble remote device
+        /// </value>
         BluetoothLEDevice BluetoothLeDevice { get; }
 
+        /// <summary>
+        /// Fired when the remote device access changes
+        /// </summary>
         event TypedEventHandler<DeviceAccessInformation, DeviceAccessChangedEventArgs> AccessChanged;
+
+        /// <summary>
+        /// Fired when the connection status of ble remote device changes
+        /// </summary>
         event TypedEventHandler<CosmedBleDevice, object> ConnectionStatusChanged;
+
+        /// <summary>
+        /// Fired when the name of the ble remote device changes
+        /// </summary>
         event TypedEventHandler<CosmedBleDevice, object> NameChanged;
 
         void ClearBluetoothLEDevice();
     }
-    
-    
-    //wrap a BluetoothLEDevice, which is obtained with a unpaired connection (therefore the device is reachable, otherwise the object is null)
+
+
+    /// <summary>
+    /// Wraps a discoverable BluetoothLEDevice, showing tha data obtained from an unpaired connection
+    /// </summary>
     public class CosmedBleDevice: ICosmedBleDevice
     {
        
@@ -35,38 +52,86 @@ namespace CosmedBleLib
 
 
         #region Public Properties
-
+        /// <value>
+        /// Gets the instance of the device
+        /// </value>
         public BluetoothLEDevice BluetoothLeDevice { get { return bluetoothLeDevice; }  }
 
+        /// <value>
+        /// Gets the device address
+        /// </value>
         public ulong BluetoothAddress { get { return bluetoothLeDevice.BluetoothAddress; } }
 
+        /// <value>
+        /// Gets the device name
+        /// </value>
         public string Name { get { return bluetoothLeDevice.Name; } }
 
+        /// <value>
+        /// Gets the Bluetooth LE apperance value. 
+        /// For category convertion <see cref="CosmedBleLib.Values.BluetoothAppearanceType"/>
+        /// </value>
         public BluetoothLEAppearance Appearance { get { return bluetoothLeDevice.Appearance; } }
 
+        /// <value>
+        /// Gets the Bluetooth address type (public, random, unspecified).
+        /// </value>
         public BluetoothAddressType BluetoothAddressType { get { return bluetoothLeDevice.BluetoothAddressType; } }
 
         //inforations about device and pairing
+        /// <value>
+        /// Gets the device information. From this object also pairing methods can be accessed.
+        /// </value>
         public DeviceInformation DeviceInformation { get { return bluetoothLeDevice.DeviceInformation; } }
 
+        /// <value>
+        /// Gets the device access information
+        /// </value>
         public DeviceAccessInformation DeviceAccessInformation { get { return bluetoothLeDevice.DeviceAccessInformation; } }
 
-        //device ID
+        /// <value>
+        /// Gets a string indicating the device ID
+        /// </value>
         public string DeviceId { get { return bluetoothLeDevice.DeviceId; } }
 
+        /// <value>
+        /// Gets a boolean indicating if the device is a Bluetooth Low Energy
+        /// </value>
         public bool IsLowEnergyDevice {  get { return bluetoothLeDevice.BluetoothDeviceId.IsLowEnergyDevice; } }
+
+        /// <value>
+        /// Gets a boolean indicating if the device is connected
+        /// </value>
         public bool IsConnected { get { return bluetoothLeDevice.ConnectionStatus == BluetoothConnectionStatus.Connected; } }
 
+        /// <value>
+        /// Gets a boolean indicating if the device can be paired
+        /// </value>
         public bool CanPair { get { return bluetoothLeDevice.DeviceInformation.Pairing.CanPair; } }
 
+        /// <value>
+        /// Gets a boolean indicating if the device is paired
+        /// </value>
         public bool IsPaired { get { return bluetoothLeDevice.DeviceInformation.Pairing.IsPaired; } }
 
         #endregion
 
 
         #region Public events
+
+        /// <summary>
+        /// Fired when the remote device access changes
+        /// </summary>
         public event TypedEventHandler<DeviceAccessInformation, DeviceAccessChangedEventArgs> AccessChanged;
+
+        /// <summary>
+        /// Fired when the connection status of ble remote device changes
+        /// </summary>
         public event TypedEventHandler<CosmedBleDevice, object> ConnectionStatusChanged;
+
+        /// <summary>
+        /// Fired when the name of the ble remote device changes
+        /// </summary>
         public event TypedEventHandler<CosmedBleDevice, object> NameChanged;
         #endregion
 
@@ -74,18 +139,26 @@ namespace CosmedBleLib
         #region Private Event handlers
 
 
-        //by disposal these 3 handler shall be unsubscribed
+        //this handler is subscribed by the class constructor to the underlying and not accessible NameChanged event.
+        //When this is fired, its action is to fire the public NameChanged event accessible to the user, to which
+        //the user can subscribe
         private void AccessChangedHanlder(DeviceAccessInformation accessInformation, DeviceAccessChangedEventArgs args)
         {
             AccessChanged?.Invoke(accessInformation, args);
         }
 
-        //these ones call the public event, to which the user can subscribe
+        //this handler is subscribed by the class constructor to the underlying and not accessible NameChanged event.
+        //When this is fired, its action is to fire the public NameChanged event accessible to the user, to which
+        //the user can subscribe
         private void ConnectionStatusChangedHandler(BluetoothLEDevice device, object args)
         {
             ConnectionStatusChanged?.Invoke(this, args);
         }
 
+
+        //this handler is subscribed by the class constructor to the underlying and not accessible NameChanged event.
+        //When this is fired, its action is to fire the public NameChanged event accessible to the user, to which
+        //the user can subscribe
         private void NameChangedHandler(BluetoothLEDevice device, object args)
         {
             NameChanged?.Invoke(this, args);
@@ -109,16 +182,19 @@ namespace CosmedBleLib
 
         #region Constructors
 
+        //constructor
         private CosmedBleDevice()
         {
 
         }
-                 
+             
+        
+        //instantiate all the fields and properties of the class
         private async Task InitializeAsync(ulong deviceAddress)
         {
             try
             {
-                // Verificare: BT_Code: BluetoothLEDevice.FromIdAsync must be called from a UI thread because it may prompt for consent.
+                // Verify: BT_Code: BluetoothLEDevice.FromIdAsync must be called from a UI thread because it may prompt for consent.
                 IAsyncOperation<BluetoothLEDevice> task = BluetoothLEDevice.FromBluetoothAddressAsync(deviceAddress);
                 this.bluetoothLeDevice = await task.AsTask().ConfigureAwait(false);
             }
@@ -143,6 +219,8 @@ namespace CosmedBleLib
 
         }
 
+
+        //instantiate all the fields and properties of the class
         private async Task InitializeAsync(string deviceId)
         {
             try
@@ -171,6 +249,12 @@ namespace CosmedBleLib
 
         }
 
+
+        /// <summary>
+        /// Creates and instance of the class from a device address.
+        /// </summary>
+        /// <param name="deviceAddress">The device address.</param>
+        /// <returns>An instance of the class</returns>
         public static async Task<CosmedBleDevice> CreateAsync(ulong deviceAddress)
         {
             var device = new CosmedBleDevice();
@@ -178,6 +262,12 @@ namespace CosmedBleLib
             return device;
         }
 
+
+        /// <summary>
+        /// Creates and instance of the class from a device ID.
+        /// </summary>
+        /// <param name="deviceId">The device ID.</param>
+        /// <returns>An instance of the class</returns>
         public static async Task<CosmedBleDevice> CreateAsync(string deviceId)
         {
             var device = new CosmedBleDevice();
@@ -185,6 +275,12 @@ namespace CosmedBleLib
             return device;
         }
 
+
+        /// <summary>
+        /// Creates and instance of the class from a advertising Device.
+        /// </summary>
+        /// <param name="advertisingDevice">The advertising Device.</param>
+        /// <returns>An instance of the class</returns>
         public static async Task<CosmedBleDevice> CreateAsync(CosmedBleAdvertisedDevice advertisingDevice)
         {
             if (advertisingDevice == null)
@@ -203,7 +299,9 @@ namespace CosmedBleLib
 
         #region Dispose device
 
-     
+     /// <summary>
+     /// Diposes and clears all the elements, collections and events related to the device
+     /// </summary>
         public void ClearBluetoothLEDevice()
         {
             // Need to clear the CCCD from the remote device to stop receiving notifications
@@ -239,14 +337,34 @@ namespace CosmedBleLib
     }
 
 
+    /// <summary>
+    /// This class contains the data resulting from a pairing attempt.
+    /// </summary>
     public sealed class PairingResult
     {
+
+        /// <value>
+        /// Gets a boolean indicating if a secure connection war used for pairing
+        /// </value>
         public bool WasSecureConnectionUsedForPairing { get; private set; }
 
+        /// <value>
+        /// Gets the Protection level used for pairing
+        /// </value>
         public DevicePairingProtectionLevel ProtectionLevelUsed { get; private set; }
 
+        /// <value>
+        /// Gets the pairing result status
+        /// </value>
         public DevicePairingResultStatus PairingResultStatus { get; private set; }
 
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="protectionLevelUsed">Protection level</param>
+        /// <param name="pairingResultStatus">Pairing result status</param>
+        /// <param name="wasSecureConnectionUsedForPairing">Boolean for secure connection usage</param>
         public PairingResult(DevicePairingProtectionLevel protectionLevelUsed, DevicePairingResultStatus pairingResultStatus, bool wasSecureConnectionUsedForPairing)
         {
             ProtectionLevelUsed = protectionLevelUsed;
@@ -257,10 +375,16 @@ namespace CosmedBleLib
 
 
 
-    //take a CosmedBleDevice and try to pair it. If pairing succeeds the return a PairedDevice
+    /// <summary>
+    /// The class offers the methods for pairing to a remote Ble device
+    /// </summary>
     public static class PairingService
     {
 
+        /// <value>
+        /// Gets the most generic DevicePairingKinds to be used as default in the pairing ´process. Windows 10 
+        /// will apply the most secure pairing option available on both devices
+        /// </value>
         public static DevicePairingKinds ceremonySelection { get; } =   DevicePairingKinds.None |
                                                                         DevicePairingKinds.ConfirmOnly |
                                                                         DevicePairingKinds.ConfirmPinMatch |
@@ -268,11 +392,17 @@ namespace CosmedBleLib
                                                                         DevicePairingKinds.ProvidePasswordCredential |
                                                                         DevicePairingKinds.ProvidePin;
 
+        /// <value>
+        /// Gets the most generic DevicePairingProtectionMethod to be used as default in the pairing ´process. 
+        /// Windows 10 will apply the most secure pairing option available on both devices
+        /// </value>
         public static DevicePairingProtectionLevel minProtectionLevel { get; } = DevicePairingProtectionLevel.None |
                                                                                  DevicePairingProtectionLevel.Default |
                                                                                  DevicePairingProtectionLevel.Encryption |
                                                                                  DevicePairingProtectionLevel.EncryptionAndAuthentication;
 
+        //this method, used as default handler to manage the pairing process should be implemented by the user and passed 
+        //to the GetPairedDevice method that accept an event as argument
         private static void PairingRequestedHandler(DeviceInformationCustomPairing sender, DevicePairingRequestedEventArgs args)
         {
             switch (args.PairingKind)
@@ -355,7 +485,16 @@ namespace CosmedBleLib
             
         }
 
-        //uses the default pairing management handler
+
+        /// <summary>
+        /// Attempts a pairing with the requested device, applying the most secure of the compatible requested protections.
+        /// The pairing interaction is hanlded by the default method. A custom method should be used and passed to the overload
+        /// version of this method.
+        /// </summary>
+        /// <param name="device">The device to pair with</param>
+        /// <param name="ceremonySelection">The ceremony selection type</param>
+        /// <param name="minProtectionLevel">The minimum protection level requested</param>
+        /// <returns>The pairing result object</returns>
         public static async Task<PairingResult> GetPairedDevice(CosmedBleDevice device, DevicePairingKinds ceremonySelection, DevicePairingProtectionLevel minProtectionLevel)
         {
             //saves the device information
@@ -385,7 +524,17 @@ namespace CosmedBleLib
             }
         }
 
-        //allows to pass a handler to manage pairing
+
+
+        /// <summary>
+        /// Attempts a pairing with the requested device, applying the most secure of the compatible requested protections.
+        /// The pairing interaction is hanlded by the custom event handler passed by the user.
+        /// </summary>
+        /// <param name="device">The device to pair with</param>
+        /// <param name="ceremonySelection">The ceremony selection type</param>
+        /// <param name="minProtectionLevel">The minimum protection level requested</param>
+        /// <param name="eventHandler">the event handler used to manage the pairing process</param>
+        /// <returns>The pairing result object</returns>
         public static async Task<PairingResult> GetPairedDevice(CosmedBleDevice device, DevicePairingKinds ceremonySelection, DevicePairingProtectionLevel minProtectionLevel, TypedEventHandler<DeviceInformationCustomPairing, DevicePairingRequestedEventArgs> eventHandler)
         {
             DeviceInformation deviceInformation = device.DeviceInformation;
@@ -413,6 +562,12 @@ namespace CosmedBleLib
             }
         }
 
+
+        /// <summary>
+        /// Unpairs the devices
+        /// </summary>
+        /// <param name="device">Device to unpair</param>
+        /// <returns>The unpair result</returns>
         public async static Task<DeviceUnpairingResult> Unpair(CosmedBleDevice device)
         {
             try

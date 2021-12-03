@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Bluetooth;
-using Windows.Devices.Bluetooth.GenericAttributeProfile;
-using Windows.Storage.Streams;
+﻿
 
-namespace CosmedBleLib
+namespace CosmedBleLib.Values
 {
 
 
@@ -18,7 +11,7 @@ namespace CosmedBleLib
     {
 
         /// <summary>
-        ///  Advertisement Flags Values
+        ///  Advertisement Flags Values.
         /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/">Reference: https://www.bluetooth.com/specifications/assigned-numbers/ </see>
         /// </summary>
         public enum BluetoothLEAdvertisementFlags : byte
@@ -37,7 +30,7 @@ namespace CosmedBleLib
 
 
     /// <summary>
-    /// Help to translate the values in the Presentation Format descriptors contained in a Characteristic
+    /// Help to translate the values in the Presentation Format descriptors contained in a Characteristic.
     /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/">Reference: https://www.bluetooth.com/specifications/assigned-numbers/ </see>
     /// </summary>
     public class PresentationFormats
@@ -240,7 +233,7 @@ namespace CosmedBleLib
 
 
     /// <summary>
-    ///     This enum assists in finding a string representation of a BT SIG assigned value for Service UUIDS
+    ///     This enum assists in finding a string representation of a BT SIG assigned value for Service UUIDS.
     ///     <see href="https://www.bluetooth.com/specifications/assigned-numbers/">Reference: https://www.bluetooth.com/specifications/assigned-numbers/ </see>
     /// </summary>
     public enum GattServiceUuid : ushort
@@ -311,7 +304,7 @@ namespace CosmedBleLib
 
 
     /// <summary>
-    ///     This enum is for finding a string representation of a BT SIG assigned value for Characteristic UUIDs
+    ///     This enum is for finding a string representation of a BT SIG assigned value for Characteristic UUIDs.
     ///     <see href="https://www.bluetooth.com/specifications/assigned-numbers/">Reference: https://www.bluetooth.com/specifications/assigned-numbers/ </see>
     /// </summary>
     public enum GattCharacteristicUuid : ushort
@@ -720,7 +713,7 @@ namespace CosmedBleLib
 
 
     /// <summary>
-    /// UIIDs from Gatt Declarations
+    /// UIIDs from Gatt Declarations.
     /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/">Reference: https://www.bluetooth.com/specifications/assigned-numbers/ </see>
     /// </summary>
     public enum GattDeclarationUuid : ushort
@@ -733,7 +726,7 @@ namespace CosmedBleLib
 
 
     /// <summary>
-    ///     This enum assists in finding a string representation of a BT SIG assigned value for Descriptor UUIDs
+    ///     This enum assists in finding a string representation of a BT SIG assigned value for Descriptor UUIDs.
     /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/">Reference: https://www.bluetooth.com/specifications/assigned-numbers/ </see>
     /// </summary>
     public enum GattDescriptorUuid : ushort
@@ -762,7 +755,7 @@ namespace CosmedBleLib
 
 
     /// <summary>
-    /// Generic Access Profile, Assigned numbers and GAP
+    /// Generic Access Profile, Assigned numbers and GAP.
     /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/">Reference: https://www.bluetooth.com/specifications/assigned-numbers/ </see>
     /// </summary>
     public enum AdvertisementSectionType : byte
@@ -817,7 +810,7 @@ namespace CosmedBleLib
 
 
     /// <summary>
-    /// Bluetooth Appearance Types
+    /// Bluetooth Appearance Types.
     /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/">Reference: https://www.bluetooth.com/specifications/assigned-numbers/ </see>
     /// </summary>
     public enum BluetoothAppearanceType : ushort
@@ -926,9 +919,8 @@ namespace CosmedBleLib
     }
 
 
-
     /// <summary>
-    /// Translate the Manufacturer identifiers. Updated at 01/12/2021. New Manufacturers may have been added later. 
+    /// Translate the Manufacturer identifiers. Update:  01/12/2021. New Manufacturers may have been added later. 
     /// <see href="https://www.bluetooth.com/specifications/assigned-numbers/">Reference: https://www.bluetooth.com/specifications/assigned-numbers/ </see>
     /// </summary>
     public enum Manufacturer : ushort

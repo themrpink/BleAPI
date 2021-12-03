@@ -1,69 +1,112 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
-using Windows.Foundation;
-using Windows.Storage.Streams;
-//using static Windows.Devices.Bluetooth.Advertisement.BluetoothLEAdvertisementDataTypes;
+using CosmedBleLib.Helpers;
+using CosmedBleLib.Collections;
 
 
-namespace CosmedBleLib
+namespace CosmedBleLib.DeviceDiscovery
 {
 
-    public static class DeviceBuilder
-    {
-        public static CosmedBleAdvertisedDevice CreateAdvertisedDevice(BluetoothLEAdvertisementReceivedEventArgs args)
-        {
-            return new CosmedBleAdvertisedDevice(args);
-        }
-    }
-
-
+    /// <summary>
+    /// Represents a remote devices with its received advertisement and, if available, scan response
+    /// </summary>
     public class CosmedBleAdvertisedDevice : IAdvertisedDevice<CosmedBleAdvertisedDevice>
     {
         private AdvertisementContent scanResponseAdvertisementContent;
         private AdvertisementContent advertisementContent;
 
-
+     
         #region Device Properties
 
-        //the name of the device
+        /// <value>
+        /// Gets the the name of the device
+        /// </value>
         public string DeviceName { get; private set; }
+        
 
-        //true is a scan response has been received
+        /// <value>
+        /// Gets the boolean indicating if a scan response from the device has been received
+        /// </value>
         public bool HasScanResponse { get; private set; }
 
-        //the address value
+
+        /// <value>
+        /// Gets and sets the device address value
+        /// </value>
         public ulong DeviceAddress { get; set; }
 
+
+        /// <value>
+        /// Gets and sets the device adress value expressed as string representation of the hexadecimal value
+        /// </value>
         public string HexDeviceAddress { get { return string.Format("0x{0:X2}", DeviceAddress); } }
 
-        //the type of address (public - random)
+
+        /// <value>
+        /// Gets the type of address (public - random)
+        /// </value>
         public BluetoothAddressType BluetoothAddressType { get; private set; }
 
-        //Timestamp of the last received advertising
+        
+        /// <value>
+        /// Gets and sets the Timestamp of the last received advertising
+        /// </value>
         public DateTimeOffset Timestamp { get; set; }
 
-        //Whether the Bluetooth LE device is currently advertising a connectable advertisement.
+
+        /// <value>
+        /// Gets the boolean indicating whether the Bluetooth LE device is currently advertising a connectable advertisement.
+        /// </value>
         public bool IsConnectable { get; private set; }
 
-        //signal strength
+
+        /// <value>
+        /// Gets the Signal Strength in dBm
+        /// </value>
         public short RawSignalStrengthInDBm { get; private set; }
 
+
+        /// <value>
+        /// Gets the boolean indicating whether a Bluetooth Address was omitted from the received advertisement.
+        /// </value>
         public bool IsAnonymous { get; private set; }
+
+
+        /// <value>
+        /// Indicates whether the received advertisement is directed.
+        /// </value>
         public bool IsDirected { get; private set; }
+
+
+        /// <value>
+        /// Indicates whether the received advertisement is scannable.
+        /// </value>
         public bool IsScannable { get; private set; }
+
+
+        /// <value>
+        /// Represents the received transmit power of the advertisement.
+        /// </value>
         public short? TransmitPowerLevelInDBm { get; private set; }
 
 
+        /// <value>
+        /// Gets the AdvertisementContect object
+        /// </value>
         public AdvertisementContent GetAdvertisementContent => advertisementContent;
 
 
+        /// <value>
+        /// Gets the tScanResponseAdvertisementContect object 
+        /// </value>
         public AdvertisementContent GetScanResponseAdvertisementContent => scanResponseAdvertisementContent;
 
 
+        /// <value>
+        /// Gets the colletion of services uuid if they exists, otherwise returns an empty collection
+        /// </value>
         public IReadOnlyCollection<Guid> ServiceUuids
         {
             get
@@ -74,6 +117,9 @@ namespace CosmedBleLib
         }
 
 
+        /// <value>
+        /// Gets the collection of services uuid from the scan response if they exists, otherwise returns an empty collection
+        /// </value>
         public IReadOnlyCollection<Guid> ServiceUuidsFromScanResponse
         {
             get
@@ -84,6 +130,9 @@ namespace CosmedBleLib
         }
 
 
+        /// <value>
+        /// Gets the flags of the advertisement if it exists, otherwise returns null
+        /// </value>
         public BluetoothLEAdvertisementFlags? Flags
         {
             get
@@ -93,6 +142,10 @@ namespace CosmedBleLib
         }
 
 
+        /// <value>
+        /// Gets the collection of ManufacturerDatae if they exists, otherwise returns an empty collection
+
+        /// </value>
         public ManufacturerDataCollection ManufacturerData
         {
             get
@@ -103,6 +156,9 @@ namespace CosmedBleLib
         }
 
 
+        /// <value>
+        /// Gets the collection of ManufacturerData from the scan response if they exists, otherwise returns an empty collection
+        /// </value>
         public ManufacturerDataCollection ManufacturerDataFromScanResponse
         {
             get
@@ -113,6 +169,10 @@ namespace CosmedBleLib
         }
 
 
+        /// <value>
+        /// Gets the collection of DataSections if they exists, otherwise returns an empty collection
+
+        /// </value>
         public DataSectionCollection DataSections
         {
             get
@@ -123,6 +183,9 @@ namespace CosmedBleLib
         }
 
 
+        /// <value>
+        /// Gets the collection of DataSections from the scan response if they exists, otherwise returns an empty collection
+        /// </value>
         public DataSectionCollection DataSectionsFromScanResponse
         {
             get
@@ -135,8 +198,11 @@ namespace CosmedBleLib
         #endregion
 
 
-        #region Delegate
+        #region Events
 
+        /// <summary>
+        /// Fired when a scan response is received
+        /// </summary>
         public event Action<CosmedBleAdvertisedDevice> ScanResponseReceived;
 
         #endregion
@@ -144,6 +210,9 @@ namespace CosmedBleLib
 
         #region Constructors
 
+        /// <summary>
+        /// Constructor of the class
+        /// </summary>
         public CosmedBleAdvertisedDevice()
         {
             this.advertisementContent = new AdvertisementContent();
@@ -151,6 +220,14 @@ namespace CosmedBleLib
             this.HasScanResponse = false;
         }
 
+        /// <summary>
+        /// Constructor of the class
+        /// </summary>
+        /// <param name="address">The device address</param>
+        /// <param name="timestamp">Timestamp of the advertisement</param>
+        /// <param name="isConnectable">Boolean indicating if the device is connectable</param>
+        /// <param name="adv">The received advertisement</param>
+        /// <param name="advType">Type of the received advertisement</param>
         public CosmedBleAdvertisedDevice(ulong address, DateTimeOffset timestamp, bool isConnectable, BluetoothLEAdvertisement adv, BluetoothLEAdvertisementType advType) : this()
         {
             if (adv == null)
@@ -161,12 +238,21 @@ namespace CosmedBleLib
             this.IsConnectable = isConnectable;
         }
 
+        /// <summary>
+        /// Constructor of the class
+        /// </summary>
+        /// <param name="args"></param>
         public CosmedBleAdvertisedDevice(BluetoothLEAdvertisementReceivedEventArgs args) : this()
         {
             _ = SetAdvertisement(args);
         }
 
 
+        /// <summary>
+        /// Sets an advertisement received from the device
+        /// </summary>
+        /// <param name="args">The arguments containing all the data about a received advertisement</param>
+        /// <returns>An instance of the class</returns>
         public CosmedBleAdvertisedDevice SetAdvertisement(BluetoothLEAdvertisementReceivedEventArgs args)
         {
             DeviceAddress = args.BluetoothAddress;
@@ -178,6 +264,7 @@ namespace CosmedBleLib
             IsScannable = args.IsScannable;
             TransmitPowerLevelInDBm = args.TransmitPowerLevelInDBm;
 
+            //if the advertisement is a scan response saves it as such
             if (args.AdvertisementType == BluetoothLEAdvertisementType.ScanResponse)
             {
                 if (DeviceName == null || !args.Advertisement.LocalName.Equals(""))
@@ -188,8 +275,11 @@ namespace CosmedBleLib
                 scanResponseAdvertisementContent.Advertisement = args.Advertisement;
                 scanResponseAdvertisementContent.AdvertisementType = args.AdvertisementType;
                 HasScanResponse = true;
+
+                //rise the event
                 ScanResponseReceived?.Invoke(this);
             }
+            //if the advertisement is normal advertisement saves it as such
             else
             {
                 IsConnectable = args.IsConnectable;
@@ -203,6 +293,9 @@ namespace CosmedBleLib
 
 
 
+        /// <summary>
+        /// Prints the advertisement and scan response data
+        /// </summary>
         public void PrintAdvertisement()
         {
             Console.WriteLine();
@@ -298,9 +391,19 @@ namespace CosmedBleLib
     }
 
 
+    /// <summary>
+    /// Contains an istance of BluetoothLEAdvertisement and BluetoothLEAdvertisementType
+    /// </summary>
     public struct AdvertisementContent
     {
+        /// <value>
+        /// Gets and sets the BluetoothLEAdvertisement 
+        /// </value>
         public BluetoothLEAdvertisement Advertisement { get; set; }
+
+        /// <value>
+        /// Gets and sets the BluetoothLEAdvertisementType
+        /// </value>
         public BluetoothLEAdvertisementType AdvertisementType { get; set; }
     }
 

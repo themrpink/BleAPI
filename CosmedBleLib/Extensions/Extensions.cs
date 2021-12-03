@@ -2,18 +2,25 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
-using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Foundation;
 using Windows.Storage.Streams;
+using CosmedBleLib.GattCommunication;
+using CosmedBleLib.CustomExceptions;
+using CosmedBleLib.Helpers;
+using CosmedBleLib.Values;
+using CosmedBleLib.DeviceDiscovery;
+using CosmedBleLib.Collections;
 
-namespace CosmedBleLib
+namespace CosmedBleLib.Extensions
 {
+
+    /// <summary>
+    /// Types of Gatt Communication status
+    /// </summary>
     public enum CosmedGattCommunicationStatus : ushort
     {
         Success = 0,
@@ -26,12 +33,21 @@ namespace CosmedBleLib
     }
 
 
-    //offers an event to be raised when an exception is raised during a gatt operation
+    /// <summary>
+    /// Event to be fired when an exception is raised during a gatt operation
+    /// </summary>
     public static class ErrorFoundClass
     {
-
+        /// <summary>
+        /// The event to be fired in case of error
+        /// </summary>
         public static event Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> ErrorFound;
 
+        /// <summary>
+        /// Fires the ErrorFound event
+        /// </summary>
+        /// <param name="sender">The characteristic on which the error occurred</param>
+        /// <param name="args">The error data</param>
         public static void Call(GattCharacteristic sender, CosmedGattErrorFoundEventArgs args)
         {
             ErrorFound?.Invoke(sender, args);
@@ -39,9 +55,15 @@ namespace CosmedBleLib
     }
 
 
+    /// <summary>
+    /// Extension methods for the GattService
+    /// </summary>
     public static class GattServiceExtensions
     {
-
+        /// <summary>
+        /// Utility methods, prints the Service data
+        /// </summary>
+        /// <param name="service">the extended service</param>
         public static void Print(this GattDeviceService service)
         {
             Console.WriteLine("printing a service:");
@@ -60,6 +82,9 @@ namespace CosmedBleLib
     }
 
 
+    /// <summary>
+    /// Extension methods for the GattCharacteristic
+    /// </summary>
     public static class GattCharacteristicExtensions
 
     {
@@ -74,13 +99,26 @@ namespace CosmedBleLib
         //}
 
         //allows from each characteristic to add a value to a reliable write instance
+        /// <summary>
+        /// Allows each characteristic to add a value to a reliable write instance
+        /// </summary>
+        /// <param name="characteristic">The extended characteristic</param>
+        /// <param name="reliableWriteTransaction">the reliable write instance to which append the value</param>
+        /// <param name="value">Value to be written</param>
         public static void AddCharacteristicToReliableWrite(this GattCharacteristic characteristic, GattReliableWriteTransaction reliableWriteTransaction, IBuffer value)
         {
             reliableWriteTransaction.WriteValue(characteristic, value);
         }
 
 
-
+        /// <summary>
+        /// Writes a characteristic with result
+        /// </summary>
+        /// <param name="characteristic">the extended characteristic</param>
+        /// <param name="value">the value to be written</param>
+        /// <param name="writeOption">Write with or without response</param>
+        /// <param name="errorAction">Optional action to manage communication errors</param>
+        /// <returns>The write result</returns>
         public static async Task<CosmedCharacteristicWriteResult> WriteWithResult(this GattCharacteristic characteristic, byte[] value, GattWriteOption writeOption, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null) 
         {
             GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
@@ -142,6 +180,12 @@ namespace CosmedBleLib
             return new CosmedCharacteristicWriteResult(null, CosmedGattCommunicationStatus.OperationNotSupported);
         }
 
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="characteristic"></param>
+        ///// <param name="errorAction"></param>
+        ///// <returns></returns>
         //public static async Task<CosmedGattCommunicationStatus> Write(this GattCharacteristic characteristic, byte[] value)
         //{
         //    GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
@@ -188,7 +232,12 @@ namespace CosmedBleLib
         //   return CosmedGattCommunicationStatus.OperationNotSupported;
         //}
 
-
+        /// <summary>
+        /// Reads the characteristic values
+        /// </summary>
+        /// <param name="characteristic">the extended characteristic</param>
+        /// <param name="errorAction">Optional action to manage communication errors</param>
+        /// <returns>The read result</returns>
         public static async Task<CosmedCharacteristicReadResult> Read(this GattCharacteristic characteristic, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
             GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
@@ -222,9 +271,15 @@ namespace CosmedBleLib
             }
             return new CosmedCharacteristicReadResult(null, CosmedGattCommunicationStatus.OperationNotSupported, null);       
         }
-        
-        
-        public static async Task<CosmedGattCommunicationStatus> Subscribe(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+
+        /// <summary>
+        /// Subscribes to notifications
+        /// </summary>
+        /// <param name="characteristic">the extended characteristic</param>
+        /// <param name="valueChangedAction">Optional action to manage the incoming notifications</param>
+        /// <param name="errorAction">Optional action to manage communication errors</param>
+        /// <returns>The subscription result</returns>
+        public static async Task<CosmedGattCommunicationStatus> SubscribeToNotification(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
             if (!characteristic.IsNotificationAllowed() && !characteristic.IsIndicationAllowed())
             {
@@ -289,48 +344,14 @@ namespace CosmedBleLib
         }
 
 
-        public static async Task<CosmedGattCommunicationStatus> SubscribeToNotification(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
-        {
-            if (!characteristic.IsNotificationAllowed())
-            {
-                return CosmedGattCommunicationStatus.OperationNotSupported;
-            }
 
-            GattReadClientCharacteristicConfigurationDescriptorResult cccd;
-            try
-            {
-                GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify).AsTask().ConfigureAwait(false);
-                if (status == GattCommunicationStatus.Success)
-                {
-                    if (valueChangedAction != null)
-                    {
-                        characteristic.ValueChanged += valueChangedAction;
-                    }
-                }
-                //gives the last status
-                return status.ConvertStatus();
-
-            }
-            catch (Exception e)
-            {
-                if (errorAction != null)
-                {
-                    ErrorFoundClass.ErrorFound += errorAction;
-                }
-                var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Notify);
-
-                //it fires the event 
-                ErrorFoundClass.Call(characteristic, args);
-          
-                ErrorFoundClass.ErrorFound -= errorAction;
-                Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
-                Console.WriteLine(e.Message);
-
-                return CosmedGattCommunicationStatus.Unreachable;
-            }
-        }
-
-
+        /// <summary>
+        /// Subscribes to indications
+        /// </summary>
+        /// <param name="characteristic">the extended characteristic</param>
+        /// <param name="valueChangedAction">Optional action to manage the incoming notifications</param>
+        /// <param name="errorAction">Optional action to manage communication errors</param>
+        /// <returns>The subscription result</returns>
         public static async Task<CosmedGattCommunicationStatus> SubscribeToIndication(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
             if (!characteristic.IsIndicationAllowed())
@@ -399,7 +420,12 @@ namespace CosmedBleLib
             return CosmedGattCommunicationStatus.OperationNotSupported;
         }
 
-
+        /// <summary>
+        /// Unsubscribes from the characteristic
+        /// </summary>
+        /// <param name="characteristic">the extended characteristic</param>
+        /// <param name="errorAction">Optional action to manage communication errors</param>
+        /// <returns>The unsubscription result</returns>
         public static async Task<CosmedGattCommunicationStatus> UnSubscribe(this GattCharacteristic characteristic, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
 
@@ -459,6 +485,11 @@ namespace CosmedBleLib
         #endregion
 
         #region helper methods
+
+        /// <summary>
+        /// Utility method to print the characteristic values
+        /// </summary>
+        /// <param name="c">the extended characteristic</param>
         public static async void Print(this GattCharacteristic c)
         {
 
@@ -494,6 +525,12 @@ namespace CosmedBleLib
             Console.WriteLine("______________________");
         }
 
+
+        /// <summary>
+        /// Searches for appearance value and translates it
+        /// </summary>
+        /// <param name="characteristic">The extended characteristic</param>
+        /// <returns>The Appearance type</returns>
         public static async Task<BluetoothAppearanceType> GetAppearanceValue(this GattCharacteristic characteristic)
         {
             var result = await characteristic.Read();
@@ -518,7 +555,11 @@ namespace CosmedBleLib
             return BluetoothAppearanceType.Unknown;
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characteristic">The extended characteristic</param>
+        /// <returns></returns>
         public static bool IsAppearanceValue(this GattCharacteristic characteristic)
         {
             var shortId = BluetoothUuidHelper.TryGetShortId(characteristic.Uuid);
@@ -537,6 +578,11 @@ namespace CosmedBleLib
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
         public static CosmedGattCommunicationStatus ConvertStatus(this GattCommunicationStatus status)
         {
             switch (status)
@@ -549,21 +595,42 @@ namespace CosmedBleLib
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characteristic">The extended characteristic</param>
+        /// <returns></returns>
         public static bool IsNotificationAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Notify);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characteristic">The extended characteristic</param>
+        /// <returns></returns>
         private static bool IsWriteAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Write) || characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.WriteWithoutResponse);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characteristic">The extended characteristic</param>
+        /// <returns></returns>
         private static bool IsReadAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Read);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="characteristic">The extended characteristic</param>
+        /// <returns></returns>
         public static bool IsIndicationAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Indicate);
@@ -573,9 +640,16 @@ namespace CosmedBleLib
     }
 
 
+    /// <summary>
+    /// 
+    /// </summary>
     public static class GattDeviceServiceResultsExtesions
     {
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gattResult"></param>
+        /// <returns></returns>
         public static async Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>> DiscoverAllGattCharacteristics(this GattDeviceServicesResult gattResult)
         {
             var emptyDictionary = new Dictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>();
@@ -610,37 +684,6 @@ namespace CosmedBleLib
     }
 
 
-    public static class AsyncOperationExtensions
-    {
-        public static Task<TResult> AsTask<TResult>(this IAsyncOperation<TResult> asyncOperation)
-        {
-            var tsc = new TaskCompletionSource<TResult>();
-
-            asyncOperation.Completed += delegate
-            {
-                switch (asyncOperation.Status)
-                {
-                    case AsyncStatus.Completed:
-                        tsc.TrySetResult(asyncOperation.GetResults());
-                        break;
-                    case AsyncStatus.Error:
-                        tsc.TrySetException(asyncOperation.ErrorCode);
-                        break;
-                    case AsyncStatus.Canceled:
-                        tsc.SetCanceled();
-                        break;
-                }
-            };
-            return tsc.Task;
-        }
-
-        public static void AddDevice(this CosmedBluetoothLEAdvertisementWatcher watcher, CosmedBleAdvertisedDevice device)
-        {
-
-        }
-    }
-
-
     /// <summary>
     /// Extension class for byte
     /// </summary>
@@ -670,65 +713,48 @@ namespace CosmedBleLib
 
 
 
-    //    public static class Inkoke
-    //    {
-    //        [DllImport("irprops.cpl", SetLastError = true)]
-    //        static extern uint BluetoothAuthenticateDeviceEx(IntPtr hwndParentIn, IntPtr hRadioIn, ref BLUETOOTH_DEVICE_INFO pbtdiInout, BLUETOOTH_OOB_DATA pbtOobData, uint authenticationRequirement);
-    //    }
+    /// <summary>
+    /// Extension class for Async Operations
+    /// </summary>
+    public static class AsyncOperationExtensions
+    {
 
-    //    public enum AUTHENTICATION_REQUIREMENTS : uint 
-    //    {
-    //        MITMProtectionNotRequired = 0x00,
-    //        MITMProtectionRequired = 0x01,
-    //        MITMProtectionNotRequiredBonding = 0x02,
-    //        MITMProtectionRequiredBonding = 0x03,
-    //        MITMProtectionNotRequiredGeneralBonding = 0x04,
-    //        MITMProtectionRequiredGeneralBonding = 0x05,
-    //        MITMProtectionNotDefined = 0xff
-    //    }
+        /// <summary>
+        /// Extension method for Task
+        /// </summary>
+        /// <typeparam name="TResult">Async operation result</typeparam>
+        /// <param name="asyncOperation">the extended operation</param>
+        /// <returns>the task result</returns>
+        public static Task<TResult> ToTask<TResult>(this IAsyncOperation<TResult> asyncOperation)
+        {
+            var tsc = new TaskCompletionSource<TResult>();
 
-
-    //    typedef struct _BLUETOOTH_DEVICE_INFO
-    //    {
-    //        DWORD dwSize;
-    //        BLUETOOTH_ADDRESS Address;
-    //        ULONG ulClassofDevice;
-    //        BOOL fConnected;
-    //        BOOL fRemembered;
-    //        BOOL fAuthenticated;
-    //        SYSTEMTIME stLastSeen;
-    //        SYSTEMTIME stLastUsed;
-    //        WCHAR szName[BLUETOOTH_MAX_NAME_SIZE];
-    //    }
-    //    BLUETOOTH_DEVICE_INFO_STRUCT;
-
-    //
-}
-
-namespace Wintellect.Interop.Sound { 
-    using System; 
-    using System.Runtime.InteropServices; 
-    using System.ComponentModel; 
-    
-    sealed class Sound { 
-        public static void MessageBeep(BeepTypes type) { 
-            if (!MessageBeep((UInt32)type)) { 
-                Int32 err = Marshal.GetLastWin32Error(); 
-                throw new Win32Exception(err); 
-            } 
+            asyncOperation.Completed += delegate
+            {
+                switch (asyncOperation.Status)
+                {
+                    case AsyncStatus.Completed:
+                        tsc.TrySetResult(asyncOperation.GetResults());
+                        break;
+                    case AsyncStatus.Error:
+                        tsc.TrySetException(asyncOperation.ErrorCode);
+                        break;
+                    case AsyncStatus.Canceled:
+                        tsc.SetCanceled();
+                        break;
+                }
+            };
+            return tsc.Task;
         }
-        
-        [DllImport("User32.dll", SetLastError = true)] 
-        static extern Boolean MessageBeep(UInt32 beepType); 
-        private Sound() { } 
-    } 
-    
-    enum BeepTypes { 
-        Simple = -1, 
-        Ok = 0x00000000, 
-        IconHand = 0x00000010, 
-        IconQuestion = 0x00000020, 
-        IconExclamation = 0x00000030, 
-        IconAsterisk = 0x00000040 
-    } 
+
+        public static void AddDevice(this CosmedBluetoothLEAdvertisementWatcher watcher, CosmedBleAdvertisedDevice device)
+        {
+
+        }
+    }
+
+
+
+
+
 }

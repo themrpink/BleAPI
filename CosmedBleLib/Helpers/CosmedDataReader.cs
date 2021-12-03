@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Windows.Devices.Bluetooth;
-using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
+using CosmedBleLib.Extensions;
 
-namespace CosmedBleLib
+namespace CosmedBleLib.Helpers
 {
 
+    /// <summary>
+    /// Types of string data
+    /// </summary>
     public  enum DataConversionType
     {
         Hex,
@@ -22,19 +19,37 @@ namespace CosmedBleLib
         Utf16,
     }
 
-
+    /// <summary>
+    /// The base to build buffer readers specific to a data format
+    /// </summary>
     public abstract class BufferReader
     {
         #region Properties
+
+        /// <value>
+        /// Gets and sets the data converted in hex format string
+        /// </value>
         public string HexValue { get; set; }
-        //public string ASCIIValue { get; set; }
+
+        /// <value>
+        /// Gets and sets the data converted in utf8 string
+        /// </value>
         public string UTF8Value { get; set; }
-        //public string UTF16Value { get; set; }
+
+        /// <value>
+        /// Gets and sets the raw data not converted
+        /// </value>
         public IBuffer RawData { get; set; }
         #endregion
 
 
         #region constructor
+
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="buffer">The buffer to be read</param>
         public BufferReader(IBuffer buffer)
         {
             RawData = buffer;
@@ -42,8 +57,6 @@ namespace CosmedBleLib
             {
                 HexValue = convertBufferData(buffer, DataConversionType.Hex);
                 UTF8Value = convertBufferData(buffer, DataConversionType.Utf8);
-                //ASCIIValue = convertBufferData(buffer, DataConversionType.ASCII);
-                //UTF16Value = convertBufferData(buffer, DataConversionType.Utf16);
             }
         }
 
@@ -51,6 +64,13 @@ namespace CosmedBleLib
 
 
         #region Methods
+
+        /// <summary>
+        /// Converts the given buffer into the requestes data type.
+        /// </summary>
+        /// <param name="buffer">The buffer to be read.</param>
+        /// <param name="type">The data convertion type.</param>
+        /// <returns>the result string.</returns>
         protected string convertBufferData(IBuffer buffer, DataConversionType type)
         {
             var data = new byte[buffer.Length];
@@ -90,162 +110,30 @@ namespace CosmedBleLib
         #endregion
 
 
-        #region Static methods
-
-        public static string ToUTF8String(IBuffer buffer)
-        {
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
-            reader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
-            return reader.ReadString(buffer.Length);
-        }
-
-        public static string ToUTF16String(IBuffer buffer)
-        {
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf16LE;
-            reader.ByteOrder = Windows.Storage.Streams.ByteOrder.LittleEndian;
-
-            // UTF16 characters are 2 bytes long and ReadString takes the character count,
-            // divide the buffer length by 2.
-            return reader.ReadString(buffer.Length / 2);
-        }
-
-        public static Int16 ToInt16(IBuffer buffer)
-        {
-            byte[] data = new byte[buffer.Length];
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.ByteOrder = ByteOrder.LittleEndian;
-            reader.ReadBytes(data);
-            data = PadBytes(data, 2);
-            return BitConverter.ToInt16(data, 0);
-        }
-
-        public static int ToInt32(IBuffer buffer)
-        {
-            if (buffer.Length > sizeof(Int32))
-            {
-                throw new ArgumentException("Cannot convert to Int32, buffer is too large");
-            }
-
-            byte[] data = new byte[buffer.Length];
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.ByteOrder = ByteOrder.LittleEndian;
-            reader.ReadBytes(data);
-            data = PadBytes(data, 4);
-            return BitConverter.ToInt32(data, 0);
-        }
-
-        public static Int64 ToInt64(IBuffer buffer)
-        {
-            if (buffer.Length > sizeof(Int64))
-            {
-                throw new ArgumentException("Cannot convert to Int64, buffer is too large");
-            }
-
-            byte[] data = new byte[buffer.Length];
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.ByteOrder = ByteOrder.LittleEndian;
-            reader.ReadBytes(data);
-            data = PadBytes(data, 8);
-            return BitConverter.ToInt32(data, 0);
-        }
-
-        public static Single ToSingle(IBuffer buffer)
-        {
-            byte[] data = new byte[buffer.Length];
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.ByteOrder = ByteOrder.LittleEndian;
-            reader.ReadBytes(data);
-            data = PadBytes(data, 4);
-            return BitConverter.ToSingle(data, 0);
-        }
-
-        public static Double ToDouble(IBuffer buffer)
-        {
-            byte[] data = new byte[buffer.Length];
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.ByteOrder = ByteOrder.LittleEndian;
-            reader.ReadBytes(data);
-            data = PadBytes(data, 8);
-            return BitConverter.ToDouble(data, 0);
-        }
-
-        public static UInt16 ToUInt16(IBuffer buffer)
-        {
-            byte[] data = new byte[buffer.Length];
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.ByteOrder = ByteOrder.LittleEndian;
-            reader.ReadBytes(data);
-            data = PadBytes(data, 2);
-            return BitConverter.ToUInt16(data, 0);
-        }
-
-        public static UInt32 ToUInt32(IBuffer buffer)
-        {
-            byte[] data = new byte[buffer.Length];
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.ByteOrder = ByteOrder.LittleEndian;
-            reader.ReadBytes(data);
-            data = PadBytes(data, 4);
-            return BitConverter.ToUInt32(data, 0);
-        }
-
-        public static UInt64 ToUInt64(IBuffer buffer)
-        {
-            byte[] data = new byte[buffer.Length];
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.ByteOrder = ByteOrder.LittleEndian;
-            reader.ReadBytes(data);
-            data = PadBytes(data, 8);
-            return BitConverter.ToUInt64(data, 0);
-        }
-
-        public static byte[] ToByteArray(IBuffer buffer)
-        {
-            byte[] data = new byte[buffer.Length];
-            DataReader reader = DataReader.FromBuffer(buffer);
-            reader.ByteOrder = ByteOrder.LittleEndian;
-            reader.ReadBytes(data);
-            return data;
-        }
-
-        public static string ToHexString(IBuffer buffer)
-        {
-            byte[] data;
-            CryptographicBuffer.CopyToByteArray(buffer, out data);
-            return BitConverter.ToString(data);
-        }
-
-
-        /// <summary>
-        /// Takes an input array of bytes and returns an array with more zeros in the front
-        /// </summary>
-        /// <param name="input"></param>
-        /// <param name="length"></param>
-        /// <returns>A byte array with more zeros in back per little endianness"/></returns>
-        private static byte[] PadBytes(byte[] input, int length)
-        {
-            if (input.Length >= length)
-            {
-                return input;
-            }
-
-            byte[] ret = new byte[length];
-            Array.Copy(input, ret, input.Length);
-            return ret;
-        }
-
-
-        #endregion
     }
 
 
+    /// <summary>
+    /// Data Buffer Reader for the ManufacturerData format
+    /// </summary>
     public class ManufacturerDataReader : BufferReader
     {
+        /// <value>
+        /// Gets the company ID value
+        /// </value>
         public ushort CompanyId { get; private set; }
+
+        /// <value>
+        /// Gets the Company ID in HEX format
+        /// </value>
         public string CompanyIdHex { get { return string.Format("{0:X}", CompanyId); } }
 
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="buffer">Buffer to be read</param>
+        /// <param name="CompanyId">Company ID</param>
         public ManufacturerDataReader(IBuffer buffer, ushort CompanyId) : base(buffer)
         {
             this.CompanyId = CompanyId;
@@ -253,15 +141,39 @@ namespace CosmedBleLib
     }
 
 
+    /// <summary>
+    /// Data Buffer Reader for the Characteristic format
+    /// </summary>
     public class CharacteristicReader : BufferReader
     {
+        /// <value>
+        /// Gets the involved Characteristic
+        /// </value>
         public GattCharacteristic Characteristic { get; }
+
+        /// <summary>
+        /// Gets the optional ProtocollError (may be null if no error has been found)
+        /// </summary>
         public byte? ProtocolError { get;}
 
+        /// <summary>
+        /// Gets the Communication Status
+        /// </summary>
         public CosmedGattCommunicationStatus Status { get; }
 
+
+        /// <summary>
+        /// Gets the timestamp
+        /// </summary>
         public DateTimeOffset Timestamp { get; }
 
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="buffer">The buffer to be read</param>
+        /// <param name="timestamp">Timestamp</param>
+        /// <param name="sender">The characteristic to whom the buffer belongs</param>
         public CharacteristicReader(IBuffer buffer, DateTimeOffset timestamp, GattCharacteristic sender) : base(buffer)
         {
             Timestamp = timestamp;
@@ -272,11 +184,27 @@ namespace CosmedBleLib
     }
 
 
+    /// <summary>
+    /// Data Buffer Reader for the Data Section format
+    /// </summary>
     public class DataSectionReader : BufferReader
     {
+        /// <value>
+        /// Gets the raw read data
+        /// </value>
         public byte RawDataType { get; }
+
+        /// <value>
+        /// Gets the converted data type
+        /// </value>
         public string DataType { get; }
 
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="buffer">Buffer to be read.</param>
+        /// <param name="dataType">The data type</param>
         public DataSectionReader(IBuffer buffer,  byte dataType) : base(buffer)
         {
             this.RawDataType = dataType;
@@ -287,7 +215,9 @@ namespace CosmedBleLib
 
 
 
-
+    /// <summary>
+    /// Helped methods to write a buffer starting from various data types.
+    /// </summary>
     public static class BufferWriter
     {
         /// <summary>
@@ -341,6 +271,12 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBufferFromHexString(string data)
         {
             DataWriter writer = new DataWriter();
@@ -365,6 +301,12 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(bool data)
         {
             DataWriter writer = new DataWriter();
@@ -373,6 +315,12 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(byte data)
         {
             DataWriter writer = new DataWriter();
@@ -381,6 +329,13 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(byte[] data)
         {
             DataWriter writer = new DataWriter();
@@ -389,6 +344,12 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(double data)
         {
             DataWriter writer = new DataWriter();
@@ -397,6 +358,12 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(Int16 data)
         {
             DataWriter writer = new DataWriter();
@@ -405,6 +372,13 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(Int32 data)
         {
             DataWriter writer = new DataWriter();
@@ -421,6 +395,12 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(Single data)
         {
             DataWriter writer = new DataWriter();
@@ -429,6 +409,12 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(UInt16 data)
         {
             DataWriter writer = new DataWriter();
@@ -437,6 +423,12 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(UInt32 data)
         {
             DataWriter writer = new DataWriter();
@@ -445,6 +437,12 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(UInt64 data)
         {
             DataWriter writer = new DataWriter();
@@ -453,6 +451,13 @@ namespace CosmedBleLib
             return writer.DetachBuffer();
         }
 
+
+
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(string data)
         {
             DataWriter writer = new DataWriter();
@@ -466,9 +471,17 @@ namespace CosmedBleLib
     }
 
 
+
+    /// <summary>
+    /// Help methods to convert buffer data obtained by the client into various data types.
+    /// </summary>
     public static class ClientBufferReader
     {
-
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>String result.</returns>
         public static string ToUTF8String(IBuffer buffer)
         {
             DataReader reader = DataReader.FromBuffer(buffer);
@@ -477,6 +490,12 @@ namespace CosmedBleLib
             return reader.ReadString(buffer.Length);
         }
 
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>String result.</returns>
         public static string ToUTF16String(IBuffer buffer)
         {
             DataReader reader = DataReader.FromBuffer(buffer);
@@ -488,6 +507,12 @@ namespace CosmedBleLib
             return reader.ReadString(buffer.Length / 2);
         }
 
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>Int16 result.</returns>
         public static Int16 ToInt16(IBuffer buffer)
         {
             byte[] data = new byte[buffer.Length];
@@ -498,6 +523,12 @@ namespace CosmedBleLib
             return BitConverter.ToInt16(data, 0);
         }
 
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>int result.</returns>
         public static int ToInt32(IBuffer buffer)
         {
             if (buffer.Length > sizeof(Int32))
@@ -513,6 +544,12 @@ namespace CosmedBleLib
             return BitConverter.ToInt32(data, 0);
         }
 
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>Int result.</returns>
         public static Int64 ToInt64(IBuffer buffer)
         {
             if (buffer.Length > sizeof(Int64))
@@ -528,6 +565,12 @@ namespace CosmedBleLib
             return BitConverter.ToInt32(data, 0);
         }
 
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>Conversion result.</returns>
         public static Single ToSingle(IBuffer buffer)
         {
             byte[] data = new byte[buffer.Length];
@@ -538,6 +581,12 @@ namespace CosmedBleLib
             return BitConverter.ToSingle(data, 0);
         }
 
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>Conversion result.</returns>
         public static Double ToDouble(IBuffer buffer)
         {
             byte[] data = new byte[buffer.Length];
@@ -548,6 +597,12 @@ namespace CosmedBleLib
             return BitConverter.ToDouble(data, 0);
         }
 
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>Conversion result.</returns>
         public static UInt16 ToUInt16(IBuffer buffer)
         {
             byte[] data = new byte[buffer.Length];
@@ -558,6 +613,13 @@ namespace CosmedBleLib
             return BitConverter.ToUInt16(data, 0);
         }
 
+
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>Conversion result.</returns>
         public static UInt32 ToUInt32(IBuffer buffer)
         {
             byte[] data = new byte[buffer.Length];
@@ -568,6 +630,12 @@ namespace CosmedBleLib
             return BitConverter.ToUInt32(data, 0);
         }
 
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>Conversion result.</returns>
         public static UInt64 ToUInt64(IBuffer buffer)
         {
             byte[] data = new byte[buffer.Length];
@@ -578,6 +646,13 @@ namespace CosmedBleLib
             return BitConverter.ToUInt64(data, 0);
         }
 
+
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>Conversion result.</returns>
         public static byte[] ToByteArray(IBuffer buffer)
         {
             byte[] data = new byte[buffer.Length];
@@ -587,6 +662,13 @@ namespace CosmedBleLib
             return data;
         }
 
+
+
+        /// <summary>
+        /// Converts buffer data into the specified format.
+        /// </summary>
+        /// <param name="buffer">The buffer to be converted.</param>
+        /// <returns>Conversion result.</returns>
         public static string ToHexString(IBuffer buffer)
         {
             byte[] data;

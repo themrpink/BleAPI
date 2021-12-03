@@ -1,0 +1,88 @@
+\hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic}{}\doxysection{Cosmed\+Ble\+Lib.\+Cosmed\+Gatt\+Characteristic Class Reference}
+\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic}\index{CosmedBleLib.CosmedGattCharacteristic@{CosmedBleLib.CosmedGattCharacteristic}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a56a318fc4ab16328f1b39972dd376592}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a56a318fc4ab16328f1b39972dd376592}} 
+{\bfseries Cosmed\+Gatt\+Characteristic} (Gatt\+Characteristic characteristic)
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a5b1a08801f5a5ecc1ace44be8975e716}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a5b1a08801f5a5ecc1ace44be8975e716}} 
+{\bfseries Cosmed\+Gatt\+Characteristic} (Gatt\+Characteristic characteristic, Action$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic}{Cosmed\+Gatt\+Characteristic}}, Gatt\+Value\+Changed\+Event\+Args $>$ characteristic\+Value\+Changed, Action$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic}{Cosmed\+Gatt\+Characteristic}}, \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_error_found_event_args}{Cosmed\+Gatt\+Error\+Found\+Event\+Args}} $>$ characteristic\+Error\+Found)
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a507156b76aff65883b017d39d2e62233}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a507156b76aff65883b017d39d2e62233}} 
+async Task$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_characteristic_write_result}{Cosmed\+Characteristic\+Write\+Result}} $>$ {\bfseries Write} (byte value, Action$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic}{Cosmed\+Gatt\+Characteristic}}, \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_error_found_event_args}{Cosmed\+Gatt\+Error\+Found\+Event\+Args}} $>$ action=null, ushort? max\+Pdu\+Size=null)
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a01188235443f7b98b49763df79f84fb2}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a01188235443f7b98b49763df79f84fb2}} 
+async Task$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_characteristic_read_result}{Cosmed\+Characteristic\+Read\+Result}} $>$ {\bfseries Read} (Action$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic}{Cosmed\+Gatt\+Characteristic}}, \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_error_found_event_args}{Cosmed\+Gatt\+Error\+Found\+Event\+Args}} $>$ action=null)
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a492f283f51bf93dff266857905cd6ec5}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a492f283f51bf93dff266857905cd6ec5}} 
+async Task$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_characteristic_subscription_result}{Cosmed\+Characteristic\+Subscription\+Result}} $>$ {\bfseries Subscribe\+To\+Notification} (Typed\+Event\+Handler$<$ Gatt\+Characteristic, Gatt\+Value\+Changed\+Event\+Args $>$ value\+Changed\+Action=null, Action$<$ Gatt\+Characteristic, \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_error_found_event_args}{Cosmed\+Gatt\+Error\+Found\+Event\+Args}} $>$ error\+Action=null)
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a7def4ea212f426c48356c4bf4e1cd4d0}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a7def4ea212f426c48356c4bf4e1cd4d0}} 
+async Task$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_characteristic_subscription_result}{Cosmed\+Characteristic\+Subscription\+Result}} $>$ {\bfseries Subscribe\+To\+Indication} (Typed\+Event\+Handler$<$ Gatt\+Characteristic, Gatt\+Value\+Changed\+Event\+Args $>$ value\+Changed\+Action=null, Action$<$ Gatt\+Characteristic, \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_error_found_event_args}{Cosmed\+Gatt\+Error\+Found\+Event\+Args}} $>$ error\+Action=null)
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a7d3590d5b9b926363f6e0c0a36073d0c}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a7d3590d5b9b926363f6e0c0a36073d0c}} 
+void {\bfseries To\+String} ()
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a185774c2233bd91183e0c7a22e0febe3}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a185774c2233bd91183e0c7a22e0febe3}} 
+void {\bfseries Clean\+Events} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a0f56569efc70df27680b9d175799f9cf}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a0f56569efc70df27680b9d175799f9cf}} 
+Action$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic}{Cosmed\+Gatt\+Characteristic}}, Gatt\+Value\+Changed\+Event\+Args $>$ {\bfseries Characteristic\+Value\+Changed}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_ac05aa4fb053e3ccfb0a012973ab51d92}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_ac05aa4fb053e3ccfb0a012973ab51d92}} 
+Action$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic}{Cosmed\+Gatt\+Characteristic}}, \mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_error_found_event_args}{Cosmed\+Gatt\+Error\+Found\+Event\+Args}} $>$ {\bfseries Characteristic\+Error\+Found}
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a1fe10049b7d4d63ab86c917880577705}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a1fe10049b7d4d63ab86c917880577705}} 
+virtual void {\bfseries On\+Error\+Found} (\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_gatt_error_found_event_args}{Cosmed\+Gatt\+Error\+Found\+Event\+Args}} args)
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_aab8c34972785c30dae89641c62979aa8}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_aab8c34972785c30dae89641c62979aa8}} 
+virtual void {\bfseries On\+Value\+Changed} (Gatt\+Characteristic sender, Gatt\+Value\+Changed\+Event\+Args args)
+\end{DoxyCompactItemize}
+\doxysubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_aae4350774c67eb36632b3e1fc2c45451}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_aae4350774c67eb36632b3e1fc2c45451}} 
+Gatt\+Characteristic {\bfseries characteristic}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_accf20064ef552fbb4270d61b0acd8148}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_accf20064ef552fbb4270d61b0acd8148}} 
+Gatt\+Protection\+Level {\bfseries Protection\+Level}\hspace{0.3cm}{\ttfamily  \mbox{[}getset\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_aa749bc0d41216dbd0eeaa1f569de354f}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_aa749bc0d41216dbd0eeaa1f569de354f}} 
+ushort {\bfseries Attribute\+Handle}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a2e6cfa2a5968c226aa90c1bc6450cb82}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a2e6cfa2a5968c226aa90c1bc6450cb82}} 
+Gatt\+Characteristic\+Properties {\bfseries Characteristic\+Properties}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_acfde6da47c2f095c90356ec01308a475}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_acfde6da47c2f095c90356ec01308a475}} 
+IRead\+Only\+List$<$ Gatt\+Presentation\+Format $>$ {\bfseries Presentation\+Formats}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_af945fd55d6711996f232c4f95ea38a6e}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_af945fd55d6711996f232c4f95ea38a6e}} 
+string {\bfseries User\+Description}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a685dc5ebef9c1ab7445170aa74a35fb7}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a685dc5ebef9c1ab7445170aa74a35fb7}} 
+Guid {\bfseries Uuid}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a5c36ba545a87d30cf0539bd7107b9d81}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a5c36ba545a87d30cf0539bd7107b9d81}} 
+bool {\bfseries Is\+Write\+Allowed}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a2fd495e3d4982c5b8e7abcf7c95e1a06}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a2fd495e3d4982c5b8e7abcf7c95e1a06}} 
+bool {\bfseries Is\+Read\+Allowed}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a605518762022fc7cd0bf0afb5c04cf47}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_a605518762022fc7cd0bf0afb5c04cf47}} 
+bool {\bfseries Is\+Notification\+Allowed}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_ac3a074375425c0890a1e604927dfdef0}\label{class_cosmed_ble_lib_1_1_cosmed_gatt_characteristic_ac3a074375425c0890a1e604927dfdef0}} 
+bool {\bfseries Is\+Indication\+Allowed}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Cosmed\+Gatt\+Characteristic.\+cs\end{DoxyCompactItemize}

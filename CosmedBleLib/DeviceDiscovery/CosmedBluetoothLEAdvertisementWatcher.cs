@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Foundation;
-using Windows.Devices.Enumeration;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Management;
+using CosmedBleLib.CustomExceptions;
+using CosmedBleLib.Adapter;
 
-namespace CosmedBleLib
+namespace CosmedBleLib.DeviceDiscovery
 {
 
     /// <summary>
@@ -207,7 +205,7 @@ namespace CosmedBleLib
         /// <summary>
         /// Constructor setting the filter
         /// </summary>
-        /// <param name="advertisementFilter">The filter object</param>
+        /// <param name="filter">The filter object</param>
         public CosmedBluetoothLEAdvertisementWatcher(IFilter filter) : this()
         {            
             SetFilter(filter ?? throw new ArgumentNullException(nameof(filter)));
@@ -646,7 +644,7 @@ namespace CosmedBleLib
                         {
                             CleanOlderDiscoveredDevices(discoveredDevices);
                         }
-                        device = DeviceBuilder.CreateAdvertisedDevice(args);
+                        device = new CosmedBleAdvertisedDevice(args);
                         discoveredDevices[args.BluetoothAddress] = device;
                     }
                     else

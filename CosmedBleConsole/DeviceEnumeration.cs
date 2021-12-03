@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
-using Windows.Foundation;
-using CosmedBleLib;
+using CosmedBleLib.Extensions;
+
+
 namespace CosmedBleConsole
 {
     class DeviceEnumeration
@@ -54,7 +50,7 @@ namespace CosmedBleConsole
                 Console.WriteLine("trying to pair...");
                 Console.WriteLine("protection: " + di.Pairing.ProtectionLevel.ToString());
                 Console.WriteLine("is paired: " + di.Pairing.IsPaired);
-                var result = await di.Pairing.PairAsync().AsTask();
+                var result = await di.Pairing.PairAsync().ToTask();
                 ///Thread.Sleep(100);
                 Console.WriteLine("status: " + result.Status.ToString());
                 Console.WriteLine(result.ProtectionLevelUsed.ToString());

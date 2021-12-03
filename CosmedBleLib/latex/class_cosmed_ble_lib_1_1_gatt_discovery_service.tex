@@ -1,0 +1,137 @@
+\hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service}{}\doxysection{Cosmed\+Ble\+Lib.\+Gatt\+Discovery\+Service Class Reference}
+\label{class_cosmed_ble_lib_1_1_gatt_discovery_service}\index{CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}}
+Inheritance diagram for Cosmed\+Ble\+Lib.\+Gatt\+Discovery\+Service\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_cosmed_ble_lib_1_1_gatt_discovery_service}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+async Task$<$ Gatt\+Device\+Services\+Result $>$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_gatt_discovery_service_a6beb011de1222070e88aa684e8615981}{Find\+Gatt\+Services\+By\+Uuid\+Async}} (Guid requested\+Uuid, Bluetooth\+Cache\+Mode cache\+Mode=Bluetooth\+Cache\+Mode.\+Uncached)
+\item 
+async Task$<$ Gatt\+Characteristics\+Result $>$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_gatt_discovery_service_a4bf4773d1a2072fbe45ab440baa37dfc}{Find\+Gatt\+Characteristics\+By\+Uuid\+Async}} (Gatt\+Device\+Service service, Guid requested\+Uuid, Bluetooth\+Cache\+Mode cache\+Mode=Bluetooth\+Cache\+Mode.\+Uncached)
+\item 
+async Task$<$ IRead\+Only\+Dictionary$<$ Gatt\+Device\+Service, Task$<$ Read\+Only\+Collection$<$ Gatt\+Characteristic $>$ $>$ $>$ $>$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_gatt_discovery_service_a894edb55dbadd2c68b19f31530759e53}{Discover\+All\+Gatt\+Services\+And\+Characteristics}} (Bluetooth\+Cache\+Mode cache\+Mode=Bluetooth\+Cache\+Mode.\+Uncached)
+\item 
+async Task$<$ Gatt\+Device\+Services\+Result $>$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_gatt_discovery_service_a6fe04df9b08ddaa50a953977ae6399e9}{Get\+All\+Gatt\+Services\+Async}} (Bluetooth\+Cache\+Mode bluetooth\+Cache\+Mode=Bluetooth\+Cache\+Mode.\+Uncached)
+\item 
+Gatt\+Reliable\+Write\+Transaction \mbox{\hyperlink{class_cosmed_ble_lib_1_1_gatt_discovery_service_a145f9ee0ec45a921aaec8101c2d1f68b}{Start\+Reliable\+Write\+Transaction}} ()
+\begin{DoxyCompactList}\small\item\em Performs GATT reliable writes on the Bluetooth LE device, in the form of a transaction write operation. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_cosmed_ble_lib_1_1_gatt_discovery_service_aeb15c89492cee4ad4366ad7c89bcf643}{Clear\+Services}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_ab04dae1296bfaca1e1bb333c1e72b531}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_ab04dae1296bfaca1e1bb333c1e72b531}} 
+static async Task$<$ \mbox{\hyperlink{class_cosmed_ble_lib_1_1_gatt_discovery_service}{Gatt\+Discovery\+Service}} $>$ {\bfseries Create\+Async} (\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_device}{Cosmed\+Ble\+Device}} device)
+\end{DoxyCompactItemize}
+\doxysubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a2a9d1f474e09bee8e4d5f2ff0f8c06ce}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a2a9d1f474e09bee8e4d5f2ff0f8c06ce}} 
+\mbox{\hyperlink{class_cosmed_ble_lib_1_1_cosmed_ble_device}{Cosmed\+Ble\+Device}} {\bfseries Device}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a654e3c1654d7d51bfb1b2c13056f6feb}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a654e3c1654d7d51bfb1b2c13056f6feb}} 
+Device\+Access\+Status {\bfseries Device\+Access\+Status}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a8dca2330081f288e689291fd1ea257f5}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a8dca2330081f288e689291fd1ea257f5}} 
+Gatt\+Session {\bfseries Gatt\+Session}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a94de8d5e745e8a492b162a0987471a15}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a94de8d5e745e8a492b162a0987471a15}} 
+bool {\bfseries Maintain\+Connection}\hspace{0.3cm}{\ttfamily  \mbox{[}getset\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a127052820287595c4de3ffffa36937d0}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a127052820287595c4de3ffffa36937d0}} 
+ushort {\bfseries Max\+Pdu\+Size}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a60cc396d97dd9b796b4d0a071e202171}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a60cc396d97dd9b796b4d0a071e202171}} 
+Gatt\+Session\+Status {\bfseries Session\+Status}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_aa5616c01cb62506f3331954996517682}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_aa5616c01cb62506f3331954996517682}} 
+Typed\+Event\+Handler$<$ Bluetooth\+LEDevice, object $>$ {\bfseries Gatt\+Services\+Changed}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a85bcc47a2d2e5bca29ccb96235fc8ecd}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a85bcc47a2d2e5bca29ccb96235fc8ecd}} 
+Typed\+Event\+Handler$<$ Gatt\+Session, object $>$ {\bfseries Max\+Pdu\+Size\+Changed}
+\item 
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a354d7a8715125cad2b4327c40b3edb1b}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a354d7a8715125cad2b4327c40b3edb1b}} 
+Typed\+Event\+Handler$<$ Gatt\+Session, Gatt\+Session\+Status\+Changed\+Event\+Args $>$ {\bfseries Session\+Status\+Changed}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_aeb15c89492cee4ad4366ad7c89bcf643}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_aeb15c89492cee4ad4366ad7c89bcf643}} 
+\index{CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}!ClearServices@{ClearServices}}
+\index{ClearServices@{ClearServices}!CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}}
+\doxysubsubsection{\texorpdfstring{ClearServices()}{ClearServices()}}
+{\footnotesize\ttfamily void Cosmed\+Ble\+Lib.\+Gatt\+Discovery\+Service.\+Clear\+Services (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_gatt_discovery_service}{Cosmed\+Ble\+Lib.\+IGatt\+Discovery\+Service}}.
+
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a894edb55dbadd2c68b19f31530759e53}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a894edb55dbadd2c68b19f31530759e53}} 
+\index{CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}!DiscoverAllGattServicesAndCharacteristics@{DiscoverAllGattServicesAndCharacteristics}}
+\index{DiscoverAllGattServicesAndCharacteristics@{DiscoverAllGattServicesAndCharacteristics}!CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}}
+\doxysubsubsection{\texorpdfstring{DiscoverAllGattServicesAndCharacteristics()}{DiscoverAllGattServicesAndCharacteristics()}}
+{\footnotesize\ttfamily async Task$<$ IRead\+Only\+Dictionary$<$ Gatt\+Device\+Service, Task$<$ Read\+Only\+Collection$<$ Gatt\+Characteristic $>$ $>$ $>$ $>$ Cosmed\+Ble\+Lib.\+Gatt\+Discovery\+Service.\+Discover\+All\+Gatt\+Services\+And\+Characteristics (\begin{DoxyParamCaption}\item[{Bluetooth\+Cache\+Mode}]{cache\+Mode = {\ttfamily BluetoothCacheMode.Uncached} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_gatt_discovery_service}{Cosmed\+Ble\+Lib.\+IGatt\+Discovery\+Service}}.
+
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a4bf4773d1a2072fbe45ab440baa37dfc}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a4bf4773d1a2072fbe45ab440baa37dfc}} 
+\index{CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}!FindGattCharacteristicsByUuidAsync@{FindGattCharacteristicsByUuidAsync}}
+\index{FindGattCharacteristicsByUuidAsync@{FindGattCharacteristicsByUuidAsync}!CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}}
+\doxysubsubsection{\texorpdfstring{FindGattCharacteristicsByUuidAsync()}{FindGattCharacteristicsByUuidAsync()}}
+{\footnotesize\ttfamily async Task$<$ Gatt\+Characteristics\+Result $>$ Cosmed\+Ble\+Lib.\+Gatt\+Discovery\+Service.\+Find\+Gatt\+Characteristics\+By\+Uuid\+Async (\begin{DoxyParamCaption}\item[{Gatt\+Device\+Service}]{service,  }\item[{Guid}]{requested\+Uuid,  }\item[{Bluetooth\+Cache\+Mode}]{cache\+Mode = {\ttfamily BluetoothCacheMode.Uncached} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_gatt_discovery_service}{Cosmed\+Ble\+Lib.\+IGatt\+Discovery\+Service}}.
+
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a6beb011de1222070e88aa684e8615981}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a6beb011de1222070e88aa684e8615981}} 
+\index{CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}!FindGattServicesByUuidAsync@{FindGattServicesByUuidAsync}}
+\index{FindGattServicesByUuidAsync@{FindGattServicesByUuidAsync}!CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}}
+\doxysubsubsection{\texorpdfstring{FindGattServicesByUuidAsync()}{FindGattServicesByUuidAsync()}}
+{\footnotesize\ttfamily async Task$<$ Gatt\+Device\+Services\+Result $>$ Cosmed\+Ble\+Lib.\+Gatt\+Discovery\+Service.\+Find\+Gatt\+Services\+By\+Uuid\+Async (\begin{DoxyParamCaption}\item[{Guid}]{requested\+Uuid,  }\item[{Bluetooth\+Cache\+Mode}]{cache\+Mode = {\ttfamily BluetoothCacheMode.Uncached} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_gatt_discovery_service}{Cosmed\+Ble\+Lib.\+IGatt\+Discovery\+Service}}.
+
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a6fe04df9b08ddaa50a953977ae6399e9}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a6fe04df9b08ddaa50a953977ae6399e9}} 
+\index{CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}!GetAllGattServicesAsync@{GetAllGattServicesAsync}}
+\index{GetAllGattServicesAsync@{GetAllGattServicesAsync}!CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}}
+\doxysubsubsection{\texorpdfstring{GetAllGattServicesAsync()}{GetAllGattServicesAsync()}}
+{\footnotesize\ttfamily async Task$<$ Gatt\+Device\+Services\+Result $>$ Cosmed\+Ble\+Lib.\+Gatt\+Discovery\+Service.\+Get\+All\+Gatt\+Services\+Async (\begin{DoxyParamCaption}\item[{Bluetooth\+Cache\+Mode}]{bluetooth\+Cache\+Mode = {\ttfamily BluetoothCacheMode.Uncached} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_gatt_discovery_service}{Cosmed\+Ble\+Lib.\+IGatt\+Discovery\+Service}}.
+
+\mbox{\Hypertarget{class_cosmed_ble_lib_1_1_gatt_discovery_service_a145f9ee0ec45a921aaec8101c2d1f68b}\label{class_cosmed_ble_lib_1_1_gatt_discovery_service_a145f9ee0ec45a921aaec8101c2d1f68b}} 
+\index{CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}!StartReliableWriteTransaction@{StartReliableWriteTransaction}}
+\index{StartReliableWriteTransaction@{StartReliableWriteTransaction}!CosmedBleLib.GattDiscoveryService@{CosmedBleLib.GattDiscoveryService}}
+\doxysubsubsection{\texorpdfstring{StartReliableWriteTransaction()}{StartReliableWriteTransaction()}}
+{\footnotesize\ttfamily Gatt\+Reliable\+Write\+Transaction Cosmed\+Ble\+Lib.\+Gatt\+Discovery\+Service.\+Start\+Reliable\+Write\+Transaction (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Performs GATT reliable writes on the Bluetooth LE device, in the form of a transaction write operation. 
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interface_cosmed_ble_lib_1_1_i_gatt_discovery_service}{Cosmed\+Ble\+Lib.\+IGatt\+Discovery\+Service}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Gatt\+Discovery.\+cs\end{DoxyCompactItemize}

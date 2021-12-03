@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using CosmedBleLib.DeviceDiscovery;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace CosmedBleLib.Test
