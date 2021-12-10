@@ -1,8 +1,0 @@
-var searchData=
-[
-  ['scanningmode_0',['ScanningMode',['../class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a170ced856a0a6c89293ac9d57931d056',1,'CosmedBleLib::CosmedBluetoothLEAdvertisementWatcher']]],
-  ['serviceuuids_1',['ServiceUuids',['../class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device.html#a4cebb57384930975cb1cec0df36b0d11',1,'CosmedBleLib::CosmedBleAdvertisedDevice']]],
-  ['serviceuuidsfromscanresponse_2',['ServiceUuidsFromScanResponse',['../class_cosmed_ble_lib_1_1_cosmed_ble_advertised_device.html#aa3638eed3be6fa590fc03f73f115f0fb',1,'CosmedBleLib::CosmedBleAdvertisedDevice']]],
-  ['showonlyconnectabledevices_3',['ShowOnlyConnectableDevices',['../interface_cosmed_ble_lib_1_1_i_filter.html#ace9f5910b94f8fdf408a3936a53e579f',1,'CosmedBleLib.IFilter.ShowOnlyConnectableDevices()'],['../class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_filter.html#a690858bbe4ffb4c39747f7e574703147',1,'CosmedBleLib.CosmedBluetoothLEAdvertisementFilter.ShowOnlyConnectableDevices()'],['../class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a6c7502e775031393cffb9bc14a2efab6',1,'CosmedBleLib.CosmedBluetoothLEAdvertisementWatcher.ShowOnlyConnectableDevices()']]],
-  ['signalstrengthfilter_4',['SignalStrengthFilter',['../interface_cosmed_ble_lib_1_1_i_filter.html#ab2f12a5918e14a7fca92e6abc5f51c9e',1,'CosmedBleLib.IFilter.SignalStrengthFilter()'],['../class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_filter.html#a719ad77d267c18247bf0337cb2a6b457',1,'CosmedBleLib.CosmedBluetoothLEAdvertisementFilter.SignalStrengthFilter()']]]
-];

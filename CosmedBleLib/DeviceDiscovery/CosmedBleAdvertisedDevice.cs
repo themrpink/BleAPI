@@ -12,19 +12,19 @@ namespace CosmedBleLib.DeviceDiscovery
     /// <summary>
     /// Represents a remote devices with its received advertisement and, if available, scan response
     /// </summary>
-    public class CosmedBleAdvertisedDevice : IAdvertisedDevice<CosmedBleAdvertisedDevice>
+    public class CosmedBleAdvertisedDevice : ICosmedBleAdvertisedDevice
     {
         private AdvertisementContent scanResponseAdvertisementContent;
         private AdvertisementContent advertisementContent;
 
-     
+
         #region Device Properties
 
         /// <value>
         /// Gets the the name of the device
         /// </value>
         public string DeviceName { get; private set; }
-        
+
 
         /// <value>
         /// Gets the boolean indicating if a scan response from the device has been received
@@ -49,7 +49,7 @@ namespace CosmedBleLib.DeviceDiscovery
         /// </value>
         public BluetoothAddressType BluetoothAddressType { get; private set; }
 
-        
+
         /// <value>
         /// Gets and sets the Timestamp of the last received advertising
         /// </value>
@@ -143,7 +143,7 @@ namespace CosmedBleLib.DeviceDiscovery
 
 
         /// <value>
-        /// Gets the collection of ManufacturerDatae if they exists, otherwise returns an empty collection
+        /// Gets the collection of ManufacturerData if exists, otherwise returns an empty collection
 
         /// </value>
         public ManufacturerDataCollection ManufacturerData
@@ -157,7 +157,7 @@ namespace CosmedBleLib.DeviceDiscovery
 
 
         /// <value>
-        /// Gets the collection of ManufacturerData from the scan response if they exists, otherwise returns an empty collection
+        /// Gets the collection of ManufacturerData from the scan response if exists, otherwise returns an empty collection
         /// </value>
         public ManufacturerDataCollection ManufacturerDataFromScanResponse
         {
@@ -248,6 +248,12 @@ namespace CosmedBleLib.DeviceDiscovery
         }
 
 
+        #endregion
+
+
+        #region methods
+
+
         /// <summary>
         /// Sets an advertisement received from the device
         /// </summary>
@@ -255,6 +261,9 @@ namespace CosmedBleLib.DeviceDiscovery
         /// <returns>An instance of the class</returns>
         public CosmedBleAdvertisedDevice SetAdvertisement(BluetoothLEAdvertisementReceivedEventArgs args)
         {
+            if (args == null)
+                throw new ArgumentNullException();
+
             DeviceAddress = args.BluetoothAddress;
             Timestamp = args.Timestamp;
             RawSignalStrengthInDBm = args.RawSignalStrengthInDBm;
@@ -289,8 +298,6 @@ namespace CosmedBleLib.DeviceDiscovery
             }
             return this;
         }
-        #endregion
-
 
 
         /// <summary>
@@ -368,9 +375,9 @@ namespace CosmedBleLib.DeviceDiscovery
                 //Console.WriteLine(advType + " manufacturer buffer UTF8 -->" + ClientGattBufferReaderWriter.ToUTF8String(m.RawData));
             }
 
-            
+
             count += DataSectionsFromScanResponse.AdvertisedDataSection.Count;
-            if(count==0)
+            if (count == 0)
                 Console.WriteLine("Scan response not available");
             else
                 Console.WriteLine();
@@ -387,6 +394,9 @@ namespace CosmedBleLib.DeviceDiscovery
 
             Console.WriteLine("--------------------- end advertisement -----------------------");
         }
+
+        #endregion
+
 
     }
 

@@ -13,49 +13,29 @@ using CosmedBleLib.Collections;
 
 namespace CosmedBleLib.ConnectionServices
 {
-    /// <summary>
-    /// This interface represents a remote Ble device
-    /// </summary>
-    public interface ICosmedBleDevice
-    {
-        /// <value>
-        /// Ble remote device
-        /// </value>
-        BluetoothLEDevice BluetoothLeDevice { get; }
+    ///// <summary>
+    ///// This interface represents a remote Ble device
+    ///// </summary>
+    //public interface ICosmedBleDevice
+    //{
 
-        /// <summary>
-        /// Fired when the remote device access changes
-        /// </summary>
-        event TypedEventHandler<DeviceAccessInformation, DeviceAccessChangedEventArgs> AccessChanged;
-
-        /// <summary>
-        /// Fired when the connection status of ble remote device changes
-        /// </summary>
-        event TypedEventHandler<CosmedBleDevice, object> ConnectionStatusChanged;
-
-        /// <summary>
-        /// Fired when the name of the ble remote device changes
-        /// </summary>
-        event TypedEventHandler<CosmedBleDevice, object> NameChanged;
-
-        void ClearBluetoothLEDevice();
-    }
+    //}
 
 
     /// <summary>
     /// Wraps a discoverable BluetoothLEDevice, showing tha data obtained from an unpaired connection
     /// </summary>
-    public class CosmedBleDevice: ICosmedBleDevice
+    public class CosmedBleDevice : ICosmedBleDevice
     {
-       
-        internal BluetoothLEDevice bluetoothLeDevice;
+
+        private BluetoothLEDevice bluetoothLeDevice;
 
 
         #region Public Properties
         /// <value>
         /// Gets the instance of the device
         /// </value>
-        public BluetoothLEDevice BluetoothLeDevice { get { return bluetoothLeDevice; }  }
+        public BluetoothLEDevice BluetoothLeDevice { get { return bluetoothLeDevice; } }
 
         /// <value>
         /// Gets the device address
@@ -97,7 +77,7 @@ namespace CosmedBleLib.ConnectionServices
         /// <value>
         /// Gets a boolean indicating if the device is a Bluetooth Low Energy
         /// </value>
-        public bool IsLowEnergyDevice {  get { return bluetoothLeDevice.BluetoothDeviceId.IsLowEnergyDevice; } }
+        public bool IsLowEnergyDevice { get { return bluetoothLeDevice.BluetoothDeviceId.IsLowEnergyDevice; } }
 
         /// <value>
         /// Gets a boolean indicating if the device is connected
@@ -172,7 +152,7 @@ namespace CosmedBleLib.ConnectionServices
             ConnectionStatusChanged += (s, a) =>
             {
                 Console.WriteLine("------------------------");
-                Console.WriteLine("new device (" + s.Name +") connection status: " + bluetoothLeDevice?.ConnectionStatus.ToString());
+                Console.WriteLine("new device (" + s.Name + ") connection status: " + bluetoothLeDevice?.ConnectionStatus.ToString());
                 Console.WriteLine("------------------------");
             };
 
@@ -187,8 +167,8 @@ namespace CosmedBleLib.ConnectionServices
         {
 
         }
-             
-        
+
+
         //instantiate all the fields and properties of the class
         private async Task InitializeAsync(ulong deviceAddress)
         {
@@ -281,7 +261,7 @@ namespace CosmedBleLib.ConnectionServices
         /// </summary>
         /// <param name="advertisingDevice">The advertising Device.</param>
         /// <returns>An instance of the class</returns>
-        public static async Task<CosmedBleDevice> CreateAsync(CosmedBleAdvertisedDevice advertisingDevice)
+        public static async Task<CosmedBleDevice> CreateAsync(ICosmedBleAdvertisedDevice advertisingDevice)
         {
             if (advertisingDevice == null)
             {
@@ -294,14 +274,27 @@ namespace CosmedBleLib.ConnectionServices
         }
 
 
+        /// <summary>
+        /// Update the device with updated status and data
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <returns>void Task</returns>
+        public async Task UpdateDeviceAsync(string deviceId)
+        {
+            bluetoothLeDevice.ConnectionStatusChanged -= ConnectionStatusChangedHandler;
+            bluetoothLeDevice.NameChanged -= NameChangedHandler;
+            bluetoothLeDevice.DeviceAccessInformation.AccessChanged -= AccessChangedHanlder;
+            await this.InitializeAsync(deviceId);
+        }
+
         #endregion
 
 
         #region Dispose device
 
-     /// <summary>
-     /// Diposes and clears all the elements, collections and events related to the device
-     /// </summary>
+        /// <summary>
+        /// Diposes and clears all the elements, collections and events related to the device
+        /// </summary>
         public void ClearBluetoothLEDevice()
         {
             // Need to clear the CCCD from the remote device to stop receiving notifications
@@ -321,7 +314,7 @@ namespace CosmedBleLib.ConnectionServices
             {
                 var result = GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions.TryRemove(r.Result, out eventHandler);
             }
-          
+
             bluetoothLeDevice.ConnectionStatusChanged -= ConnectionStatusChangedHandler;
             bluetoothLeDevice.NameChanged -= NameChangedHandler;
             bluetoothLeDevice.DeviceAccessInformation.AccessChanged -= AccessChangedHanlder;
@@ -400,6 +393,7 @@ namespace CosmedBleLib.ConnectionServices
                                                                                  DevicePairingProtectionLevel.Default |
                                                                                  DevicePairingProtectionLevel.Encryption |
                                                                                  DevicePairingProtectionLevel.EncryptionAndAuthentication;
+
 
         //this method, used as default handler to manage the pairing process should be implemented by the user and passed 
         //to the GetPairedDevice method that accept an event as argument
@@ -495,26 +489,29 @@ namespace CosmedBleLib.ConnectionServices
         /// <param name="ceremonySelection">The ceremony selection type</param>
         /// <param name="minProtectionLevel">The minimum protection level requested</param>
         /// <returns>The pairing result object</returns>
-        public static async Task<PairingResult> GetPairedDevice(CosmedBleDevice device, DevicePairingKinds ceremonySelection, DevicePairingProtectionLevel minProtectionLevel)
+        public static async Task<PairingResult> PairDevice(ICosmedBleDevice device, DevicePairingKinds ceremonySelection, DevicePairingProtectionLevel minProtectionLevel)
         {
             //saves the device information
-            DeviceInformation deviceInformation = device.DeviceInformation;
+            DeviceInformation deviceInformation = device.BluetoothLeDevice.DeviceInformation;
             try
             {
                 //create a new device from deviceId (necessary to recognize previously paired devices)
-                var bledevice = device.bluetoothLeDevice; // await BluetoothLEDevice.FromIdAsync(deviceInformation.Id);
+                var bledevice = device.BluetoothLeDevice; // await BluetoothLEDevice.FromIdAsync(deviceInformation.Id);
 
                 //try the pairing process
                 bledevice.DeviceInformation.Pairing.Custom.PairingRequested += PairingRequestedHandler;
                 DevicePairingResult devicePairingResult = await bledevice.DeviceInformation.Pairing.Custom.PairAsync(ceremonySelection, minProtectionLevel);
                 bledevice.DeviceInformation.Pairing.Custom.PairingRequested -= PairingRequestedHandler;
 
-                string deviceId = deviceInformation.Id; //I reuse did to reload later.
-                bledevice = await BluetoothLEDevice.FromIdAsync(deviceId);
+                string deviceId = deviceInformation.Id;
 
                 //update the device 
-                device.bluetoothLeDevice = bledevice;
-                
+                await device.UpdateDeviceAsync(deviceId);
+
+                //bledevice = await BluetoothLEDevice.FromIdAsync(deviceId);
+                ////update the device 
+                //device.bluetoothLeDevice = bledevice;
+
                 return new PairingResult(devicePairingResult.ProtectionLevelUsed, devicePairingResult.Status, bledevice.WasSecureConnectionUsedForPairing);
             }
             catch (Exception e)
@@ -523,7 +520,6 @@ namespace CosmedBleLib.ConnectionServices
                 throw;
             }
         }
-
 
 
         /// <summary>
@@ -535,9 +531,9 @@ namespace CosmedBleLib.ConnectionServices
         /// <param name="minProtectionLevel">The minimum protection level requested</param>
         /// <param name="eventHandler">the event handler used to manage the pairing process</param>
         /// <returns>The pairing result object</returns>
-        public static async Task<PairingResult> GetPairedDevice(CosmedBleDevice device, DevicePairingKinds ceremonySelection, DevicePairingProtectionLevel minProtectionLevel, TypedEventHandler<DeviceInformationCustomPairing, DevicePairingRequestedEventArgs> eventHandler)
+        public static async Task<PairingResult> PairDevice(ICosmedBleDevice device, DevicePairingKinds ceremonySelection, DevicePairingProtectionLevel minProtectionLevel, TypedEventHandler<DeviceInformationCustomPairing, DevicePairingRequestedEventArgs> eventHandler)
         {
-            DeviceInformation deviceInformation = device.DeviceInformation;
+            DeviceInformation deviceInformation = device.BluetoothLeDevice.DeviceInformation;
             try
             {
                 //create a new device from deviceId (necessary to recognize previously paired devices)
@@ -548,11 +544,13 @@ namespace CosmedBleLib.ConnectionServices
                 DevicePairingResult devicePairingResult = await bledevice.DeviceInformation.Pairing.Custom.PairAsync(ceremonySelection, minProtectionLevel);
                 deviceInformation.Pairing.Custom.PairingRequested -= eventHandler;
 
-                string deviceId = deviceInformation.Id; //I reuse did to reload later.
-                bledevice = await BluetoothLEDevice.FromIdAsync(deviceId);
-
+                string deviceId = deviceInformation.Id; 
+                
                 //update the device 
-                device.bluetoothLeDevice = bledevice;
+                await device.UpdateDeviceAsync(deviceId);
+
+                //bledevice = await BluetoothLEDevice.FromIdAsync(deviceId);
+                //device.bluetoothLeDevice = bledevice;
 
                 return new PairingResult(devicePairingResult.ProtectionLevelUsed, devicePairingResult.Status, bledevice.WasSecureConnectionUsedForPairing);
             }
@@ -568,13 +566,13 @@ namespace CosmedBleLib.ConnectionServices
         /// </summary>
         /// <param name="device">Device to unpair</param>
         /// <returns>The unpair result</returns>
-        public async static Task<DeviceUnpairingResult> Unpair(CosmedBleDevice device)
+        public async static Task<DeviceUnpairingResult> Unpair(ICosmedBleDevice device)
         {
             try
             {
                 //using (device.bluetoothLeDevice)
                 //{
-                    DeviceUnpairingResult unpairResult = await device.DeviceInformation.Pairing.UnpairAsync();
+                    DeviceUnpairingResult unpairResult = await device.BluetoothLeDevice.DeviceInformation.Pairing.UnpairAsync();
                     return unpairResult;
                 //}
 

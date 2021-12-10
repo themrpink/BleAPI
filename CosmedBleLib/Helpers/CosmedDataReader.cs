@@ -152,17 +152,6 @@ namespace CosmedBleLib.Helpers
         public GattCharacteristic Characteristic { get; }
 
         /// <summary>
-        /// Gets the optional ProtocollError (may be null if no error has been found)
-        /// </summary>
-        public byte? ProtocolError { get;}
-
-        /// <summary>
-        /// Gets the Communication Status
-        /// </summary>
-        public CosmedGattCommunicationStatus Status { get; }
-
-
-        /// <summary>
         /// Gets the timestamp
         /// </summary>
         public DateTimeOffset Timestamp { get; }
@@ -178,8 +167,6 @@ namespace CosmedBleLib.Helpers
         {
             Timestamp = timestamp;
             Characteristic = sender;
-           // ProtocolError = protocolError;
-           // Status = status;
         }
     }
 
@@ -208,7 +195,7 @@ namespace CosmedBleLib.Helpers
         public DataSectionReader(IBuffer buffer,  byte dataType) : base(buffer)
         {
             this.RawDataType = dataType;
-            this.DataType = string.Format("{0:X}", dataType);  //DataType.ToString("X");
+            this.DataType = string.Format("{0:X}", dataType);
         }
 
     }
@@ -216,7 +203,7 @@ namespace CosmedBleLib.Helpers
 
 
     /// <summary>
-    /// Helped methods to write a buffer starting from various data types.
+    /// Helper methods to write a buffer given various data types.
     /// </summary>
     public static class BufferWriter
     {
@@ -387,6 +374,11 @@ namespace CosmedBleLib.Helpers
             return writer.DetachBuffer();
         }
 
+        /// <summary>
+        /// Writes data into buffer
+        /// </summary>
+        /// <param name="data">Data to be written</param>
+        /// <returns>The result buffer</returns>
         public static IBuffer ToIBuffer(Int64 data)
         {
             DataWriter writer = new DataWriter();

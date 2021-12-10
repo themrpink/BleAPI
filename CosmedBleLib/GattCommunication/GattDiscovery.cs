@@ -86,6 +86,42 @@ namespace CosmedBleLib.GattCommunication
         /// </summary>
         event TypedEventHandler<GattSession, GattSessionStatusChangedEventArgs> SessionStatusChanged;
 
+
+        /// <value>
+        /// Gets the remote Ble Device object of Gatt communication
+        /// </value>
+        ICosmedBleDevice Device { get; }
+
+        /// <value>
+        /// Gets the device access status
+        /// </value>
+        DeviceAccessStatus DeviceAccessStatus { get; }
+
+        /// <value>
+        /// Gets the Gatt session
+        /// </value>
+        GattSession GattSession { get; }
+
+        /// <value>
+        /// Gets a boolean indicating if the Gatt session can maintain connection
+        /// </value>
+        bool CanMaintainConnection { get; }
+
+        /// <value>
+        /// Sets and gets the option to maintain connection
+        /// </value>
+        bool MaintainConnection { get; set; }
+
+        /// <value>
+        /// Gets the value of the Max Pdu supported size
+        /// </value>
+        ushort MaxPduSize { get; }
+
+        /// <value>
+        /// Gets the session status
+        /// </value>
+        GattSessionStatus SessionStatus { get; }
+
     }
 
     /// <summary>
@@ -113,7 +149,7 @@ namespace CosmedBleLib.GattCommunication
         /// </summary>
         /// <param name="device">The destination device for the gatt communication </param>
         /// <returns>An instance of the class</returns>
-        public async static Task<GattDiscoveryService> CreateAsync(CosmedBleDevice device)
+        public async static Task<GattDiscoveryService> CreateAsync(ICosmedBleDevice device)
         {
             GattDiscoveryService service = new GattDiscoveryService();
             await service.InitializeAsync(device);
@@ -121,7 +157,7 @@ namespace CosmedBleLib.GattCommunication
         }
 
 
-        private async Task InitializeAsync(CosmedBleDevice device)
+        private async Task InitializeAsync(ICosmedBleDevice device)
         {
             if (device == null)
             {
@@ -142,7 +178,7 @@ namespace CosmedBleLib.GattCommunication
         /// <value>
         /// Gets the remote Ble Device object of Gatt communication
         /// </value>
-        public CosmedBleDevice Device { get; private set; }
+        public ICosmedBleDevice Device { get; private set; }
 
         /// <value>
         /// Gets the device access status
@@ -157,7 +193,12 @@ namespace CosmedBleLib.GattCommunication
         /// <value>
         /// Gets a boolean indicating if the Gatt session can maintain connection
         /// </value>
-        public bool MaintainConnection { get { return GattSession.CanMaintainConnection; } set { GattSession.MaintainConnection = value; } }
+        public bool CanMaintainConnection { get { return GattSession.CanMaintainConnection; } set { GattSession.MaintainConnection = value; } }
+
+        /// <value>
+        /// Sets and gets the option to maintain connection
+        /// </value>
+        public bool MaintainConnection { get { return GattSession.MaintainConnection; } set { GattSession.MaintainConnection = value; } }
 
         /// <value>
         /// Gets the value of the Max Pdu supported size
@@ -187,19 +228,21 @@ namespace CosmedBleLib.GattCommunication
 
 
         #region EventHandlers
-        private Action<CosmedGattCharacteristic, GattValueChangedEventArgs> CharacteristicValueChanged { get; set; } = (s, a) =>
-        {
-            CharacteristicReader cr = new CharacteristicReader(a.CharacteristicValue, a.Timestamp, s.characteristic);
-            Console.WriteLine("characteristic buffer hex: " + cr.HexValue);
-        };
 
-        private Action<CosmedGattCharacteristic, CosmedGattErrorFoundEventArgs> CharacteristicErrorFound { get; set; } = (s, a) =>
-        {
-            Console.WriteLine("(((((((((((((((( error found, called by the hanlder in CosmedBelConnectedDevices))))))))))))");
-        };
+        //private Action<CosmedGattCharacteristic, GattValueChangedEventArgs> CharacteristicValueChanged { get; set; } = (s, a) =>
+        //{
+        //    CharacteristicReader cr = new CharacteristicReader(a.CharacteristicValue, a.Timestamp, s.characteristic);
+        //    Console.WriteLine("characteristic buffer hex: " + cr.HexValue);
+        //};
+
+        //private Action<CosmedGattCharacteristic, CosmedGattErrorFoundEventArgs> CharacteristicErrorFound { get; set; } = (s, a) =>
+        //{
+        //    Console.WriteLine("(((((((((((((((( error found, called by the hanlder in CosmedBelConnectedDevices))))))))))))");
+        //};
 
 
-        //by disposal this must be unsubscribed
+        //by disposal these must be unsubscribed
+        //they invoke the underlying events not accessible to the user
         private void GattServicesChangedHandler(BluetoothLEDevice BleDevice, object arg)
         {
             GattServicesChanged?.Invoke(BleDevice, arg);
@@ -214,6 +257,7 @@ namespace CosmedBleLib.GattCommunication
         {
             SessionStatusChanged?.Invoke(gattSession, args);
         }
+        
         #endregion
 
 
@@ -368,7 +412,7 @@ namespace CosmedBleLib.GattCommunication
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("ERROR: " + e.Message + " --- device name: " + Device.Name);
+                    Console.WriteLine("ERROR: " + e.Message + " --- device name: " + Device.BluetoothLeDevice.Name);
                     //throw new GattCommunicationException("impossible to retrieve the services", e);
                 }
             }

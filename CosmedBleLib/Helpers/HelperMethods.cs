@@ -32,10 +32,10 @@ namespace CosmedBleLib.Helpers
         }
         
         /// <summary>
-        /// 
+        /// Checks if the uuid services belongs to = DeviceInformation, GenericAttribute, GenericAccess, ScanParameters
         /// </summary>
-        /// <param name="uuid"></param>
-        /// <returns></returns>
+        /// <param name="uuid">Service uuid</param>
+        /// <returns>True if uuid belongs to the described Services</returns>
         public static bool IsReadOnly(Guid uuid)
         {
             if (GattServiceUuids.DeviceInformation == uuid || GattServiceUuids.GenericAttribute == uuid || GattServiceUuids.GenericAccess == uuid || GattServiceUuids.ScanParameters == uuid)
@@ -121,14 +121,14 @@ namespace CosmedBleLib.Helpers
 
 
     /// <summary>
-    /// Helper methods for Advertisement Data Types
+    /// Helper methods for Advertisement Data Types.
     /// </summary>
     public static class AdvertisementDataTypeHelper
     {
         /// <summary>
-        /// Helper function to convert a registered dataType value to a name
+        /// Helper function to convert a registered dataType value to a name.
         /// </summary>
-        /// <param name="dataType">DataType value..</param>
+        /// <param name="dataType">AdvertisementSectionType value.</param>
         /// <returns>Name of the DataType. If not registered return the byte in HEX string format.</returns>
         public static string ConvertAdvertisementDataTypeToString(byte dataType)
         {
@@ -144,7 +144,7 @@ namespace CosmedBleLib.Helpers
 
 
     /// <summary>
-    /// Helper methods for Appearance attribute data type
+    /// Helper methods for Appearance attribute data type.
     /// </summary>
     public static class AppearenceDataTypeHelper
     {
@@ -224,7 +224,7 @@ namespace CosmedBleLib.Helpers
         /// <returns>Name of the Namespace type. If not registered return the value in HEX string format</returns>
         public static string ConvertNamespaceTypeToString(byte namespaceType)
         {
-            PresentationFormats.FormatTypes format;
+            PresentationFormats.NamespaceId format;
             if (Enum.TryParse(namespaceType.ToString(), out format))
             {
                 return format.ToString();
@@ -244,7 +244,8 @@ namespace CosmedBleLib.Helpers
         /// <summary>
         /// Converts GenericGattCharacteristic.Value to a string based on the presentation format
         /// </summary>
-        /// <param name="characteristic"></param>
+        /// <param name="characteristic">the Characteristic.</param>
+        /// <param name="value">The value</param>
         /// <returns>value as a string</returns>
         public static string ConvertGattCharacteristicValueToString(GattCharacteristic characteristic, IBuffer value)
         {

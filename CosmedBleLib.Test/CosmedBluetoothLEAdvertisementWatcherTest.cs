@@ -15,8 +15,8 @@ namespace CosmedBleLib.MSTest.UnitTest
     [TestClass]
     public class CosmedBluetoothLEAdvertisementWatcherTest
     {       
-        private CosmedBleAdvertisedDevice device;
-        public CosmedBleAdvertisedDevice device2;
+        private ICosmedBleAdvertisedDevice device;
+        public ICosmedBleAdvertisedDevice device2;
         private CosmedBluetoothLEAdvertisementWatcher watcher;
 
 
@@ -361,7 +361,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         [TestCategory("scanning.collections")]
         public async Task RecentlyDevicesCollection_UpdateTimeElapsed_CollectionChanged()
         {
-            IReadOnlyCollection<CosmedBleAdvertisedDevice> recent;
+            IReadOnlyCollection<ICosmedBleAdvertisedDevice> recent;
             watcher.TimeoutSeconds = 1;
             double timeout = watcher.TimeoutSeconds;
             await watcher.StartPassiveScanning();
@@ -378,7 +378,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         [TestCategory("scanning.collections")]
         public void RecentlyDiscoveredDevicesCollection_CollectionsUpdateTimeNotElapsedYet_CollectionNotChanged()
         {
-            IReadOnlyCollection<CosmedBleAdvertisedDevice> recent;
+            IReadOnlyCollection<ICosmedBleAdvertisedDevice> recent;
             watcher.TimeoutSeconds = 1;
             watcher.addDiscoveredDevices(device);
             recent = watcher.RecentlyDiscoveredDevices;

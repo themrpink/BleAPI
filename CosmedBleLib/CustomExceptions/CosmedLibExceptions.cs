@@ -206,7 +206,7 @@ namespace CosmedBleLib.CustomExceptions
 
 
     /// <summary>
-    /// Thrown when pairing generate an exception
+    /// Thrown when pairing causes an error.
     /// </summary>
     [Serializable]
     public class BlePairingException : Exception

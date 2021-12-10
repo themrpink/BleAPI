@@ -15,8 +15,8 @@ namespace CosmedBleLib.DeviceDiscovery
     /// <summary>
     /// Wrapper class for the BleAdvertisementWatcher, allows passive or active scanning and filtering
     /// </summary>
-    public sealed class CosmedBluetoothLEAdvertisementWatcher : IScanAdvertisement
-    {
+    public sealed class CosmedBluetoothLEAdvertisementWatcher : IBleScanner
+    { 
         //private ObservableCollection<CosmedBleAdvertisedDevice> KnownDevices = new ObservableCollection<CosmedBleAdvertisedDevice>();
         //private List<DeviceInformation> UnknownDevices = new List<DeviceInformation>();
 
@@ -33,10 +33,10 @@ namespace CosmedBleLib.DeviceDiscovery
         private StateMachine status;
 
         //the structure where all the discovered devices are saved. It gets updated at every advertisement received
-        private Dictionary<ulong, CosmedBleAdvertisedDevice> discoveredDevices;
+        private Dictionary<ulong, ICosmedBleAdvertisedDevice> discoveredDevices;
 
         //the structure where the last discovered devices are saved
-        private Dictionary<ulong, CosmedBleAdvertisedDevice> lastDiscoveredDevices; 
+        private Dictionary<ulong, ICosmedBleAdvertisedDevice> lastDiscoveredDevices; 
 
         //filter to apply to the discovered devices
         private IFilter filter;
@@ -58,7 +58,7 @@ namespace CosmedBleLib.DeviceDiscovery
         /// <summary>
         ///Fired when a new device is discovered
         /// </summary>
-        public event TypedEventHandler<CosmedBluetoothLEAdvertisementWatcher, CosmedBleAdvertisedDevice> NewDeviceDiscovered;
+        public event TypedEventHandler<CosmedBluetoothLEAdvertisementWatcher, ICosmedBleAdvertisedDevice> NewDeviceDiscovered;
         
         /// <summary>
         /// Fired when the scan is stopped or aborted
@@ -124,7 +124,7 @@ namespace CosmedBleLib.DeviceDiscovery
         /// The collection is created at every user request from the devices dictionary. 
         /// Thread safe.
         /// </value>
-        public IReadOnlyCollection<CosmedBleAdvertisedDevice> AllDiscoveredDevices
+        public IReadOnlyCollection<ICosmedBleAdvertisedDevice> AllDiscoveredDevices
         {
             get
             {
@@ -142,7 +142,7 @@ namespace CosmedBleLib.DeviceDiscovery
         /// The collection is created at every user request from the devices dictionary. 
         /// Thread safe.
         /// </value>
-        public IReadOnlyCollection<CosmedBleAdvertisedDevice> RecentlyDiscoveredDevices
+        public IReadOnlyCollection<ICosmedBleAdvertisedDevice> RecentlyDiscoveredDevices
         {
             get
             {
@@ -170,13 +170,13 @@ namespace CosmedBleLib.DeviceDiscovery
         /// The collection is created at every user request from the devices dictionary. 
         /// Thread safe.
         /// </value>
-        public IReadOnlyCollection<CosmedBleAdvertisedDevice> LastDiscoveredDevices
+        public IReadOnlyCollection<ICosmedBleAdvertisedDevice> LastDiscoveredDevices
         {
             get
             {
                 lock (devicesThreadLock)
                 {
-                    IReadOnlyList<CosmedBleAdvertisedDevice> lastDiscoveredDevicesTemp = lastDiscoveredDevices.Values.Where(d => check(d)).ToList().AsReadOnly();
+                    IReadOnlyList<ICosmedBleAdvertisedDevice> lastDiscoveredDevicesTemp = lastDiscoveredDevices.Values.Where(d => check(d)).ToList().AsReadOnly();
                     lastDiscoveredDevices.Clear();
                     return lastDiscoveredDevicesTemp;
                 }
@@ -193,8 +193,8 @@ namespace CosmedBleLib.DeviceDiscovery
         /// 
         public CosmedBluetoothLEAdvertisementWatcher()
         {
-            discoveredDevices = new Dictionary<ulong, CosmedBleAdvertisedDevice>();
-            lastDiscoveredDevices = new Dictionary<ulong, CosmedBleAdvertisedDevice>();
+            discoveredDevices = new Dictionary<ulong, ICosmedBleAdvertisedDevice>();
+            lastDiscoveredDevices = new Dictionary<ulong, ICosmedBleAdvertisedDevice>();
             status = StateMachine.Stopped;
             //questo va lasciato facoltativo
             ScanInterrupted += OnScanInterrupted;
@@ -486,7 +486,7 @@ namespace CosmedBleLib.DeviceDiscovery
         /// <summary>
         /// Remove all the devices from the dictionary
         /// </summary>
-        private void clearDiscoveredDevices(Dictionary<ulong, CosmedBleAdvertisedDevice> dict)
+        private void clearDiscoveredDevices(Dictionary<ulong, ICosmedBleAdvertisedDevice> dict)
         {
             lock (devicesThreadLock)
             {
@@ -498,7 +498,7 @@ namespace CosmedBleLib.DeviceDiscovery
         /// Delete all the devices from the dictionary, except the 20 last discovered ones.
         /// </summary>
         /// <param name="dictionary"></param>
-        private void CleanOlderDiscoveredDevices(Dictionary<ulong, CosmedBleAdvertisedDevice> dictionary)
+        private void CleanOlderDiscoveredDevices(Dictionary<ulong, ICosmedBleAdvertisedDevice> dictionary)
         {
             int numberOfLeftDevices = 20;
             if( dictionary.Count > 20)
@@ -557,7 +557,7 @@ namespace CosmedBleLib.DeviceDiscovery
         /// <param name="dev">The filtered devices</param>
         /// <returns>True if the filtering option ShowOnlyConnectableDevices has been set to true.
         /// Otherwise returns the true if the device is connectable, false if not.</returns>
-        private bool check(CosmedBleAdvertisedDevice dev)
+        private bool check(ICosmedBleAdvertisedDevice dev)
         {
             if(ShowOnlyConnectableDevices)
             {
@@ -580,7 +580,7 @@ namespace CosmedBleLib.DeviceDiscovery
 
 
 
-        public void addDiscoveredDevices(CosmedBleAdvertisedDevice device)
+        public void addDiscoveredDevices(ICosmedBleAdvertisedDevice device)
         {
             lock (devicesThreadLock)
             {
@@ -599,7 +599,7 @@ namespace CosmedBleLib.DeviceDiscovery
         {
             //controlla se c´é un device BLE acceso, lasciare che lo gestisca l'utente
 
-            bool bleIsOn = CosmedBluetoothLEAdapter.IsBluetoothLEOn();
+            bool bleIsOn = CosmedBluetoothLEAdapter.IsBluetoothLEOn;
 
             if (!bleIsOn)
             {
@@ -611,7 +611,7 @@ namespace CosmedBleLib.DeviceDiscovery
             }
 
             //se non c´è aspetta che ci sia per poi riprendere la scansione
-            while (!CosmedBluetoothLEAdapter.IsBluetoothLEOn()) { Thread.Sleep(1000); }
+            while (!CosmedBluetoothLEAdapter.IsBluetoothLEOn) { Thread.Sleep(1000); }
             Console.WriteLine("bluetooth attivo, riprende lo scan");
             StartActiveScanning();
         }
@@ -631,7 +631,7 @@ namespace CosmedBleLib.DeviceDiscovery
         /// <param name="args">The advertisement data</param>
         private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
         {
-            CosmedBleAdvertisedDevice device;
+            ICosmedBleAdvertisedDevice device;
             Console.WriteLine("adv received +++++++++++++++");
             if (sender == watcher && args != null && status == StateMachine.Started)
             {
@@ -724,10 +724,5 @@ namespace CosmedBleLib.DeviceDiscovery
     }
 
 
-    //public static class WatcherTestExtenions(this CosmedBluetoothLEAdvertisementWatcher watcher)
-    //    {
-
-    //}
-
-    }
+}
 

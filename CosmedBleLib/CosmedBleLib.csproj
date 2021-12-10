@@ -53,13 +53,14 @@
   <ItemGroup>
     <Compile Include="BleAdapter\CosmedBluetoothLEAdapter.cs" />
     <Compile Include="Collections\Collections.cs" />
+    <Compile Include="ConnectionServices\ICosmedBleDevice.cs" />
     <Compile Include="ConnectionServices\PairingDevice.cs" />
     <Compile Include="CustomExceptions\CosmedLibExceptions.cs" />
     <Compile Include="DeviceDiscovery\CosmedBleAdvertisedDevice.cs" />
     <Compile Include="DeviceDiscovery\CosmedBluetoothLEAdvertisementFilter.cs" />
     <Compile Include="DeviceDiscovery\CosmedBluetoothLEAdvertisementWatcher.cs" />
-    <Compile Include="DeviceDiscovery\IAdvertisedDevice.cs" />
-    <Compile Include="DeviceDiscovery\IScanAdvertisement.cs" />
+    <Compile Include="DeviceDiscovery\IBleScanner.cs" />
+    <Compile Include="DeviceDiscovery\ICosmedBleAdvertisedDevice.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="GattCommunication\GattDiscovery.cs" />
     <Compile Include="GattCommunication\CosmedGattCharacteristic.cs" />
@@ -70,9 +71,5 @@
     <Compile Include="Values\Values.cs" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
-    <None Include="ClassDiagram2.cd" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

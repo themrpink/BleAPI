@@ -1,4 +1,0 @@
-var searchData=
-[
-  ['addmanufacturerdata_0',['AddManufacturerData',['../class_cosmed_ble_lib_1_1_filter_builder.html#a32441af88004436fbb4cc126eae68862',1,'CosmedBleLib.FilterBuilder.AddManufacturerData(BluetoothLEManufacturerData manufacturerData)'],['../class_cosmed_ble_lib_1_1_filter_builder.html#a80a87207ddc4f5c28dde43d65381f411',1,'CosmedBleLib.FilterBuilder.AddManufacturerData(ushort companyId, byte[] manufacturerData)'],['../class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_filter.html#a57cadc9fd1425cb7347f2bdb254ad7de',1,'CosmedBleLib.CosmedBluetoothLEAdvertisementFilter.AddManufacturerData(BluetoothLEManufacturerData manufacturerData)'],['../class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_filter.html#ac631d63d51cfe665c8ac081d94e4f6a2',1,'CosmedBleLib.CosmedBluetoothLEAdvertisementFilter.AddManufacturerData(ushort companyId, byte[] manufacturerData)']]]
-];

@@ -11,8 +11,6 @@ namespace CosmedBleLib.Test
     public class EventsTest
     {
 
-
-
         private CosmedBleAdvertisedDevice device;
         public CosmedBleAdvertisedDevice device2;
         private CosmedBluetoothLEAdvertisementWatcher watcher;
@@ -93,15 +91,16 @@ namespace CosmedBleLib.Test
 
         [TestMethod]
         [TestCategory("events.watcher")]
-        public async Task WatcherStopScanningEvent_PassiveScanStoppd_EventRaised()
+        public async Task WatcherStopScanningEvent_PassiveScanStopped_EventRaised()
         {
             count = 0;
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
-            watcher.ScanStopped += (s, a) => count = 1;
+            watcher.ScanStopped += (s, a) => count+=1;
 
             await watcher.StartPassiveScanning();
+            Thread.Sleep(100);
             watcher.StopScanning();
-            Thread.Sleep(10);
+            Thread.Sleep(100);
 
             Assert.IsTrue(count == 1);
         }

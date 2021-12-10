@@ -73,7 +73,7 @@ namespace CosmedBleConsole
                 {
                      if (device.IsConnectable)
                      {
-                        device.PrintAdvertisement();
+                        ((CosmedBleAdvertisedDevice)device).PrintAdvertisement();
 
                         if (device.IsConnectable)// && device.DeviceName.Equals("myname"))
                         {
@@ -83,12 +83,12 @@ namespace CosmedBleConsole
                             {
                                 //get device. it´s possible to set some event handler
                                 CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
-
+                                
                                 //pairing. it´s possible to call an overload with custom event handler
-                                PairingResult pairedDevice = await PairingService.GetPairedDevice(connectionDevice, ceremonySelection, minProtectionLevel);
+                                PairingResult pairedDevice = await PairingService.PairDevice(connectionDevice, ceremonySelection, minProtectionLevel);
 
                                 //it´s possible to set some event handler
-                                GattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
+                                IGattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
 
                                 //request the gatt result (collection of services)
                                 GattDeviceServicesResult gattResult = await discoveryService.GetAllGattServicesAsync();
@@ -165,9 +165,24 @@ namespace CosmedBleConsole
 
 
 
-        public static void prova (CosmedGattCharacteristic sender, CosmedGattErrorFoundEventArgs args)
+        //public static void prova (CosmedGattCharacteristic sender, CosmedGattErrorFoundEventArgs args)
+        //{
+        //    Console.WriteLine("!!!!!!!!!!!!!Called from prova!!!!!!!!!!!!!!!!!!!!!!!");
+        //}
+
+        public static void UseInterfaces() 
         {
-            Console.WriteLine("!!!!!!!!!!!!!Called from prova!!!!!!!!!!!!!!!!!!!!!!!");
+            IBleScanner watcher = new CosmedBluetoothLEAdvertisementWatcher();
+
+            IFilter filter = FilterBuilder.Init().BuildFilter();
+
+            watcher.SetFilter(filter);
+
+            watcher.StartActiveScanning();
+
+            var devices = watcher.AllDiscoveredDevices;
+
+
         }
 
 

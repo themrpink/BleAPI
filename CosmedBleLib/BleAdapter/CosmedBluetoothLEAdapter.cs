@@ -71,8 +71,23 @@ namespace CosmedBleLib.Adapter
         /// <value>
         /// Gets a boolean incating the the adapter is turned on 
         /// </value>
-        public bool IsAdapterOn => IsBluetoothLEOn();
-        
+        public bool IsAdapterOn => IsBluetoothLEOn;
+
+
+
+        /// <value>
+        /// Checks if the bluetooth apapter is turned on
+        /// </value>
+        public static bool IsBluetoothLEOn
+        {
+            get
+            {
+                SelectQuery sq = new SelectQuery("SELECT DeviceId FROM Win32_PnPEntity WHERE service='BthLEEnum'");
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(sq);
+                return searcher.Get().Count > 0;
+            }
+        }
+
 
         private CosmedBluetoothLEAdapter()
         {
@@ -113,18 +128,7 @@ namespace CosmedBleLib.Adapter
         }
 
 
-        /// <summary>
-        /// Checks if the bluetooth apapter is turned on
-        /// </summary>
-        /// <returns>True if the adapter is on</returns>
-        public static bool IsBluetoothLEOn()
-        {
-            SelectQuery sq = new SelectQuery("SELECT DeviceId FROM Win32_PnPEntity WHERE service='BthLEEnum'");
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(sq);
-            return searcher.Get().Count > 0;
-        }
-
-
+  
         /// <summary>
         /// Gets an instance of the required remote Ble device
         /// </summary>

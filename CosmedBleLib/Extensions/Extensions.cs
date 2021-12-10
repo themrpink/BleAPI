@@ -233,9 +233,9 @@ namespace CosmedBleLib.Extensions
         //}
 
         /// <summary>
-        /// Reads the characteristic values
+        /// Reads the characteristic values.
         /// </summary>
-        /// <param name="characteristic">the extended characteristic</param>
+        /// <param name="characteristic">The extended characteristic</param>
         /// <param name="errorAction">Optional action to manage communication errors</param>
         /// <returns>The read result</returns>
         public static async Task<CosmedCharacteristicReadResult> Read(this GattCharacteristic characteristic, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
@@ -273,9 +273,9 @@ namespace CosmedBleLib.Extensions
         }
 
         /// <summary>
-        /// Subscribes to notifications
+        /// Subscribes to notifications.
         /// </summary>
-        /// <param name="characteristic">the extended characteristic</param>
+        /// <param name="characteristic">The extended characteristic.</param>
         /// <param name="valueChangedAction">Optional action to manage the incoming notifications</param>
         /// <param name="errorAction">Optional action to manage communication errors</param>
         /// <returns>The subscription result</returns>
@@ -346,12 +346,12 @@ namespace CosmedBleLib.Extensions
 
 
         /// <summary>
-        /// Subscribes to indications
+        /// Subscribes to indications.
         /// </summary>
-        /// <param name="characteristic">the extended characteristic</param>
-        /// <param name="valueChangedAction">Optional action to manage the incoming notifications</param>
-        /// <param name="errorAction">Optional action to manage communication errors</param>
-        /// <returns>The subscription result</returns>
+        /// <param name="characteristic">The extended characteristic.</param>
+        /// <param name="valueChangedAction">Optional action to manage the incoming notifications.</param>
+        /// <param name="errorAction">Optional action to manage communication errors.</param>
+        /// <returns>The subscription result.</returns>
         public static async Task<CosmedGattCommunicationStatus> SubscribeToIndication(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
             if (!characteristic.IsIndicationAllowed())
@@ -421,11 +421,11 @@ namespace CosmedBleLib.Extensions
         }
 
         /// <summary>
-        /// Unsubscribes from the characteristic
+        /// Unsubscribes from the characteristic.
         /// </summary>
-        /// <param name="characteristic">the extended characteristic</param>
-        /// <param name="errorAction">Optional action to manage communication errors</param>
-        /// <returns>The unsubscription result</returns>
+        /// <param name="characteristic">the extended characteristic.</param>
+        /// <param name="errorAction">Optional action to manage communication errors.</param>
+        /// <returns>The unsubscription result.</returns>
         public static async Task<CosmedGattCommunicationStatus> UnSubscribe(this GattCharacteristic characteristic, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
 
@@ -487,9 +487,9 @@ namespace CosmedBleLib.Extensions
         #region helper methods
 
         /// <summary>
-        /// Utility method to print the characteristic values
+        /// Utility method to print the characteristic values.
         /// </summary>
-        /// <param name="c">the extended characteristic</param>
+        /// <param name="c">The extended characteristic.</param>
         public static async void Print(this GattCharacteristic c)
         {
 
@@ -527,10 +527,10 @@ namespace CosmedBleLib.Extensions
 
 
         /// <summary>
-        /// Searches for appearance value and translates it
+        /// Searches for appearance value and translates it.
         /// </summary>
-        /// <param name="characteristic">The extended characteristic</param>
-        /// <returns>The Appearance type</returns>
+        /// <param name="characteristic">The extended characteristic.</param>
+        /// <returns>The Appearance type.</returns>
         public static async Task<BluetoothAppearanceType> GetAppearanceValue(this GattCharacteristic characteristic)
         {
             var result = await characteristic.Read();
@@ -556,10 +556,10 @@ namespace CosmedBleLib.Extensions
         }
 
         /// <summary>
-        /// 
+        /// Checks if the Characteristic is an Appearance attribute.
         /// </summary>
-        /// <param name="characteristic">The extended characteristic</param>
-        /// <returns></returns>
+        /// <param name="characteristic">The extended characteristic.</param>
+        /// <returns>Boolean result.</returns>
         public static bool IsAppearanceValue(this GattCharacteristic characteristic)
         {
             var shortId = BluetoothUuidHelper.TryGetShortId(characteristic.Uuid);
@@ -579,10 +579,10 @@ namespace CosmedBleLib.Extensions
 
 
         /// <summary>
-        /// 
+        /// Converts the communication status.
         /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
+        /// <param name="status">the extended communication status.</param>
+        /// <returns>the converted status.</returns>
         public static CosmedGattCommunicationStatus ConvertStatus(this GattCommunicationStatus status)
         {
             switch (status)
@@ -597,40 +597,40 @@ namespace CosmedBleLib.Extensions
 
 
         /// <summary>
-        /// 
+        /// Checks if notification is allowed.
         /// </summary>
-        /// <param name="characteristic">The extended characteristic</param>
-        /// <returns></returns>
+        /// <param name="characteristic">The extended characteristic.</param>
+        /// <returns>Boolean result.</returns>
         public static bool IsNotificationAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Notify);
         }
 
         /// <summary>
-        /// 
+        /// Checks if write is allowed.
         /// </summary>
-        /// <param name="characteristic">The extended characteristic</param>
-        /// <returns></returns>
+        /// <param name="characteristic">The extended characteristic.</param>
+        /// <returns>Boolean result.</returns>
         private static bool IsWriteAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Write) || characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.WriteWithoutResponse);
         }
 
         /// <summary>
-        /// 
+        /// Checks if read is allowed.
         /// </summary>
-        /// <param name="characteristic">The extended characteristic</param>
-        /// <returns></returns>
+        /// <param name="characteristic">The extended characteristic.</param>
+        /// <returns>Boolean result.</returns>
         private static bool IsReadAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Read);
         }
 
         /// <summary>
-        /// 
+        /// Checks if indication is allowed.
         /// </summary>
-        /// <param name="characteristic">The extended characteristic</param>
-        /// <returns></returns>
+        /// <param name="characteristic">The extended characteristic.</param>
+        /// <returns>Boolean result.</returns>
         public static bool IsIndicationAllowed(this GattCharacteristic characteristic)
         {
             return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.Indicate);
@@ -641,15 +641,15 @@ namespace CosmedBleLib.Extensions
 
 
     /// <summary>
-    /// 
+    /// GattDeviceServiceResults extesion methods.
     /// </summary>
     public static class GattDeviceServiceResultsExtesions
     {
         /// <summary>
-        /// 
+        /// Discover all services and characteristic of the remote device.
         /// </summary>
-        /// <param name="gattResult"></param>
-        /// <returns></returns>
+        /// <param name="gattResult">Contains the requested Services and Characteristic if communication succeeds.</param>
+        /// <returns>The discovery result.</returns>
         public static async Task<IReadOnlyDictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>> DiscoverAllGattCharacteristics(this GattDeviceServicesResult gattResult)
         {
             var emptyDictionary = new Dictionary<GattDeviceService, Task<ReadOnlyCollection<GattCharacteristic>>>();
