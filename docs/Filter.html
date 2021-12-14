@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Filtering advertising devices &mdash; CosmedBleLib 1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Pairing and unpairing" href="Pairing.html" />
+    <link rel="prev" title="Discovering devices" href="DiscoveringDevices.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CosmedBleLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QuickStart.html">QuickStart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="DiscoveringDevices.html">Discovering devices</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Filtering advertising devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pairing.html">Pairing and unpairing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GattDiscovery.html">Gatt Discovery Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GattCommunication.html">Gatt communication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HelperMethods.html">Helper Methods</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="./api/html/index.html#http://">Cosmed API Documentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.microsoft.com/en-us/windows/uwp/devices-sensors/bluetooth-low-energy-overview">Microsoft UWP Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CosmedBleLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Filtering advertising devices</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Filter.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="filtering-advertising-devices">
+<h1>Filtering advertising devices<a class="headerlink" href="#filtering-advertising-devices" title="Permalink to this headline"></a></h1>
+<p>Incoming advertising devices can be filtered by the watcher. In order to do that an IFilter object with the desired filtering properties should be create.
+It can be then used to instatiate a new watcher as constructor parameter, or added later to an exhisiting watcher using the SetFilter(IFilter filter) and RemoveFilter() methods.</p>
+<p>To create a filter with the desired filtering properties a filter builder is available</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Build a filter and add it to the watcher</span><a class="headerlink" href="#id1" title="Permalink to this code"></a></div>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span> <span class="c1">//creates a filter for devices called &quot;MyLocalName&quot;</span>
+ <span class="n">IFilter</span> <span class="n">filter</span> <span class="p">=</span> <span class="n">FilterBuilder</span><span class="p">.</span><span class="n">Init</span><span class="p">().</span><span class="n">SetLocalName</span><span class="p">(</span><span class="s">&quot;MyLocalName&quot;</span><span class="p">).</span><span class="n">BuildFilter</span><span class="p">();</span>
+
+ <span class="c1">//instatiates the watcher with the filter. The filter will be applied at every scan</span>
+ <span class="n">IBleScanner</span> <span class="n">scanner</span> <span class="p">=</span> <span class="k">new</span> <span class="n">CosmedBluetoothLEAdvertisementWatcher</span><span class="p">(</span><span class="n">filter</span><span class="p">);</span>
+
+ <span class="c1">//removes the filter. The scanner stops filtering</span>
+ <span class="n">scanner</span><span class="p">.</span><span class="n">RemoveFilter</span><span class="p">();</span>
+
+ <span class="c1">//creates a new filter by Advertisement Flags</span>
+ <span class="n">filter</span> <span class="p">=</span> <span class="n">FilterBuilder</span><span class="p">.</span><span class="n">Init</span><span class="p">().</span><span class="n">SetFlags</span><span class="p">(</span><span class="n">BluetoothLEAdvertisementFlags</span><span class="p">.</span><span class="n">GeneralDiscoverableMode</span><span class="p">).</span><span class="n">BuildFilter</span><span class="p">();</span>
+
+ <span class="c1">//add the new filter to the watcher</span>
+ <span class="n">scanner</span><span class="p">.</span><span class="n">SetFilter</span><span class="p">(</span><span class="n">filter</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>Here the map of the building methods:</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/filterbuilder.png"><img alt="_images/filterbuilder.png" src="_images/filterbuilder.png" style="width: 866.4px; height: 459.59999999999997px;" /></a>
+</figure>
+<p>Please see the FilterBuilder in the API documentation for more details.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="DiscoveringDevices.html" class="btn btn-neutral float-left" title="Discovering devices" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Pairing.html" class="btn btn-neutral float-right" title="Pairing and unpairing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Stefano Urani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

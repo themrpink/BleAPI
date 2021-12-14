@@ -1,0 +1,28 @@
+var class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher =
+[
+    [ "CosmedBluetoothLEAdvertisementWatcher", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#ae33e6b7d871a949dd9eda9bc82449199", null ],
+    [ "CosmedBluetoothLEAdvertisementWatcher", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#aed0e4c204be66f8f781213c95ee28919", null ],
+    [ "PauseScanning", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a8efaa14dca86ef262ab20680a21898dd", null ],
+    [ "RemoveFilter", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a9f0c1b785dbcf38ddca0e3381acc031d", null ],
+    [ "ResumeScanning", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a69e1321766592a89bb90eea84e223ccd", null ],
+    [ "SetFilter", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a62b0cf123d19de09e9a136945bd98aa7", null ],
+    [ "StartActiveScanning", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a719ee43d6574bb55bb34bdb64b793382", null ],
+    [ "StartPassiveScanning", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#ab3c118be632b240ceb26c197579ac3f4", null ],
+    [ "StopScanning", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a71b6f4b9ec380331fc64a147769356b7", null ],
+    [ "AllDiscoveredDevices", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a87bd9f23b49cad63d109fb52adb3cb42", null ],
+    [ "GetWatcherStatus", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a4fbf8db42225cf26e90aa7b6c2c65b4c", null ],
+    [ "IsFilteringActive", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a121f2f15be5666e33dcbd407ae541fe9", null ],
+    [ "IsScanningActive", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a0d249d1826b2955c4112a8d42d7e1bef", null ],
+    [ "IsScanningPassive", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#aa4fec0a5681e61489f9e8b238f1cf2f0", null ],
+    [ "IsScanningStarted", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#add0334e2b77d2c3194a7a4baf1c4b1f3", null ],
+    [ "LastDiscoveredDevices", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#acf05fb27a4646b4c00a7f50d01f89c6b", null ],
+    [ "RecentlyDiscoveredDevices", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a1a6eeb2b693aa1b87ff9da1d4c84fb00", null ],
+    [ "ScanningMode", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a170ced856a0a6c89293ac9d57931d056", null ],
+    [ "ShowOnlyConnectableDevices", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a6c7502e775031393cffb9bc14a2efab6", null ],
+    [ "TimeoutSeconds", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a577150d04cbe72de07704a8b4d78655b", null ],
+    [ "NewDeviceDiscovered", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a61043f6c7292a614f7e194841229a81d", null ],
+    [ "ScanInterrupted", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a5cd90e5e2806966561a9dd6d6604f67c", null ],
+    [ "ScanModeChanged", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#a34690fb5dcce6026fcb148f63ec01b5c", null ],
+    [ "ScanStopped", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#adf9af432ff7d80ba21c961d60948ce6b", null ],
+    [ "StartedListening", "d0/dc0/class_cosmed_ble_lib_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#aa0d121c8a6f4eb471abd8c579116ed0c", null ]
+];

@@ -1,0 +1,11 @@
+var searchData=
+[
+  ['advertiseddatasection_0',['AdvertisedDataSection',['../class_cosmed_ble_lib_1_1_collections_1_1_data_section_collection.html#a19082ea7307233b02113f4970adfb689',1,'CosmedBleLib::Collections::DataSectionCollection']]],
+  ['advertisedmanufacturerdata_1',['AdvertisedManufacturerData',['../class_cosmed_ble_lib_1_1_collections_1_1_manufacturer_data_collection.html#a77716ad1c320980640f7376d243d9aa6',1,'CosmedBleLib::Collections::ManufacturerDataCollection']]],
+  ['advertisement_2',['Advertisement',['../struct_cosmed_ble_lib_1_1_device_discovery_1_1_advertisement_content.html#ac14268306f9e2c8a3d31a97f8ad154c7',1,'CosmedBleLib::DeviceDiscovery::AdvertisementContent']]],
+  ['advertisementfilter_3',['AdvertisementFilter',['../interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_filter.html#a2c0cbe2751d55e96b9e7ebbfda715ecf',1,'CosmedBleLib.DeviceDiscovery.IFilter.AdvertisementFilter()'],['../class_cosmed_ble_lib_1_1_device_discovery_1_1_cosmed_bluetooth_l_e_advertisement_filter.html#a9b697098516780df84b55011345abfd6',1,'CosmedBleLib.DeviceDiscovery.CosmedBluetoothLEAdvertisementFilter.AdvertisementFilter()']]],
+  ['advertisementtype_4',['AdvertisementType',['../struct_cosmed_ble_lib_1_1_device_discovery_1_1_advertisement_content.html#a285d171a4eb29dee33c29c9f3abf05b5',1,'CosmedBleLib::DeviceDiscovery::AdvertisementContent']]],
+  ['alldiscovereddevices_5',['AllDiscoveredDevices',['../class_cosmed_ble_lib_1_1_device_discovery_1_1_cosmed_bluetooth_l_e_advertisement_watcher.html#aa4337ed99b41c09e924b119e4e7ce07b',1,'CosmedBleLib.DeviceDiscovery.CosmedBluetoothLEAdvertisementWatcher.AllDiscoveredDevices()'],['../interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_ble_scanner.html#adad735f4e91ced8900a27ef29198d3b0',1,'CosmedBleLib.DeviceDiscovery.IBleScanner.AllDiscoveredDevices()']]],
+  ['appearance_6',['Appearance',['../class_cosmed_ble_lib_1_1_connection_services_1_1_cosmed_ble_device.html#a7118dd78e54420692e4ead64dbd2f3cc',1,'CosmedBleLib::ConnectionServices::CosmedBleDevice']]],
+  ['arelowenergysecureconnectionssupported_7',['AreLowEnergySecureConnectionsSupported',['../class_cosmed_ble_lib_1_1_adapter_1_1_cosmed_bluetooth_l_e_adapter.html#a373771392422b7b83180e11c1e1c7850',1,'CosmedBleLib::Adapter::CosmedBluetoothLEAdapter']]]
+];

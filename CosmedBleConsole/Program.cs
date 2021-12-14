@@ -41,34 +41,41 @@ namespace CosmedBleConsole
         {
             FilterBuilder cfb = FilterBuilder.Init(true);
             IFilter f = cfb.ClearAdvertisementFilter().BuildFilter();
-           
+
+            //creates a filter for devices called "BLE Peripheral"
+            IFilter filter = FilterBuilder.Init().SetLocalName("BLE Peripheral").BuildFilter();//.SetFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode |   BluetoothLEAdvertisementFlags.LimitedDiscoverableMode |BluetoothLEAdvertisementFlags.ClassicNotSupported).BuildFilter();
+
+            //create a scanner with the given filter
+            IBleScanner scanner =  new CosmedBluetoothLEAdvertisementWatcher(filter);
+
+            //starts an active scan
+            await scanner.StartActiveScanning();
+
             //to use the other implementation option
             // DeviceEnumeration.StartDeviceEnumeration();
 
             //Console.ReadLine();
 
-            var scanner = new CosmedBluetoothLEAdvertisementWatcher();
+            //var scanner = new CosmedBluetoothLEAdvertisementWatcher();
 
             //create a filter
-            CosmedBluetoothLEAdvertisementFilter filter = new CosmedBluetoothLEAdvertisementFilter();
+            //CosmedBluetoothLEAdvertisementFilter filter = new CosmedBluetoothLEAdvertisementFilter();
 
             //set the filter
-            filter.SetFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode | BluetoothLEAdvertisementFlags.ClassicNotSupported).SetCompanyID("4D");
+            //filter.SetFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode | BluetoothLEAdvertisementFlags.ClassicNotSupported).SetCompanyID("4D");
 
             //scan with filter
             //CosmedBluetoothLEAdvertisementWatcher scan = new CosmedBluetoothLEAdvertisementWatcher(filter);
 
-
-
             Console.WriteLine("_______________________scanning____________________");
 
             //start scanning
-            await scanner.StartActiveScanning();
+            scanner.StartActiveScanning();
             //scan.StartPassiveScanning();
 
-            while (true)
+            while (scanner.status != StateMachine.Stopped)
             {
-                await scanner.StartActiveScanning();
+                
                 foreach (var device in scanner.AllDiscoveredDevices)
                 {
                      if (device.IsConnectable)
@@ -77,8 +84,7 @@ namespace CosmedBleConsole
 
                         if (device.IsConnectable)// && device.DeviceName.Equals("myname"))
                         {
-                            //var p = await Connector.StartConnectionProcessAsync(scanner, device);
-                            scanner.StopScanning();
+                            scanner.PauseScanning();
                             try
                             {
                                 //get device. it´s possible to set some event handler
@@ -159,6 +165,8 @@ namespace CosmedBleConsole
                         }
                     }
                 }
+                
+                scanner.ResumeScanning();
                 Thread.Sleep(3000);
             }
         }
@@ -217,10 +225,4 @@ namespace CosmedBleConsole
     //Thread.Sleep(3000);
 
 }
-
-
-
-
-
-
 

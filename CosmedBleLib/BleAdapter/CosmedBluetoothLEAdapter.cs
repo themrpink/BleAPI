@@ -26,58 +26,58 @@ namespace CosmedBleLib.Adapter
         private bool isCentralRoleSupported;
 
 
-        /// <value>
+        /// <summary>
         /// The address of the adapter expressed as decimal value
-        /// </value>
+        /// </summary>
         public ulong DecimalAddress { get {return decimalAddress; } }
 
 
-        /// <value>
+        /// <summary>
         /// The address of the adapter expressed as hexidecimal value
-        /// </value>
+        /// </summary>
         public string HexAddress { get { return hexAddress; }  }
 
 
-        /// <value>
+        /// <summary>
         /// Gets or sets a value indicating whether Secure Connections are supported for paired Bluetooth LE devices
-        /// </value>
+        /// </summary>
         public bool AreLowEnergySecureConnectionsSupported { get { return areLowEnergySecureConnectionsSupported; } }
 
 
-        /// <value>
+        /// <summary>
         /// Indicates the maximum length of an advertisement that can be published by this adapter.
-        /// </value>
+        /// </summary>
         public uint MaxAdvertisementDataLength { get { return maxAdvertisementDataLength; }  }
 
 
-        /// <value>
+        /// <summary>
         /// Indicates whether the adapter supports the 5.0 Extended Advertising format.
-        /// </value>
+        /// </summary>
         public bool IsExtendedAdvertisingSupported { get { return isExtendedAdvertisingSupported; } }
 
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean indicating if the adapater supports LowEnergy central role.
-        /// </value>
+        /// </summary>
         public bool IsCentralRoleSupported { get { return isCentralRoleSupported; }  }
 
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean indicating if the adapater supports LowEnergy Bluetooth Transport type.
-        /// </value>
+        /// </summary>
         public bool IsLowEnergySupported { get { return isLowEnergySupported; } }
 
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean incating the the adapter is turned on 
-        /// </value>
+        /// </summary>
         public bool IsAdapterOn => IsBluetoothLEOn;
 
 
 
-        /// <value>
+        /// <summary>
         /// Checks if the bluetooth apapter is turned on
-        /// </value>
+        /// </summary>
         public static bool IsBluetoothLEOn
         {
             get

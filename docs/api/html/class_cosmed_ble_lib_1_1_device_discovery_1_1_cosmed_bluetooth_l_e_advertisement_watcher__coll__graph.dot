@@ -1,0 +1,9 @@
+digraph "CosmedBleLib.DeviceDiscovery.CosmedBluetoothLEAdvertisementWatcher"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="CosmedBleLib.DeviceDiscovery.\lCosmedBluetoothLEAdvertisementWatcher",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Wrapper class for the BleAdvertisementWatcher, allows passive or active scanning and filtering"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="IBleScanner",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_ble_scanner.html",tooltip="Reprensents and advertisements scanner"];
+}

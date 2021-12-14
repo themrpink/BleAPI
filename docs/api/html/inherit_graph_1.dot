@@ -1,0 +1,12 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node31 [label="IEnumerable",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node31 -> Node0 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node0 [label="CosmedBleLib.Collections.\lDataSectionCollection",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_collections_1_1_data_section_collection.html",tooltip="Iterable collection of DataSection"];
+  Node31 -> Node33 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node33 [label="CosmedBleLib.Collections.\lManufacturerDataCollection",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_collections_1_1_manufacturer_data_collection.html",tooltip="Iterable collection of ManufacturerData"];
+}

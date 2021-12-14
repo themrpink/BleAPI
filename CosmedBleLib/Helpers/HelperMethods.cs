@@ -234,7 +234,6 @@ namespace CosmedBleLib.Helpers
     }
 
 
- 
     /// <summary>
     /// Helper class to change the values so they're easily consumable.
     /// Converts GenericGattCharacteristic.Value to a string based on the presentation format.
@@ -242,7 +241,7 @@ namespace CosmedBleLib.Helpers
     public class ValueConverter
     {
         /// <summary>
-        /// Converts GenericGattCharacteristic.Value to a string based on the presentation format
+        /// Converts GattCharacteristic.Value to a string based on the presentation format
         /// </summary>
         /// <param name="characteristic">the Characteristic.</param>
         /// <param name="value">The value</param>
@@ -265,7 +264,7 @@ namespace CosmedBleLib.Helpers
         }
 
         /// <summary>
-        /// Converts GenericGattCharacteristic.Value to a string based on the presentation format
+        /// Converts GattCharacteristic buffered value to a string based on the presentation format
         /// </summary>
         /// <param name="value">value to convert</param>
         /// <param name="format">presentation format to use</param>
@@ -344,4 +343,5 @@ namespace CosmedBleLib.Helpers
             }
         }
     }
+
 }

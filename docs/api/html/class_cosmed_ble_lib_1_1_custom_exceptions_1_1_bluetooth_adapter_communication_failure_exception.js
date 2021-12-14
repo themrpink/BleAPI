@@ -1,0 +1,7 @@
+var class_cosmed_ble_lib_1_1_custom_exceptions_1_1_bluetooth_adapter_communication_failure_exception =
+[
+    [ "BluetoothAdapterCommunicationFailureException", "class_cosmed_ble_lib_1_1_custom_exceptions_1_1_bluetooth_adapter_communication_failure_exception.html#a13940845411e27ee2d78bd07328a7cd5", null ],
+    [ "BluetoothAdapterCommunicationFailureException", "class_cosmed_ble_lib_1_1_custom_exceptions_1_1_bluetooth_adapter_communication_failure_exception.html#a16722f995bbe997378a2f7b594f16edd", null ],
+    [ "BluetoothAdapterCommunicationFailureException", "class_cosmed_ble_lib_1_1_custom_exceptions_1_1_bluetooth_adapter_communication_failure_exception.html#ae2e721d8e030e713d42a95295f2dc1d8", null ],
+    [ "BluetoothAdapterCommunicationFailureException", "class_cosmed_ble_lib_1_1_custom_exceptions_1_1_bluetooth_adapter_communication_failure_exception.html#a1e500ba9a6fc7f03c100654058a39130", null ]
+];

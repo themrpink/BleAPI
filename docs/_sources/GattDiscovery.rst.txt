@@ -1,0 +1,98 @@
+Gatt Discovery Services
+=======================
+
+After selecting a discovered device and paired with it, the next step is to discover the Services and Characteristics available on the remote device.
+An IGattDiscoveryService obejct will serve this purpose. It can be instatiated with the statit CreateAsync(ICosmedBleDevice device) method:
+
+.. code-block:: csharp
+
+    //connectionDevice is an instance of CosmebBleDevice, which implements the ICosmedBleDevice interface
+    IGattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
+
+
+An IGattDiscoveryService ojbect exposes some properties and events of the GattSession and about the connection.
+
+
+.. figure:: /images/gattdiscovery.png
+   :scale: 50%
+
+Please see the IGattDiscoveryService interface in the API documentation for more info.
+
+Also see:
+ * `GattSession <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattsession?view=winrt-22000>`_
+ * `GattSessionStatus <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattsessionstatus?view=winrt-22000>`_
+ * `DeviceAccessStatus <https://docs.microsoft.com/en-us/uwp/api/windows.devices.enumeration.deviceaccessstatus?view=winrt-22000>`_
+
+
+Gatt discovery
+--------------
+
+Once the IGattDiscoveryService object instatiated, there are four methods available to discover Services and Characteristics, plus one method to realise reliable writes
+and one to clear the Services.
+
+.. figure:: /images/gattdiscovery2.png
+   :scale: 50%
+
+All the discovery methods take an optional cacheMode parameter. The default value is Uncached, which means that the Services or Characteristics will be directly requested to the remote device.
+If Cached is choosen, the operating system will first search for the Services and Characteristics in its cache, and only if they are not available it will send a request to the device.
+
+
+.. code-block:: csharp
+	
+    //gets all the services of the remote device, possibly from the cache
+    GattDeviceServicesResult result = discoveryService.GetAllGattServicesAsync(BluetoothCacheMode.Cached);
+
+    //creates Guid object from DeviceName Characteristic 16 bit uuid
+    Guid uuid = BluetoothUuidHelper.FromShortId(0x2A00);
+	
+    //the caracteristic 
+    foreach(var service in result.Services)
+    {
+        //tries to get the requested, uncached, characteristics
+        GattCharacteristicsResult characteristics;
+        characteristics = discoveryService.FindGattCharacteristicsByUuidAsync(service, uuid);	
+		
+        //gets if available the requested caracteristic
+        GattCharacteristic characteristic;
+        if(characteristics.Status == GattCommunicationStatus.Success)
+        {
+            characteristic = characteristics.Characteristics[0];		
+        }			
+    }
+	
+	
+For details about the four discovering methods please refer to the IGattDiscoveryService in the API documentation.
+
+
+Reliable write
+--------------
+
+The method StartReliableWriteTransaction() returns a `GattReliableWriteTransaction <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattreliablewritetransaction?view=winrt-22000>`_
+where writes can be queued and later processed all together. Characteristics can invoke the extention method AddCharacteristicToReliableWrite(AddCharacteristicToReliableWrite, IBuffer) to be added to the given transaction queue.
+
+.. code-block:: csharp
+    
+    AddCharacteristicToReliableWrite reliableWrite = discoveryService.StartReliableWriteTransaction();
+	
+    //prepares the buffer
+    IBuffer value = BufferWriter.ToIBuffer("a string");
+	
+    //add a write request for a characteristic to the write queue
+    characteristic.AddCharacteristicToReliableWrite(reliableWrite, value);
+	
+    //the same process can be done multiple times with different characteristics
+    // ...
+	
+    //finally the write transaction can be executed
+    GattWriteResult result = reliableWrite.CommitWithResultAsync();
+	
+
+Clear Services
+--------------
+
+This method disposes the GattSession and the Services retrieved:
+
+.. code-block:: csharp
+
+   discoveryService.ClearServices();
+	

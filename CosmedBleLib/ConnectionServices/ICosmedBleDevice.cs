@@ -9,9 +9,9 @@ namespace CosmedBleLib.ConnectionServices
 
     public interface ICosmedBleDevice
     {
-        /// <value>
+        /// <summary>
         /// Ble remote device
-        /// </value>
+        /// </summary>
         BluetoothLEDevice BluetoothLeDevice { get; }
 
 

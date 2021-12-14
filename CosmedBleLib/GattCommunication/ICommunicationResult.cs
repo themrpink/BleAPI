@@ -10,14 +10,14 @@ namespace CosmedBleLib.GattCommunication
     /// </summary>
     public interface ICommunicationResult
     {
-        /// <value>
+        /// <summary>
         /// The protocol Error, in case an error occurred during communication
-        /// </value>
+        /// </summary>
         byte? ProtocolError { get; }
 
-        /// <value>
+        /// <summary>
         /// The communication status
-        /// </value>
+        /// </summary>
         CosmedGattCommunicationStatus Status { get; }
     }
 
@@ -27,14 +27,14 @@ namespace CosmedBleLib.GattCommunication
     /// </summary>
     public interface ICharacteristicCommunicationResult : ICommunicationResult
     {
-        /// <value>
+        /// <summary>
         /// Gets the Characteristic property
-        /// </value>
+        /// </summary>
         GattCharacteristicProperties Property { get; }
 
-        /// <value>
+        /// <summary>
         /// Gets the Characteristics list
-        /// </value>
+        /// </summary>
         IReadOnlyList<GattCharacteristic> Characteristics { get; }
     }
 
@@ -44,9 +44,9 @@ namespace CosmedBleLib.GattCommunication
     /// </summary>
     public interface IServiceCommunicationResult : ICommunicationResult
     {
-        /// <value>
+        /// <summary>
         /// Gets the Services list
-        /// </value>
+        /// </summary>
         IReadOnlyList<GattDeviceService> Services { get; }
     }
 

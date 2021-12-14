@@ -28,9 +28,9 @@ namespace CosmedBleLib.Collections
     /// </summary>
     public class ManufacturerDataCollection : IEnumerable<ManufacturerDataReader>
         {
-        /// <value>
+        /// <summary>
         /// Gets a ReadonlyList of ManufacturerDataReader
-        /// </value>
+        /// </summary>
         /// <see cref="ManufacturerDataReader"/>
         public IReadOnlyList<ManufacturerDataReader> AdvertisedManufacturerData { get; }
 

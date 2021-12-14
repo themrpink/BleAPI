@@ -16,21 +16,21 @@ namespace CosmedBleLib.DeviceDiscovery
     /// </summary>
     public interface IFilter
     {
-        /// <value>
+        /// <summary>
         /// The filter based on advertised data
-        /// </value>
+        /// </summary>
         BluetoothLEAdvertisementFilter AdvertisementFilter { get; set; }
 
 
-        /// <value>
+        /// <summary>
         /// Filter based on advertising device signal
-        /// </value>
+        /// </summary>
         BluetoothSignalStrengthFilter SignalStrengthFilter { get; set; }
 
 
-        /// <value>
+        /// <summary>
         /// Option to filter by connectable devices
-        /// </value>
+        /// </summary>
         bool ShowOnlyConnectableDevices { get; set; }
     }
 
@@ -328,15 +328,15 @@ namespace CosmedBleLib.DeviceDiscovery
     /// </summary>
     public sealed class CosmedBluetoothLEAdvertisementFilter : IFilter
     {
-        /// <value>
+        /// <summary>
         /// Gets and sets an AdvertisementFilter
-        /// </value>
+        /// </summary>
         public BluetoothLEAdvertisementFilter AdvertisementFilter { get; set; }
 
 
-        /// <value>
+        /// <summary>
         /// Gets and sets a SignalStrengthFilter
-        /// </value>
+        /// </summary>
         public BluetoothSignalStrengthFilter SignalStrengthFilter { get; set; }
 
 

@@ -1,0 +1,234 @@
+
+
+Gatt communication
+==================
+
+The Library adds to the Uwp class `GattCharacteristic <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattcharacteristic?view=winrt-22000>`_ some useful extension method to execute the operations that allow Gatt communication.
+
+.. figure:: /images/characteristic.png
+   :scale: 60%
+   
+   
+The methods have the following signatures:
+
+.. code-block:: csharp
+
+   //Write
+   Task<CosmedCharacteristicWriteResult> WriteWithResult(byte[] value, GattWriteOption writeOption, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+   
+   //Read
+   Task<CosmedCharacteristicReadResult> Read(Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+   
+   //Subscribe to Notification   
+   Task<CosmedGattCommunicationStatus> SubscribeToNotification(TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+   
+   //Subscribe to Indication
+   Task<CosmedGattCommunicationStatus> SubscribeToIndication(TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+   
+   //Unsubscribe   
+   Task<CosmedGattCommunicationStatus> UnSubscribe(Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+   
+   //Add the calling Characteristic to Reliable Write Transaction
+   void AddCharacteristicToReliableWrite(GattReliableWriteTransaction reliableWriteTransaction, IBuffer value)
+   
+
+
+
+WriteWithResult
+---------------
+   
+This method writes a value to the Characteristic, if Write operation is allowed. The method checks that and will eventually specify it in the returned result, but it's also possible to verify before calling the method:
+  
+  
+.. code-block:: csharp
+
+   //Checks if Write is allowed for the calling Characteristic
+   bool result = characteristic.IsWriteAllowed();
+   
+
+The WriteWithResult method takes the following parameters:
+
+* byte[] value:
+   * the value to be written. The size should not exceed the supported payload capacity
+	
+* GattWriteOption writeOption:
+   * can be WriteWithoutResponse or WriteWithResponse
+   * `See GattWriteOption <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattwriteoption?view=winrt-22000>`_
+   
+* Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null:
+   * optional parameter, see :ref:`ErrorFoundClass<ErrorFoundClass>`
+
+
+
+Read
+----
+
+This method reads the value from the calling Characteristic object, if Read operation is allowed. The method checks that and will eventually specify it in the returned result, but it's also possible to verify before calling the method:
+  
+  
+.. code-block:: csharp
+
+   //Checks if read operation is allowed for the calling Characteristic
+   bool result = characteristic.IsWriteAllowed();
+   
+
+The Read method takes the following parameter:
+   
+* Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null:
+   * optional parameter, see :ref:`ErrorFoundClass<ErrorFoundClass>`
+   
+   
+   
+SubscribeToNotification
+-----------------------
+
+This method subscribes to notifications to the calling Characteristic object, if Notify operation is allowed. The method checks that and will eventually specify it in the returned result, but it's also possible to verify before calling the method:
+  
+  
+.. code-block:: csharp
+
+   //Checks if Notify operation is allowed for the calling Characteristic
+   bool result = characteristic.IsWriteAllowed();
+   
+
+The SubscribeToNotifications method takes the following parameters:
+
+* TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction:
+   * see :ref:`valueChangedAction<valueChangedAction>`
+   
+* Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null:
+   * optional parameter, see :ref:`ErrorFoundClass<ErrorFoundClass>`
+   
+   
+   
+SubscribeToIndication
+---------------------
+
+This method subscribes to indications to the calling Characteristic object, if Indicate operation is allowed. The method checks that and will eventually specify it in the returned result, but it's also possible to verify before calling the method:
+  
+  
+.. code-block:: csharp
+
+   //Checks if Indicate operation is allowed for the calling Characteristic
+   bool result = characteristic.IsWriteAllowed();
+   
+
+The SubscribeToIndications method takes the following parameters:
+
+* TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction:
+   * see :ref:`valueChangedAction<valueChangedAction>`
+   
+* Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null:
+   * optional parameter, see :ref:`ErrorFoundClass<ErrorFoundClass>`
+   
+   
+   
+Unsubscribe
+-----------
+
+This method unsubscribes from notifications and indications from the calling Characteristic object, if Notify or Indicate operation is allowed. The method checks that and will eventually specify it in the returned result, but it's also possible to verify before calling the method:
+  
+  
+.. code-block:: csharp
+
+   //Checks if Notify operation is allowed for the calling Characteristic
+   bool result = characteristic.IsWriteAllowed();
+   
+
+The SubscribeToNotifications method takes the following parameters:
+
+   
+* Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null:
+   * optional parameter, see :ref:`ErrorFoundClass<ErrorFoundClass>`
+
+
+
+AddCharacteristicToReliableWrite
+--------------------------------
+
+This method takes as arguments the GattReliableWriteTransaction to which we want to add the write operation and the value we want to write.
+
+* For an example see :ref:`Reliable write`
+
+
+
+ErrorFoundClass
+---------------
+
+This static class offers an event (ErrorFoundClass.ErrorFound), shared by all the operations methods listed above to manage errors and exceptions raised during any communication call.
+The user can subscribe an error handler to this event, managing the exceptions in the same way for every operation with any characteristic during the same session.
+To hanlde a specific operation of a specific characteristic a custom event handler can instead be passed to any of the four operations methods plus the unsubscribe method.
+
+If neither the static event ErrorFoundClass.ErrorFound nor the custom one passed as parameter are used, the user will not receive a notification in case of exception, 
+but the exception will still be silently catched ánd the result of the operation marked as Unreachable in the returned operation Result.
+
+
+.. code-block:: csharp
+
+   //use of the generic error event
+   //create the handler
+   Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> ErrorHandler = 
+	(s,a) => Console.WriteLine("exception catched from communication with characteristic " + s.Uuid);
+				
+   //subscribe to the static event
+   ErrorFoundClass.ErrorFound += ErrorHandler;
+
+   //if an excetion occur the ErrorHandler will be invoked
+   characteristic.Read();
+
+   //before closing the session, unsubscribe
+   ErrorFoundClass.ErrorFound -= ErrorHandler;
+   
+   //use of a handler as parameter
+   Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> TemporaryErrorHandler = 
+	(s,a) => Console.WriteLine("exception catched from communication with characteristic " + s.Uuid);  
+
+    //the passed hanlder will be used, and automatically unsubscribed after the method call
+    characteristic.Read(TemporaryErrorHandler);
+	
+
+
+
+valueChangedAction
+------------------
+
+This is a parameter for the SubscribeToNotification and SubscribeToIndication methods:
+
+.. code-block:: csharp
+
+   TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction
+   
+It's the event handle that will receive the notifications or indications to which the user has subscribed.
+
+Example:
+
+.. code-block:: csharp
+
+    //this event hanlder will print to the console the time and the value of each received notification
+    TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = (s, a) =>
+    {
+        Console.WriteLine("notification:");
+        Console.WriteLine(a.Timestamp.ToString());
+        IBuffer CharacteristicValue = a.CharacteristicValue;
+        string val = ClientBufferReader.ToUTF8String(CharacteristicValue);
+        Console.WriteLine("buffer content: " + val);
+    }
+	
+    //call the method passing the event handler
+    CosmedGattCommunicationStatus result = await characteristic.SubscribeToNotification(valueChangedAction);
+
+
+See also:
+
+* `GattCharacteristic <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattcharacteristic?view=winrt-22000>`_
+
+* `GattValueChangedEventArgs <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattvaluechangedeventargs?view=winrt-22000>`_
+
+
+
+
+
+
+
+
+

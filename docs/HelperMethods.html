@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helper Methods &mdash; CosmedBleLib 1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Gatt communication" href="GattCommunication.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CosmedBleLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QuickStart.html">QuickStart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="DiscoveringDevices.html">Discovering devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Filter.html">Filtering advertising devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pairing.html">Pairing and unpairing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GattDiscovery.html">Gatt Discovery Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GattCommunication.html">Gatt communication</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Helper Methods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#read-and-write-buffer-data">Read and write buffer data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#read-buffer-data">Read buffer data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#write-buffer-data">Write buffer data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#specific-buffer-readers">Specific buffer readers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#convert-bluetooth-assigned-numbers">Convert Bluetooth Assigned Numbers</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="./api/html/index.html#http://">Cosmed API Documentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.microsoft.com/en-us/windows/uwp/devices-sensors/bluetooth-low-energy-overview">Microsoft UWP Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CosmedBleLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Helper Methods</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/HelperMethods.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="helper-methods">
+<h1>Helper Methods<a class="headerlink" href="#helper-methods" title="Permalink to this headline"></a></h1>
+<p>The library offers some utilities to convert data in the desired format.</p>
+<p>Two main groups of helper methods are offered:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#read-and-write-buffer-data"><span class="std std-ref">Read and write buffer data</span></a></p></li>
+<li><p><a class="reference internal" href="#convert-bluetooth-assigned-numbers"><span class="std std-ref">Convert Bluetooth Assigned Numbers</span></a></p></li>
+</ul>
+<section id="read-and-write-buffer-data">
+<h2>Read and write buffer data<a class="headerlink" href="#read-and-write-buffer-data" title="Permalink to this headline"></a></h2>
+<section id="read-buffer-data">
+<h3>Read buffer data<a class="headerlink" href="#read-buffer-data" title="Permalink to this headline"></a></h3>
+<p>Helper methods to convert buffer data into various data types.
+They are accessible from the static class CosmedBleLib.Helpers.ClientBufferReader. They all take an IBuffer as argument, and return a value of the type indicated in the method signatures:</p>
+<ul class="simple">
+<li><p>public static string ToUTF8String(IBuffer buffer)</p></li>
+<li><p>public static string ToUTF16String(IBuffer buffer)</p></li>
+<li><p>public static Int16 ToInt16(IBuffer buffer)</p></li>
+<li><p>public static int ToInt32(IBuffer buffer)</p></li>
+<li><p>public static Int64 ToInt64(IBuffer buffer)</p></li>
+<li><p>public static Single ToSingle(IBuffer buffer)</p></li>
+<li><p>public static Double ToDouble(IBuffer buffer)</p></li>
+<li><p>public static UInt16 ToUInt16(IBuffer buffer)</p></li>
+<li><p>public static UInt32 ToUInt32(IBuffer buffer)</p></li>
+<li><p>public static UInt64 ToUInt64(IBuffer buffer)</p></li>
+<li><p>public static byte[] ToByteArray(IBuffer buffer)</p></li>
+<li><p>public static string ToHexString(IBuffer buffer)</p></li>
+</ul>
+<p>This method adds a padding of zeros in the front of a byte array:</p>
+<ul class="simple">
+<li><p>private static byte[] PadBytes(byte[] input, int length)</p></li>
+</ul>
+</section>
+<section id="write-buffer-data">
+<h3>Write buffer data<a class="headerlink" href="#write-buffer-data" title="Permalink to this headline"></a></h3>
+<p>Helper methods to write various data formats into an IBuffer, as indicated in the argument types.
+They are accessible from the static class CosmedBleLib.Helpers.BufferWriter:</p>
+<ul class="simple">
+<li><p>public static IBuffer ConvertValueToBuffer(byte byteValue)</p></li>
+<li><p>public static IBuffer ConvertValueToBuffer(byte byteValue1, byte byteValue2)</p></li>
+<li><p>public static IBuffer ConvertValueToBuffer(DateTime time)</p></li>
+<li><p>public static IBuffer ToIBufferFromHexString(string data)</p></li>
+<li><p>public static IBuffer ToIBuffer(bool data)</p></li>
+<li><p>public static IBuffer ToIBuffer(byte data)</p></li>
+<li><p>public static IBuffer ToIBuffer(byte[] data)</p></li>
+<li><p>public static IBuffer ToIBuffer(double data)</p></li>
+<li><p>public static IBuffer ToIBuffer(Int16 data)</p></li>
+<li><p>public static IBuffer ToIBuffer(Int32 data)</p></li>
+<li><p>public static IBuffer ToIBuffer(Int64 data)</p></li>
+<li><p>public static IBuffer ToIBuffer(Single data)</p></li>
+<li><p>public static IBuffer ToIBuffer(UInt16 data)</p></li>
+<li><p>public static IBuffer ToIBuffer(UInt32 data)</p></li>
+<li><p>public static IBuffer ToIBuffer(UInt64 data)</p></li>
+<li><p>public static IBuffer ToIBuffer(string data)</p></li>
+</ul>
+</section>
+<section id="specific-buffer-readers">
+<h3>Specific buffer readers<a class="headerlink" href="#specific-buffer-readers" title="Permalink to this headline"></a></h3>
+<p>This classes allows to convert data from specific buffers into string format:</p>
+<ul class="simple">
+<li><p>public class ManufacturerDataReader</p></li>
+<li><p>public class CharacteristicReader</p></li>
+<li><p>public class DataSectionReader</p></li>
+</ul>
+<p>For more detailed information, please see the API Documentation.</p>
+</section>
+</section>
+<section id="convert-bluetooth-assigned-numbers">
+<h2>Convert Bluetooth Assigned Numbers<a class="headerlink" href="#convert-bluetooth-assigned-numbers" title="Permalink to this headline"></a></h2>
+<p>These public static classes and methods allow to convert values into their assigned string value:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>class GattServiceUuidHelper</dt><dd><ul>
+<li><p>string ConvertUuidToName(Guid uuid) –&gt; Converts a 16 or 128 bit Gatt Primary Service UUID to its name if registered.</p></li>
+<li><p>see the API Documentation</p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattdeviceservice.uuid?view=winrt-22000">see GattDeviceService Uuid</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>class GattCharacteristicUuidHelper</dt><dd><ul>
+<li><p>string ConvertUuidToName(Guid uuid) –&gt; Converts a registered 16 or 128 bit Characteristic UUID to its name if registered.</p></li>
+<li><p>see the API Documentation</p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattcharacteristic.uuid?view=winrt-22000#Windows_Devices_Bluetooth_GenericAttributeProfile_GattCharacteristic_Uuid">see GattCharacteristic Uuid</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>class GattDeclarationHelper</dt><dd><ul>
+<li><p>string ConvertUuidToName(Guid uuid) –&gt; Converts a registered 16 or 128 bit GattDeclaration UUID to a name if registered.</p></li>
+<li><p>see the API Documentation</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>class GattDescriptorUuidHelper</dt><dd><ul>
+<li><p>string ConvertUuidToName(Guid uuid) –&gt; Converts a registered 16 or 128 bit Gatt Descriptor UUID to a name if registered.</p></li>
+<li><p>see the API Documentation</p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattdescriptor?view=winrt-22000">see GattDescriptor</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>class AdvertisementDataTypeHelper</dt><dd><ul>
+<li><p>string ConvertAdvertisementDataTypeToString(byte dataType) –&gt; Converts a registered dataType value to a name</p></li>
+<li><p>see the API Documentation</p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.advertisement.bluetoothleadvertisementdatatypes?view=winrt-22000">see BluetoothLEAdvertisementDataTypes</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>class AppearenceDataTypeHelper</dt><dd><ul>
+<li><p>string ConvertAppearenceTypeToString(ushort dataType) –&gt; Converts an Appearance data type to a name</p></li>
+<li><p>see the API Documentation</p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.bluetoothleappearance?view=winrt-22000">see BluetoothLEAppearance</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>class PresentationFormatUnitsHelper</dt><dd><ul>
+<li><p>string ConvertUnitTypeToString(ushort unitType) –&gt; Converts a registered Presentation Format Unit value to a name</p></li>
+<li><p>see the API Documentation</p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattpresentationformat.unit?view=winrt-22000#Windows_Devices_Bluetooth_GenericAttributeProfile_GattPresentationFormat_Unit">see GattPresentationFormat Unit</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>class PresentationFormatTypeHelper</dt><dd><ul>
+<li><p>string ConvertFormatTypeToString(byte formatType) –&gt; Converts a registered Presentation Format type value to a name</p></li>
+<li><p>see the API Documentation</p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattpresentationformat.formattype?view=winrt-22000#Windows_Devices_Bluetooth_GenericAttributeProfile_GattPresentationFormat_FormatType">see GattPresentationFormat FormatType</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>class NamespaceTypeHelper</dt><dd><ul>
+<li><p>string ConvertNamespaceTypeToString(byte namespaceType) –&gt; Converts a Namespace type to a name</p></li>
+<li><p>see the API Documentation</p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattpresentationformat.namespace?view=winrt-22000#Windows_Devices_Bluetooth_GenericAttributeProfile_GattPresentationFormat_Namespace">see GattPresentationFormat Namespace</a></p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>class ValueConverter</dt><dd><ul>
+<li><p>string ConvertGattCharacteristicValueToString(GattCharacteristic characteristic, IBuffer value) –&gt; Converts GattCharacteristic value to a string based on the presentation format</p></li>
+<li><p>string ConvertValueBufferToString(IBuffer value, GattPresentationFormat format = null) –&gt; Converts GattCharacteristic value to a string based on the presentation format</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<p>For more information about the Bluetooth Assigned Numbers see:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.bluetooth.com/specifications/assigned-numbers/">Bluetooth Assigned Numbers</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="GattCommunication.html" class="btn btn-neutral float-left" title="Gatt communication" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Stefano Urani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

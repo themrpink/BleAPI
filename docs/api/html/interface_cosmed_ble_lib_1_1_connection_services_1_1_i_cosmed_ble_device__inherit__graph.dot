@@ -1,0 +1,9 @@
+digraph "CosmedBleLib.ConnectionServices.ICosmedBleDevice"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="CosmedBleLib.ConnectionServices.\lICosmedBleDevice",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="CosmedBleLib.ConnectionServices.\lCosmedBleDevice",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_connection_services_1_1_cosmed_ble_device.html",tooltip="Wraps a discoverable BluetoothLEDevice, showing tha data obtained from an unpaired connection"];
+}

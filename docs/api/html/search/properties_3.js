@@ -1,0 +1,14 @@
+var searchData=
+[
+  ['datasections_0',['DataSections',['../class_cosmed_ble_lib_1_1_device_discovery_1_1_cosmed_ble_advertised_device.html#a0dcbb687bd7703c2d74c09929e4b05fa',1,'CosmedBleLib::DeviceDiscovery::CosmedBleAdvertisedDevice']]],
+  ['datasectionsfromscanresponse_1',['DataSectionsFromScanResponse',['../class_cosmed_ble_lib_1_1_device_discovery_1_1_cosmed_ble_advertised_device.html#a576b94e1e3f6c6ff04e11ae83da781cf',1,'CosmedBleLib::DeviceDiscovery::CosmedBleAdvertisedDevice']]],
+  ['datatype_2',['DataType',['../class_cosmed_ble_lib_1_1_helpers_1_1_data_section_reader.html#a78d08ba097af0af84de01a7c99372b5a',1,'CosmedBleLib::Helpers::DataSectionReader']]],
+  ['decimaladdress_3',['DecimalAddress',['../class_cosmed_ble_lib_1_1_adapter_1_1_cosmed_bluetooth_l_e_adapter.html#a45178f772e30a72daf1ff129016f19af',1,'CosmedBleLib::Adapter::CosmedBluetoothLEAdapter']]],
+  ['device_4',['Device',['../interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_gatt_discovery_service.html#a464bfee634e0d38445b71b1707876792',1,'CosmedBleLib.GattCommunication.IGattDiscoveryService.Device()'],['../class_cosmed_ble_lib_1_1_gatt_communication_1_1_gatt_discovery_service.html#a8d334a2b8a8909cbc1b023ce96ea1960',1,'CosmedBleLib.GattCommunication.GattDiscoveryService.Device()']]],
+  ['deviceaccessinformation_5',['DeviceAccessInformation',['../class_cosmed_ble_lib_1_1_connection_services_1_1_cosmed_ble_device.html#aee57085a2384497e36e56ab382b5ddae',1,'CosmedBleLib::ConnectionServices::CosmedBleDevice']]],
+  ['deviceaccessstatus_6',['DeviceAccessStatus',['../interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_gatt_discovery_service.html#afe9c6d71b90e18b75a4f9dfe16a3c199',1,'CosmedBleLib.GattCommunication.IGattDiscoveryService.DeviceAccessStatus()'],['../class_cosmed_ble_lib_1_1_gatt_communication_1_1_gatt_discovery_service.html#a671988398f663228e0cde45857179494',1,'CosmedBleLib.GattCommunication.GattDiscoveryService.DeviceAccessStatus()']]],
+  ['deviceaddress_7',['DeviceAddress',['../class_cosmed_ble_lib_1_1_device_discovery_1_1_cosmed_ble_advertised_device.html#a51cd07bd88eb4df2c19dca95016aedd3',1,'CosmedBleLib::DeviceDiscovery::CosmedBleAdvertisedDevice']]],
+  ['deviceid_8',['DeviceId',['../class_cosmed_ble_lib_1_1_connection_services_1_1_cosmed_ble_device.html#a08ce1c7209cc172b5e60e1f679474eb2',1,'CosmedBleLib::ConnectionServices::CosmedBleDevice']]],
+  ['deviceinformation_9',['DeviceInformation',['../class_cosmed_ble_lib_1_1_connection_services_1_1_cosmed_ble_device.html#ab4e265ee925caf44066cdf60e41e2b28',1,'CosmedBleLib::ConnectionServices::CosmedBleDevice']]],
+  ['devicename_10',['DeviceName',['../class_cosmed_ble_lib_1_1_device_discovery_1_1_cosmed_ble_advertised_device.html#a634cf6f94456ddbd57d379aa2a585887',1,'CosmedBleLib::DeviceDiscovery::CosmedBleAdvertisedDevice']]]
+];

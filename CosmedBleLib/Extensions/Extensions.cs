@@ -90,6 +90,7 @@ namespace CosmedBleLib.Extensions
     {
         #region gatt operations
 
+        private static event Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> ErrorFoundCustom;
 
         //public static async Task<GattDescriptorsResult> GetDescriptorValue(this GattCharacteristic characteristic)
         //{
@@ -131,8 +132,6 @@ namespace CosmedBleLib.Extensions
             {
                 properties = GattCharacteristicProperties.Write;
             }
-            //what about reliable writes ???
-
             
             if (characteristic.IsWriteAllowed())
             {
@@ -161,18 +160,20 @@ namespace CosmedBleLib.Extensions
                 }
                 catch (Exception e)
                 {
+                    var args = new CosmedGattErrorFoundEventArgs(e, properties);
                     if (errorAction != null)
                     {
-                        ErrorFoundClass.ErrorFound += errorAction;
+                        GattCharacteristicExtensions.ErrorFoundCustom += errorAction;
+                        GattCharacteristicExtensions.ErrorFoundCustom.Invoke(characteristic, args);
+                        GattCharacteristicExtensions.ErrorFoundCustom -= errorAction;
                     }
-                    var args = new CosmedGattErrorFoundEventArgs(e, properties);
+                    else
+                    {
+                        ErrorFoundClass.Call(characteristic, args);
+                    }
 
-                    //it fires the event 
-                    ErrorFoundClass.Call(characteristic, args);
-
-                    ErrorFoundClass.ErrorFound -= errorAction;
-                    Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
-                    Console.WriteLine(e.Message);
+                    //Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
+                    //Console.WriteLine(e.Message);
                     
                     return new CosmedCharacteristicWriteResult(null, CosmedGattCommunicationStatus.Unreachable);
                 }
@@ -255,18 +256,23 @@ namespace CosmedBleLib.Extensions
                 }
                 catch (Exception e)
                 {
+                    var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Read);
                     if (errorAction != null)
                     {
-                        ErrorFoundClass.ErrorFound += errorAction;
+                        GattCharacteristicExtensions.ErrorFoundCustom += errorAction;
+                        GattCharacteristicExtensions.ErrorFoundCustom.Invoke(characteristic, args);
+                        GattCharacteristicExtensions.ErrorFoundCustom -= errorAction;
                     }
-                    var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Read);
+                    else
+                    {
+                        ErrorFoundClass.Call(characteristic, args);
+                    }
 
                     //it fires the event 
-                    ErrorFoundClass.Call(characteristic, args);
 
-                    ErrorFoundClass.ErrorFound -= errorAction;
-                    Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
-                    Console.WriteLine(e.Message);
+                    //Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
+                    //Console.WriteLine(e.Message);
+                    return new CosmedCharacteristicReadResult(null, CosmedGattCommunicationStatus.Unreachable, null);
                 }
             }
             return new CosmedCharacteristicReadResult(null, CosmedGattCommunicationStatus.OperationNotSupported, null);       
@@ -279,7 +285,7 @@ namespace CosmedBleLib.Extensions
         /// <param name="valueChangedAction">Optional action to manage the incoming notifications</param>
         /// <param name="errorAction">Optional action to manage communication errors</param>
         /// <returns>The subscription result</returns>
-        public static async Task<CosmedGattCommunicationStatus> SubscribeToNotification(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+        public static async Task<CosmedGattCommunicationStatus> SubscribeToNotification(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
             if (!characteristic.IsNotificationAllowed() && !characteristic.IsIndicationAllowed())
             {
@@ -320,7 +326,11 @@ namespace CosmedBleLib.Extensions
                             }
                         }
                         GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions[characteristic] = valueChangedAction;
-                    }                   
+                    }
+                    else
+                    {
+                        throw new ArgumentNullException("valueChangedAction parameter cannot be null");
+                    }
                 }
 
                 //gives the last status
@@ -329,13 +339,18 @@ namespace CosmedBleLib.Extensions
             }
             catch (Exception e)
             {
+                var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Notify);
                 if (errorAction != null)
                 {
-                    ErrorFoundClass.ErrorFound += errorAction;
+                    GattCharacteristicExtensions.ErrorFoundCustom += errorAction;
+                    GattCharacteristicExtensions.ErrorFoundCustom.Invoke(characteristic, args);
+                    GattCharacteristicExtensions.ErrorFoundCustom -= errorAction;
                 }
-                var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Notify);
-                ErrorFoundClass.Call(characteristic, args);
-                //ErrorFoundClass.ErrorFound -= errorAction;
+                else
+                {
+                    ErrorFoundClass.Call(characteristic, args);
+                }
+
                 Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
                 Console.WriteLine(e.Message);
 
@@ -352,7 +367,7 @@ namespace CosmedBleLib.Extensions
         /// <param name="valueChangedAction">Optional action to manage the incoming notifications.</param>
         /// <param name="errorAction">Optional action to manage communication errors.</param>
         /// <returns>The subscription result.</returns>
-        public static async Task<CosmedGattCommunicationStatus> SubscribeToIndication(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction = null, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
+        public static async Task<CosmedGattCommunicationStatus> SubscribeToIndication(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
             if (!characteristic.IsIndicationAllowed())
             {
@@ -395,6 +410,20 @@ namespace CosmedBleLib.Extensions
                     if (valueChangedAction != null)
                     {
                         characteristic.ValueChanged += valueChangedAction;
+                        if (GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions.ContainsKey(characteristic))
+                        {
+                            TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> oldEventHandler;
+                            var success = GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions.TryGetValue(characteristic, out oldEventHandler);
+                            if (success)
+                            {
+                                characteristic.ValueChanged -= oldEventHandler;
+                            }
+                        }
+                        GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions[characteristic] = valueChangedAction;
+                    }
+                    else
+                    {
+                        throw new ArgumentNullException("valueChangedAction parameter cannot be null");
                     }
                 }
                 //gives the last status
@@ -403,13 +432,18 @@ namespace CosmedBleLib.Extensions
             }
             catch (Exception e)
             {
+                var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate);
                 if (errorAction != null)
                 {
-                    ErrorFoundClass.ErrorFound += errorAction;
+                    GattCharacteristicExtensions.ErrorFoundCustom += errorAction;
+                    GattCharacteristicExtensions.ErrorFoundCustom.Invoke(characteristic, args);
+                    GattCharacteristicExtensions.ErrorFoundCustom -= errorAction;
                 }
-                var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate);
-                ErrorFoundClass.Call(characteristic, args);
-                ErrorFoundClass.ErrorFound -= errorAction;
+                else
+                {
+                    ErrorFoundClass.Call(characteristic, args);
+                }
+
                 Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString() + " name: " + characteristic.Service.Device.Name);
                 Console.WriteLine(e.Message);
 
@@ -455,6 +489,12 @@ namespace CosmedBleLib.Extensions
 
                 var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None).AsTask().ConfigureAwait(false);
                 
+                TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> oldEventHandler;
+                var success = GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions.TryGetValue(characteristic, out oldEventHandler);
+                if (success)
+                {
+                    characteristic.ValueChanged -= oldEventHandler;
+                }
                 //if (status == GattCommunicationStatus.Success)
                 //{
                 //    //adrebbe tolta la giusta action
@@ -467,14 +507,18 @@ namespace CosmedBleLib.Extensions
                 }
             catch (Exception e)
             {
+                var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.None);
                 if (errorAction != null)
                 {
-                    ErrorFoundClass.ErrorFound += errorAction;
+                    GattCharacteristicExtensions.ErrorFoundCustom += errorAction;
+                    GattCharacteristicExtensions.ErrorFoundCustom.Invoke(characteristic, args);
+                    GattCharacteristicExtensions.ErrorFoundCustom -= errorAction;
+                }
+                else
+                {
+                    ErrorFoundClass.Call(characteristic, args);
                 }
 
-                var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Notify);
-                ErrorFoundClass.Call(characteristic, args);
-                ErrorFoundClass.ErrorFound -= errorAction;
                 Console.WriteLine("error catched with characteristic: " + characteristic.Uuid.ToString());
                 Console.WriteLine(e.Message);
            

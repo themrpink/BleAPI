@@ -1,0 +1,26 @@
+var interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device =
+[
+    [ "SetAdvertisement", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#afc6ce9856aea8e4ca21f0be0105c4198", null ],
+    [ "BluetoothAddressType", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#ab990573f721390876475305a19833bf1", null ],
+    [ "DataSections", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a38df2bb04861763e5513c128f76b1fe2", null ],
+    [ "DataSectionsFromScanResponse", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a94e9d46a88b172f61cbe4a9a392c39c4", null ],
+    [ "DeviceAddress", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a19cdcca9b13d455d6fc4ed80a6c7c56d", null ],
+    [ "DeviceName", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#afe6bf9f66a69481b1d6fa49dab032418", null ],
+    [ "Flags", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a9182e8d70902d46341abfca8dace6982", null ],
+    [ "GetAdvertisementContent", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a7be292d3f712e3e6d6c4a81f9ce7af61", null ],
+    [ "GetScanResponseAdvertisementContent", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a66e791649137d5b223f9565846bce748", null ],
+    [ "HasScanResponse", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#abd18f6232735885ff8a477aacef072e0", null ],
+    [ "HexDeviceAddress", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a92d1ee1f714447ea267b7d9e2e54542f", null ],
+    [ "IsAnonymous", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#ad9969aa85c29dc9fa43067295388fec3", null ],
+    [ "IsConnectable", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a2fa10840a50b1628085665850b01b66b", null ],
+    [ "IsDirected", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#aa0219fd065fdefdbbd3fd959b025390d", null ],
+    [ "IsScannable", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a55032933b32223eb045461b42fc734e1", null ],
+    [ "ManufacturerData", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a0699a62d350d5fbc6e52963346effc47", null ],
+    [ "ManufacturerDataFromScanResponse", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a7a797599e9ee915c9b1067f5abbb1425", null ],
+    [ "RawSignalStrengthInDBm", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a0b698220362f701b68b231b60d0e7222", null ],
+    [ "ServiceUuids", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#ace64ba83b62fde2f69f47ba63094f4cc", null ],
+    [ "ServiceUuidsFromScanResponse", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#aff17613c5f1cfa740b565c3b8ac6817d", null ],
+    [ "Timestamp", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a64510f3503989ff0564895ee1882c0aa", null ],
+    [ "TransmitPowerLevelInDBm", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#a0190fb2e6a2982bd1aba55823ae51329", null ],
+    [ "ScanResponseReceived", "interface_cosmed_ble_lib_1_1_device_discovery_1_1_i_cosmed_ble_advertised_device.html#abd3e8e112f55e80d39b543ae33aacbfe", null ]
+];

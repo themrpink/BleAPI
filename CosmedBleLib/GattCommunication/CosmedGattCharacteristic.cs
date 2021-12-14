@@ -386,19 +386,19 @@ namespace CosmedBleLib.GattCommunication
     /// </summary>
     public class CosmedGattErrorFoundEventArgs : EventArgs
     {
-        /// <value>
+        /// <summary>
         /// Gets the catched exception.
-        /// </value>
+        /// </summary>
         public Exception Exception { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the characteristic properties.
-        /// </value>
+        /// </summary>
         public GattCharacteristicProperties Property { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the GattReadClientCharacteristicConfigurationDescriptorResult.
-        /// </value>
+        /// </summary>
         public GattReadClientCharacteristicConfigurationDescriptorResult Result { get; private set; }
 
         /// <summary>
@@ -430,9 +430,9 @@ namespace CosmedBleLib.GattCommunication
     /// </summary>
     public class CosmedCharacteristicSubscriptionResult : ICommunicationResult
     {
-        /// <value>
+        /// <summary>
         /// Gets the characteristic properties.
-        /// </value>
+        /// </summary>
         public GattCharacteristicProperties Property { get; private set; }
 
         /// <summary>
@@ -445,9 +445,9 @@ namespace CosmedBleLib.GattCommunication
         /// </summary>
         public CosmedGattCommunicationStatus Status { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the protocol error if present.
-        /// </value>
+        /// </summary>
         public byte? ProtocolError { get; private set; }
 
 
@@ -484,9 +484,9 @@ namespace CosmedBleLib.GattCommunication
     /// </summary>
     public class CosmedCharacteristicReadResult : BufferReader, ICommunicationResult
     {
-        /// <value>
+        /// <summary>
         /// Gets the protocol error if present.
-        /// </value>
+        /// </summary>
         public byte? ProtocolError { get; private set; }
 
         /// <summary>
@@ -494,14 +494,14 @@ namespace CosmedBleLib.GattCommunication
         /// </summary>
         public CosmedGattCommunicationStatus Status { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the protocol error in hex string format if present.
-        /// </value>
+        /// </summary>
         public string ProtocolErrorString { get { return string.Format("X2", ProtocolError); } }
 
-        /// <value>
+        /// <summary>
         /// Gets the characteristic properties.
-        /// </value>
+        /// </summary>
         public GattCharacteristicProperties Property { get; private set; }
 
 
@@ -525,14 +525,14 @@ namespace CosmedBleLib.GattCommunication
     /// </summary>
     public class CosmedCharacteristicWriteResult : ICommunicationResult
     {
-        /// <value>
+        /// <summary>
         /// Gets the characteristic properties.
-        /// </value>
+        /// </summary>
         public GattCharacteristicProperties Property { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the protocol error if present.
-        /// </value>
+        /// </summary>
         public byte? ProtocolError { get; }
 
         /// <summary>

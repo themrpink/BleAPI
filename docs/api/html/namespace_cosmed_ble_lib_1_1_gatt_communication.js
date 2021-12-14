@@ -1,0 +1,12 @@
+var namespace_cosmed_ble_lib_1_1_gatt_communication =
+[
+    [ "CosmedCharacteristicReadResult", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_read_result.html", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_read_result" ],
+    [ "CosmedCharacteristicSubscriptionResult", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_subscription_result.html", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_subscription_result" ],
+    [ "CosmedCharacteristicWriteResult", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_write_result.html", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_write_result" ],
+    [ "CosmedGattErrorFoundEventArgs", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_gatt_error_found_event_args.html", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_gatt_error_found_event_args" ],
+    [ "GattDiscoveryService", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_gatt_discovery_service.html", "class_cosmed_ble_lib_1_1_gatt_communication_1_1_gatt_discovery_service" ],
+    [ "ICharacteristicCommunicationResult", "interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_characteristic_communication_result.html", "interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_characteristic_communication_result" ],
+    [ "ICommunicationResult", "interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_communication_result.html", "interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_communication_result" ],
+    [ "IGattDiscoveryService", "interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_gatt_discovery_service.html", "interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_gatt_discovery_service" ],
+    [ "IServiceCommunicationResult", "interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_service_communication_result.html", "interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_service_communication_result" ]
+];

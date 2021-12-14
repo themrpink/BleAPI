@@ -32,66 +32,66 @@ namespace CosmedBleLib.ConnectionServices
 
 
         #region Public Properties
-        /// <value>
+        /// <summary>
         /// Gets the instance of the device
-        /// </value>
+        /// </summary>
         public BluetoothLEDevice BluetoothLeDevice { get { return bluetoothLeDevice; } }
 
-        /// <value>
+        /// <summary>
         /// Gets the device address
-        /// </value>
+        /// </summary>
         public ulong BluetoothAddress { get { return bluetoothLeDevice.BluetoothAddress; } }
 
-        /// <value>
+        /// <summary>
         /// Gets the device name
-        /// </value>
+        /// </summary>
         public string Name { get { return bluetoothLeDevice.Name; } }
 
-        /// <value>
+        /// <summary>
         /// Gets the Bluetooth LE apperance value. 
         /// For category convertion <see cref="CosmedBleLib.Values.BluetoothAppearanceType"/>
-        /// </value>
+        /// </summary>
         public BluetoothLEAppearance Appearance { get { return bluetoothLeDevice.Appearance; } }
 
-        /// <value>
+        /// <summary>
         /// Gets the Bluetooth address type (public, random, unspecified).
-        /// </value>
+        /// </summary>
         public BluetoothAddressType BluetoothAddressType { get { return bluetoothLeDevice.BluetoothAddressType; } }
 
         //inforations about device and pairing
-        /// <value>
+        /// <summary>
         /// Gets the device information. From this object also pairing methods can be accessed.
-        /// </value>
+        /// </summary>
         public DeviceInformation DeviceInformation { get { return bluetoothLeDevice.DeviceInformation; } }
 
-        /// <value>
+        /// <summary>
         /// Gets the device access information
-        /// </value>
+        /// </summary>
         public DeviceAccessInformation DeviceAccessInformation { get { return bluetoothLeDevice.DeviceAccessInformation; } }
 
-        /// <value>
+        /// <summary>
         /// Gets a string indicating the device ID
-        /// </value>
+        /// </summary>
         public string DeviceId { get { return bluetoothLeDevice.DeviceId; } }
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean indicating if the device is a Bluetooth Low Energy
-        /// </value>
+        /// </summary>
         public bool IsLowEnergyDevice { get { return bluetoothLeDevice.BluetoothDeviceId.IsLowEnergyDevice; } }
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean indicating if the device is connected
-        /// </value>
+        /// </summary>
         public bool IsConnected { get { return bluetoothLeDevice.ConnectionStatus == BluetoothConnectionStatus.Connected; } }
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean indicating if the device can be paired
-        /// </value>
+        /// </summary>
         public bool CanPair { get { return bluetoothLeDevice.DeviceInformation.Pairing.CanPair; } }
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean indicating if the device is paired
-        /// </value>
+        /// </summary>
         public bool IsPaired { get { return bluetoothLeDevice.DeviceInformation.Pairing.IsPaired; } }
 
         #endregion
@@ -336,19 +336,19 @@ namespace CosmedBleLib.ConnectionServices
     public sealed class PairingResult
     {
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean indicating if a secure connection war used for pairing
-        /// </value>
+        /// </summary>
         public bool WasSecureConnectionUsedForPairing { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the Protection level used for pairing
-        /// </value>
+        /// </summary>
         public DevicePairingProtectionLevel ProtectionLevelUsed { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the pairing result status
-        /// </value>
+        /// </summary>
         public DevicePairingResultStatus PairingResultStatus { get; private set; }
 
 
@@ -374,22 +374,22 @@ namespace CosmedBleLib.ConnectionServices
     public static class PairingService
     {
 
-        /// <value>
+        /// <summary>
         /// Gets the most generic DevicePairingKinds to be used as default in the pairing ´process. Windows 10 
         /// will apply the most secure pairing option available on both devices
-        /// </value>
-        public static DevicePairingKinds ceremonySelection { get; } =   DevicePairingKinds.None |
+        /// </summary>
+        public static DevicePairingKinds CeremonySelection { get; } =   DevicePairingKinds.None |
                                                                         DevicePairingKinds.ConfirmOnly |
                                                                         DevicePairingKinds.ConfirmPinMatch |
                                                                         DevicePairingKinds.DisplayPin |
                                                                         DevicePairingKinds.ProvidePasswordCredential |
                                                                         DevicePairingKinds.ProvidePin;
 
-        /// <value>
+        /// <summary>
         /// Gets the most generic DevicePairingProtectionMethod to be used as default in the pairing ´process. 
         /// Windows 10 will apply the most secure pairing option available on both devices
-        /// </value>
-        public static DevicePairingProtectionLevel minProtectionLevel { get; } = DevicePairingProtectionLevel.None |
+        /// </summary>
+        public static DevicePairingProtectionLevel MinProtectionLevel { get; } = DevicePairingProtectionLevel.None |
                                                                                  DevicePairingProtectionLevel.Default |
                                                                                  DevicePairingProtectionLevel.Encryption |
                                                                                  DevicePairingProtectionLevel.EncryptionAndAuthentication;

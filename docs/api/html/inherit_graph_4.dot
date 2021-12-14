@@ -1,0 +1,22 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node11 [label="Exception",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",tooltip=" "];
+  Node11 -> Node0 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node0 [label="CosmedBleLib.CustomExceptions.\lBleDeviceConnectionException",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_custom_exceptions_1_1_ble_device_connection_exception.html",tooltip="Thrown when the connection with the device generate an error"];
+  Node11 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="CosmedBleLib.CustomExceptions.\lBlePairingException",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_custom_exceptions_1_1_ble_pairing_exception.html",tooltip="Thrown when pairing causes an error."];
+  Node11 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="CosmedBleLib.CustomExceptions.\lBluetoothAdapterCommunicationFailure\lException",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_custom_exceptions_1_1_bluetooth_adapter_communication_failure_exception.html",tooltip="Thrown when an attempt of communication with the adapter fails"];
+  Node11 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="CosmedBleLib.CustomExceptions.\lBluetoothLeNotSupportedException",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_custom_exceptions_1_1_bluetooth_le_not_supported_exception.html",tooltip="Thrown when the Ble is not supported"];
+  Node11 -> Node16 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node16 [label="CosmedBleLib.CustomExceptions.\lCentralRoleNotSupportedException",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_custom_exceptions_1_1_central_role_not_supported_exception.html",tooltip="Thrown when central role is not supported"];
+  Node11 -> Node17 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node17 [label="CosmedBleLib.CustomExceptions.\lGattCommunicationException",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_custom_exceptions_1_1_gatt_communication_exception.html",tooltip="Thrown when an error during communication through the Gatt occurs"];
+  Node11 -> Node18 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node18 [label="CosmedBleLib.CustomExceptions.\lScanAbortedException",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_custom_exceptions_1_1_scan_aborted_exception.html",tooltip="Thrown when the scan is aborted"];
+}

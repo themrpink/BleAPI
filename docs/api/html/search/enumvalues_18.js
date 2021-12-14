@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['x_5fsenso_5fsolutions_5fkft_0',['x_Senso_Solutions_Kft',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a6de922f6b3b8943b036f5dbad7d6b3c3',1,'CosmedBleLib::Values']]],
+  ['xanthio_1',['XANTHIO',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8af9dda6ac105275a17f560dc5dc6d4cbe',1,'CosmedBleLib::Values']]],
+  ['xenoma_5finc_2',['Xenoma_Inc',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a676ccde31ca923fa768fcdd7b7dbc0ce',1,'CosmedBleLib::Values']]],
+  ['xensr_3',['Xensr',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a7dbaa90e0aca34a6037a2f2f409301f5',1,'CosmedBleLib::Values']]],
+  ['xenter_5finc_4',['Xenter_Inc',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a993bf50103713b1b0066b9f5bbc21a7f',1,'CosmedBleLib::Values']]],
+  ['xi_5fan_5ffengyu_5finformation_5ftechnology_5fco_5fltd_5',['Xi_an_Fengyu_Information_Technology_Co_Ltd',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a6a0d37b1934a0b79ee183bd36fa85e7f',1,'CosmedBleLib::Values']]],
+  ['xiamen_5feholder_5felectronics_5fcoltd_6',['Xiamen_Eholder_Electronics_CoLtd',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8af96cbe3a1443f4c1beca1be2416d8cf0',1,'CosmedBleLib::Values']]],
+  ['xiamen_5feveresports_5fgoods_5fco_5fltd_7',['Xiamen_Everesports_Goods_Co_Ltd',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a985ff01b395ff1a5ba7ec9e765466685',1,'CosmedBleLib::Values']]],
+  ['xiamen_5fmage_5finformation_5ftechnology_5fco_5fltd_8',['Xiamen_Mage_Information_Technology_Co_Ltd',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a9427372fd875bce9a3f36bdcbf261420',1,'CosmedBleLib::Values']]],
+  ['xiaomi_5finc_9',['Xiaomi_Inc',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8af644a1f692e024bb216968e080377c8b',1,'CosmedBleLib::Values']]],
+  ['xicato_5finc_10',['Xicato_Inc',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a766412dca4286c6313d7e433302b235e',1,'CosmedBleLib::Values']]],
+  ['xiq_11',['XiQ',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8ac70831fd0f75fa5d6153f34b5567495a',1,'CosmedBleLib::Values']]],
+  ['xmi_5fsystems_5fsa_12',['XMI_Systems_SA',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8ad12d5757127ea4e7a1c2bbb67f19f147',1,'CosmedBleLib::Values']]],
+  ['xradio_5ftechnology_5fcoltd_13',['Xradio_Technology_CoLtd',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a6552779a47b35d21ced1b18cb1e11478',1,'CosmedBleLib::Values']]],
+  ['xsens_5ftechnologies_5fbv_14',['Xsens_Technologies_BV',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a15c139cbc337d82260aafc8340ee09b4',1,'CosmedBleLib::Values']]],
+  ['xtel_5fwireless_5faps_15',['XTel_Wireless_ApS',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a921e5b20ee868b3cb84b9959253bb51f',1,'CosmedBleLib::Values']]],
+  ['xtrava_5finc_16',['Xtrava_Inc',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8ab6aa3cb80360d286eebddfbe2fbdc732',1,'CosmedBleLib::Values']]],
+  ['xuntong_17',['XUNTONG',['../namespace_cosmed_ble_lib_1_1_values.html#adbe4e57b38f03ab7b05331e8262bced8a60d5205a25cc9f2a10b065f0a438c054',1,'CosmedBleLib::Values']]]
+];

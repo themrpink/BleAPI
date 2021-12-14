@@ -20,93 +20,93 @@ namespace CosmedBleLib.DeviceDiscovery
 
         #region Device Properties
 
-        /// <value>
+        /// <summary>
         /// Gets the the name of the device
-        /// </value>
+        /// </summary>
         public string DeviceName { get; private set; }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the boolean indicating if a scan response from the device has been received
-        /// </value>
+        /// </summary>
         public bool HasScanResponse { get; private set; }
 
 
-        /// <value>
+        /// <summary>
         /// Gets and sets the device address value
-        /// </value>
+        /// </summary>
         public ulong DeviceAddress { get; set; }
 
 
-        /// <value>
+        /// <summary>
         /// Gets and sets the device adress value expressed as string representation of the hexadecimal value
-        /// </value>
+        /// </summary>
         public string HexDeviceAddress { get { return string.Format("0x{0:X2}", DeviceAddress); } }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the type of address (public - random)
-        /// </value>
+        /// </summary>
         public BluetoothAddressType BluetoothAddressType { get; private set; }
 
 
-        /// <value>
+        /// <summary>
         /// Gets and sets the Timestamp of the last received advertising
-        /// </value>
+        /// </summary>
         public DateTimeOffset Timestamp { get; set; }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the boolean indicating whether the Bluetooth LE device is currently advertising a connectable advertisement.
-        /// </value>
+        /// </summary>
         public bool IsConnectable { get; private set; }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the Signal Strength in dBm
-        /// </value>
+        /// </summary>
         public short RawSignalStrengthInDBm { get; private set; }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the boolean indicating whether a Bluetooth Address was omitted from the received advertisement.
-        /// </value>
+        /// </summary>
         public bool IsAnonymous { get; private set; }
 
 
-        /// <value>
+        /// <summary>
         /// Indicates whether the received advertisement is directed.
-        /// </value>
+        /// </summary>
         public bool IsDirected { get; private set; }
 
 
-        /// <value>
+        /// <summary>
         /// Indicates whether the received advertisement is scannable.
-        /// </value>
+        /// </summary>
         public bool IsScannable { get; private set; }
 
 
-        /// <value>
+        /// <summary>
         /// Represents the received transmit power of the advertisement.
-        /// </value>
+        /// </summary>
         public short? TransmitPowerLevelInDBm { get; private set; }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the AdvertisementContect object
-        /// </value>
+        /// </summary>
         public AdvertisementContent GetAdvertisementContent => advertisementContent;
 
 
-        /// <value>
+        /// <summary>
         /// Gets the tScanResponseAdvertisementContect object 
-        /// </value>
+        /// </summary>
         public AdvertisementContent GetScanResponseAdvertisementContent => scanResponseAdvertisementContent;
 
 
-        /// <value>
+        /// <summary>
         /// Gets the colletion of services uuid if they exists, otherwise returns an empty collection
-        /// </value>
+        /// </summary>
         public IReadOnlyCollection<Guid> ServiceUuids
         {
             get
@@ -117,9 +117,9 @@ namespace CosmedBleLib.DeviceDiscovery
         }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the collection of services uuid from the scan response if they exists, otherwise returns an empty collection
-        /// </value>
+        /// </summary>
         public IReadOnlyCollection<Guid> ServiceUuidsFromScanResponse
         {
             get
@@ -130,9 +130,9 @@ namespace CosmedBleLib.DeviceDiscovery
         }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the flags of the advertisement if it exists, otherwise returns null
-        /// </value>
+        /// </summary>
         public BluetoothLEAdvertisementFlags? Flags
         {
             get
@@ -142,10 +142,9 @@ namespace CosmedBleLib.DeviceDiscovery
         }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the collection of ManufacturerData if exists, otherwise returns an empty collection
-
-        /// </value>
+        /// </summary>
         public ManufacturerDataCollection ManufacturerData
         {
             get
@@ -156,9 +155,9 @@ namespace CosmedBleLib.DeviceDiscovery
         }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the collection of ManufacturerData from the scan response if exists, otherwise returns an empty collection
-        /// </value>
+        /// </summary>
         public ManufacturerDataCollection ManufacturerDataFromScanResponse
         {
             get
@@ -169,10 +168,9 @@ namespace CosmedBleLib.DeviceDiscovery
         }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the collection of DataSections if they exists, otherwise returns an empty collection
-
-        /// </value>
+        /// </summary>
         public DataSectionCollection DataSections
         {
             get
@@ -183,9 +181,9 @@ namespace CosmedBleLib.DeviceDiscovery
         }
 
 
-        /// <value>
+        /// <summary>
         /// Gets the collection of DataSections from the scan response if they exists, otherwise returns an empty collection
-        /// </value>
+        /// </summary>
         public DataSectionCollection DataSectionsFromScanResponse
         {
             get
@@ -406,14 +404,14 @@ namespace CosmedBleLib.DeviceDiscovery
     /// </summary>
     public struct AdvertisementContent
     {
-        /// <value>
+        /// <summary>
         /// Gets and sets the BluetoothLEAdvertisement 
-        /// </value>
+        /// </summary>
         public BluetoothLEAdvertisement Advertisement { get; set; }
 
-        /// <value>
+        /// <summary>
         /// Gets and sets the BluetoothLEAdvertisementType
-        /// </value>
+        /// </summary>
         public BluetoothLEAdvertisementType AdvertisementType { get; set; }
     }
 

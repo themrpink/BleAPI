@@ -1,0 +1,9 @@
+var searchData=
+[
+  ['maintainconnection_0',['MaintainConnection',['../interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_gatt_discovery_service.html#a9c7977d952e682ea13d8730c201a633d',1,'CosmedBleLib.GattCommunication.IGattDiscoveryService.MaintainConnection()'],['../class_cosmed_ble_lib_1_1_gatt_communication_1_1_gatt_discovery_service.html#ae5f452172a93bef1062a6378b183aa26',1,'CosmedBleLib.GattCommunication.GattDiscoveryService.MaintainConnection()']]],
+  ['manufacturerdata_1',['ManufacturerData',['../class_cosmed_ble_lib_1_1_device_discovery_1_1_cosmed_ble_advertised_device.html#a612d125cbc9b9a5a224be859e3d90087',1,'CosmedBleLib::DeviceDiscovery::CosmedBleAdvertisedDevice']]],
+  ['manufacturerdatafromscanresponse_2',['ManufacturerDataFromScanResponse',['../class_cosmed_ble_lib_1_1_device_discovery_1_1_cosmed_ble_advertised_device.html#ab6d8b090cfa10f94fae244ba8dc32445',1,'CosmedBleLib::DeviceDiscovery::CosmedBleAdvertisedDevice']]],
+  ['maxadvertisementdatalength_3',['MaxAdvertisementDataLength',['../class_cosmed_ble_lib_1_1_adapter_1_1_cosmed_bluetooth_l_e_adapter.html#a910ae6c58d8f8120ff716ccc1cfdddd6',1,'CosmedBleLib::Adapter::CosmedBluetoothLEAdapter']]],
+  ['maxpdusize_4',['MaxPduSize',['../interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_gatt_discovery_service.html#aba2f177dd12deb18f23be47f28ba795a',1,'CosmedBleLib.GattCommunication.IGattDiscoveryService.MaxPduSize()'],['../class_cosmed_ble_lib_1_1_gatt_communication_1_1_gatt_discovery_service.html#a91495f329f01e54d473827083342a6b0',1,'CosmedBleLib.GattCommunication.GattDiscoveryService.MaxPduSize()']]],
+  ['minprotectionlevel_5',['MinProtectionLevel',['../class_cosmed_ble_lib_1_1_connection_services_1_1_pairing_service.html#afb929e66afe25181d7af66317145ed28',1,'CosmedBleLib::ConnectionServices::PairingService']]]
+];

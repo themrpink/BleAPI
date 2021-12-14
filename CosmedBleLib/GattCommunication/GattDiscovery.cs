@@ -87,39 +87,39 @@ namespace CosmedBleLib.GattCommunication
         event TypedEventHandler<GattSession, GattSessionStatusChangedEventArgs> SessionStatusChanged;
 
 
-        /// <value>
+        /// <summary>
         /// Gets the remote Ble Device object of Gatt communication
-        /// </value>
+        /// </summary>
         ICosmedBleDevice Device { get; }
 
-        /// <value>
+        /// <summary>
         /// Gets the device access status
-        /// </value>
+        /// </summary>
         DeviceAccessStatus DeviceAccessStatus { get; }
 
-        /// <value>
+        /// <summary>
         /// Gets the Gatt session
-        /// </value>
+        /// </summary>
         GattSession GattSession { get; }
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean indicating if the Gatt session can maintain connection
-        /// </value>
+        /// </summary>
         bool CanMaintainConnection { get; }
 
-        /// <value>
+        /// <summary>
         /// Sets and gets the option to maintain connection
-        /// </value>
+        /// </summary>
         bool MaintainConnection { get; set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the value of the Max Pdu supported size
-        /// </value>
+        /// </summary>
         ushort MaxPduSize { get; }
 
-        /// <value>
+        /// <summary>
         /// Gets the session status
-        /// </value>
+        /// </summary>
         GattSessionStatus SessionStatus { get; }
 
     }
@@ -175,39 +175,39 @@ namespace CosmedBleLib.GattCommunication
 
         #region Properties
 
-        /// <value>
+        /// <summary>
         /// Gets the remote Ble Device object of Gatt communication
-        /// </value>
+        /// </summary>
         public ICosmedBleDevice Device { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the device access status
-        /// </value>
+        /// </summary>
         public DeviceAccessStatus DeviceAccessStatus { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets the Gatt session
-        /// </value>
+        /// </summary>
         public GattSession GattSession { get; private set; }
 
-        /// <value>
+        /// <summary>
         /// Gets a boolean indicating if the Gatt session can maintain connection
-        /// </value>
+        /// </summary>
         public bool CanMaintainConnection { get { return GattSession.CanMaintainConnection; } set { GattSession.MaintainConnection = value; } }
 
-        /// <value>
+        /// <summary>
         /// Sets and gets the option to maintain connection
-        /// </value>
+        /// </summary>
         public bool MaintainConnection { get { return GattSession.MaintainConnection; } set { GattSession.MaintainConnection = value; } }
 
-        /// <value>
+        /// <summary>
         /// Gets the value of the Max Pdu supported size
-        /// </value>
+        /// </summary>
         public ushort MaxPduSize { get { return GattSession.MaxPduSize; } }
 
-        /// <value>
+        /// <summary>
         /// Gets the session status
-        /// </value>
+        /// </summary>
         public GattSessionStatus SessionStatus { get { return GattSession.SessionStatus; } }
 
         /// <summary>

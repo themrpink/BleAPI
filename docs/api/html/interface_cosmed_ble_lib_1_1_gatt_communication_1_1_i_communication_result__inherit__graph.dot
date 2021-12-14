@@ -1,0 +1,18 @@
+digraph "CosmedBleLib.GattCommunication.ICommunicationResult"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="CosmedBleLib.GattCommunication.\lICommunicationResult",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="Represents a Gatt Communication Result"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="CosmedBleLib.GattCommunication.\lCosmedCharacteristicReadResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_read_result.html",tooltip="Represents a read result"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="CosmedBleLib.GattCommunication.\lCosmedCharacteristicSubscriptionResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_subscription_result.html",tooltip="Represents a subscription result"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="CosmedBleLib.GattCommunication.\lCosmedCharacteristicWriteResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_write_result.html",tooltip="Represents a write result"];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="CosmedBleLib.GattCommunication.\lICharacteristicCommunicationResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_characteristic_communication_result.html",tooltip="Represents a Characteristic Gatt Communication Result"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="CosmedBleLib.GattCommunication.\lIServiceCommunicationResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_service_communication_result.html",tooltip="Represents a Service Gatt Communication Result"];
+}

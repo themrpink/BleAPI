@@ -14,7 +14,7 @@ namespace CosmedBleLib.MSTest.UnitTest
 
     [TestClass]
     public class CosmedBluetoothLEAdvertisementWatcherTest
-    {       
+    {
         private ICosmedBleAdvertisedDevice device;
         public ICosmedBleAdvertisedDevice device2;
         private CosmedBluetoothLEAdvertisementWatcher watcher;
@@ -71,7 +71,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         {
             await watcher.StartActiveScanning();
             Thread.Sleep(50);
-             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
+            Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
 
 
@@ -85,7 +85,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StopScanning();
             Thread.Sleep(100);
             await watcher.StartActiveScanning();
-             Thread.Sleep(100);
+            Thread.Sleep(100);
 
             Assert.IsTrue(watcher.GetWatcherStatus == BluetoothLEAdvertisementWatcherStatus.Started);
         }
@@ -197,56 +197,56 @@ namespace CosmedBleLib.MSTest.UnitTest
 
 
 
-    //    [TestMethod]
-    //    [TestCategory("scanning.mode")]
-    //    public void StartScanning_startBothModes_eventsAreNotEmpty()
-    //    {
-    //        bool check;
-    //        BluetoothLEAdvertisementWatcher BleWatcher = watcher.getBleWatcher();
-    //        watcher.StartActiveScanning();
+        //    [TestMethod]
+        //    [TestCategory("scanning.mode")]
+        //    public void StartScanning_startBothModes_eventsAreNotEmpty()
+        //    {
+        //        bool check;
+        //        BluetoothLEAdvertisementWatcher BleWatcher = watcher.getBleWatcher();
+        //        watcher.StartActiveScanning();
 
-    //        check = VerifyDelegateAttachedTo(watcher, nameof(watcher.AllDevicesCollectionUpdated));
-    //        Assert.IsTrue(check);
+        //        check = VerifyDelegateAttachedTo(watcher, nameof(watcher.AllDevicesCollectionUpdated));
+        //        Assert.IsTrue(check);
 
-    //        check = VerifyDelegateAttachedTo(watcher, nameof(watcher.NewDeviceDiscovered));
-    //        Assert.IsTrue(check);
+        //        check = VerifyDelegateAttachedTo(watcher, nameof(watcher.NewDeviceDiscovered));
+        //        Assert.IsTrue(check);
 
-    //        check = VerifyDelegateAttachedTo(watcher, nameof(watcher.RecentDevicesCollectionUpdated));
-    //        Assert.IsTrue(check);
-   
-    //*   questi non funzionano, restiuiscono null al fieldInfo
-    //        check = VerifyDelegateAttachedTo(BleWatcher, nameof(BleWatcher.Received));
-    //        Assert.IsTrue(check);
+        //        check = VerifyDelegateAttachedTo(watcher, nameof(watcher.RecentDevicesCollectionUpdated));
+        //        Assert.IsTrue(check);
 
-    //        check = VerifyDelegateAttachedTo(BleWatcher, nameof(BleWatcher.Stopped));
-    //        Assert.IsTrue(check);
-   
-    //    }
+        //*   questi non funzionano, restiuiscono null al fieldInfo
+        //        check = VerifyDelegateAttachedTo(BleWatcher, nameof(BleWatcher.Received));
+        //        Assert.IsTrue(check);
+
+        //        check = VerifyDelegateAttachedTo(BleWatcher, nameof(BleWatcher.Stopped));
+        //        Assert.IsTrue(check);
+
+        //    }
 
         private bool VerifyDelegateAttachedTo(object objectWithEvent, string eventName)
         {
-                var allBindings = BindingFlags.IgnoreCase | BindingFlags.Public |
-                BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreReturn | 
-                BindingFlags.Default | BindingFlags.CreateInstance | BindingFlags.InvokeMethod; 
+            var allBindings = BindingFlags.IgnoreCase | BindingFlags.Public |
+            BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreReturn |
+            BindingFlags.Default | BindingFlags.CreateInstance | BindingFlags.InvokeMethod;
 
-                var type = objectWithEvent.GetType();
-                var fieldInfo = type.GetField(eventName, allBindings);
+            var type = objectWithEvent.GetType();
+            var fieldInfo = type.GetField(eventName, allBindings);
 
-                var value = fieldInfo.GetValue(objectWithEvent);
+            var value = fieldInfo.GetValue(objectWithEvent);
 
-                var handler = value as Delegate;
-                return handler != null;
+            var handler = value as Delegate;
+            return handler != null;
         }
 
 
-        
+
         [TestMethod]
         [TestCategory("scanning.collections")]
         public void allDeviceDiscovered_NewDevice_DeviceAdded()
         {
             watcher.addDiscoveredDevices(device);
 
-            CollectionAssert.Contains(watcher.AllDiscoveredDevices.ToList(),  device);
+            CollectionAssert.Contains(watcher.AllDiscoveredDevices.ToList(), device);
         }
 
 
@@ -286,7 +286,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StopScanning();
             Thread.Sleep(50);
             await watcher.StartPassiveScanning();
-            
+
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
 
             await watcher.StartActiveScanning();
@@ -304,7 +304,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             watcher.StopScanning();
             Thread.Sleep(50);
             await watcher.StartActiveScanning();
-            
+
             CollectionAssert.AreEquivalent(watcher.AllDiscoveredDevices.ToList(), Array.Empty<CosmedBleAdvertisedDevice>().ToList().AsReadOnly());
         }
 
@@ -440,7 +440,7 @@ namespace CosmedBleLib.MSTest.UnitTest
         {
             watcher.addDiscoveredDevices(device);
             watcher.StopScanning();
-  
+
             CollectionAssert.Contains(watcher.AllDiscoveredDevices.ToList(), device);
             CollectionAssert.AreNotEquivalent(watcher.AllDiscoveredDevices.ToList(), new List<CosmedBleAdvertisedDevice>());
         }
@@ -552,7 +552,7 @@ namespace CosmedBleLib.MSTest.UnitTest
             //Thread.Sleep(100);
             watcher = null;
         }
-  
-        
+
+
     }
 }

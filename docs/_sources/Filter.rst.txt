@@ -1,0 +1,35 @@
+
+Filtering advertising devices
+=============================
+
+Incoming advertising devices can be filtered by the watcher. In order to do that an IFilter object with the desired filtering properties should be create.
+It can be then used to instatiate a new watcher as constructor parameter, or added later to an exhisiting watcher using the SetFilter(IFilter filter) and RemoveFilter() methods.
+
+To create a filter with the desired filtering properties a filter builder is available
+
+.. code-block:: csharp
+   :caption: Build a filter and add it to the watcher
+   
+
+    //creates a filter for devices called "MyLocalName"
+    IFilter filter = FilterBuilder.Init().SetLocalName("MyLocalName").BuildFilter();
+	
+    //instatiates the watcher with the filter. The filter will be applied at every scan
+    IBleScanner scanner = new CosmedBluetoothLEAdvertisementWatcher(filter);
+	
+    //removes the filter. The scanner stops filtering
+    scanner.RemoveFilter();
+	
+    //creates a new filter by Advertisement Flags
+    filter = FilterBuilder.Init().SetFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode).BuildFilter();
+	
+    //add the new filter to the watcher
+    scanner.SetFilter(filter);
+	
+	
+Here the map of the building methods:
+
+.. figure:: /images/filterbuilder.png
+   :scale: 60%
+
+Please see the FilterBuilder in the API documentation for more details. 

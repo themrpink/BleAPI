@@ -15,7 +15,7 @@ namespace CosmedBleLib.Test
         public CosmedBleAdvertisedDevice device2;
         private CosmedBluetoothLEAdvertisementWatcher watcher;
         public CosmedBluetoothLEAdvertisementFilter Filter;
-        public static int count = 0;
+        //public static int count = 0;
 
 
         [TestInitialize]
@@ -45,9 +45,9 @@ namespace CosmedBleLib.Test
         
         [TestMethod]
         [TestCategory("events.watcher")]
-        public async Task WatcherNewDeviceDiscoveredEvent_newDeviceDiscovered_EventCalled()           
+        public async Task WatcherNewDeviceDiscoveredEvent_newDeviceDiscovered_EventCalled()
         {
-            count = 0;
+            int count = 0;
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
             watcher.NewDeviceDiscovered += (s, a) => count = 1;
 
@@ -63,7 +63,7 @@ namespace CosmedBleLib.Test
         [TestCategory("events.watcher")]
         public async Task WatcherStartedListeningEvent_scanPassiveStarted_eventCalled()
         {
-            count = 0;
+            int count  = 0;
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
             watcher.StartedListening += (s, a) => count += 1;
 
@@ -78,10 +78,10 @@ namespace CosmedBleLib.Test
         [TestCategory("events.watcher")]
         public async Task WatcherStartedListeningEvent_scanActiveStarted_eventCalled()
         {
-            count = 0;
+            int count  = 0;
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
-
             watcher.StartedListening += (s, a) => count = 1;
+
             await watcher.StartActiveScanning();
 
             Assert.IsTrue(count == 1);
@@ -93,7 +93,7 @@ namespace CosmedBleLib.Test
         [TestCategory("events.watcher")]
         public async Task WatcherStopScanningEvent_PassiveScanStopped_EventRaised()
         {
-            count = 0;
+            int count  = 0;
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
             watcher.ScanStopped += (s, a) => count+=1;
 
@@ -111,7 +111,7 @@ namespace CosmedBleLib.Test
         [TestCategory("events.watcher")]
         public async Task WatcherStopScanningEvent_ActiveScanStoppedAndStartedAndStopped_EventRaisedTwice()
         {
-            count = 0;
+            int count = 0;
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
             watcher.ScanStopped += (s, a) => { count += 1; };
             
@@ -119,7 +119,7 @@ namespace CosmedBleLib.Test
             Thread.Sleep(100);
             watcher.StopScanning();
             Thread.Sleep(100);
-            await watcher.StartActiveScanning();
+            await watcher .StartActiveScanning();
             watcher.StopScanning();
             Thread.Sleep(100);
 
@@ -132,13 +132,13 @@ namespace CosmedBleLib.Test
         [TestCategory("events.watcher")]
         public async Task WatcherScanModeChangedEvent_ChangeScanModeMultipleTimes_EventRaised()
         {
-            count = 0;
+            int count = 0;
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
             watcher.ScanModeChanged += () => count += 1;
 
             await watcher.StartPassiveScanning();
-            await watcher.StartActiveScanning();
-            await watcher.StartPassiveScanning();
+            await watcher .StartActiveScanning();
+            await watcher .StartPassiveScanning();
       
             Assert.IsTrue(count == 2);
         }
@@ -149,11 +149,11 @@ namespace CosmedBleLib.Test
         [TestCategory("events.watcher")]
         public async Task WatcherScanInterruptedEvent_ChangeScanModeMultipleTimes_EventRaised()
         {
-            count = 0;
+            int count  = 0;
             watcher = new CosmedBluetoothLEAdvertisementWatcher();
             watcher.ScanInterrupted += (s,a) => count += 1;
 
-            await watcher.StartPassiveScanning();
+            await watcher .StartPassiveScanning();
             watcher.StopScanning();
 
 
@@ -182,7 +182,7 @@ namespace CosmedBleLib.Test
             watcher.StopScanning();
             watcher = null;
             Filter = null;
-            count = 0;
+            //count = 0;
         }
 
     }

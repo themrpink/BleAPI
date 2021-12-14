@@ -1,0 +1,26 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node0 [label="CosmedBleLib.Helpers.Buffer\lReader",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_helpers_1_1_buffer_reader.html",tooltip="The base to build buffer readers specific to a data format"];
+  Node0 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="CosmedBleLib.GattCommunication.\lCosmedCharacteristicReadResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_read_result.html",tooltip="Represents a read result"];
+  Node0 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="CosmedBleLib.Helpers.Characteristic\lReader",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_helpers_1_1_characteristic_reader.html",tooltip="Data Buffer Reader for the Characteristic format"];
+  Node0 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="CosmedBleLib.Helpers.Data\lSectionReader",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_helpers_1_1_data_section_reader.html",tooltip="Data Buffer Reader for the Data Section format"];
+  Node0 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="CosmedBleLib.Helpers.Manufacturer\lDataReader",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_helpers_1_1_manufacturer_data_reader.html",tooltip="Data Buffer Reader for the ManufacturerData format"];
+  Node22 [label="CosmedBleLib.GattCommunication.\lICommunicationResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_communication_result.html",tooltip="Represents a Gatt Communication Result"];
+  Node22 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node22 -> Node23 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node23 [label="CosmedBleLib.GattCommunication.\lCosmedCharacteristicSubscriptionResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_subscription_result.html",tooltip="Represents a subscription result"];
+  Node22 -> Node24 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node24 [label="CosmedBleLib.GattCommunication.\lCosmedCharacteristicWriteResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$class_cosmed_ble_lib_1_1_gatt_communication_1_1_cosmed_characteristic_write_result.html",tooltip="Represents a write result"];
+  Node22 -> Node25 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node25 [label="CosmedBleLib.GattCommunication.\lICharacteristicCommunicationResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_characteristic_communication_result.html",tooltip="Represents a Characteristic Gatt Communication Result"];
+  Node22 -> Node26 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node26 [label="CosmedBleLib.GattCommunication.\lIServiceCommunicationResult",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$interface_cosmed_ble_lib_1_1_gatt_communication_1_1_i_service_communication_result.html",tooltip="Represents a Service Gatt Communication Result"];
+}

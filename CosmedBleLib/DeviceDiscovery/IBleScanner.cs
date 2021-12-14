@@ -14,20 +14,40 @@ namespace CosmedBleLib.DeviceDiscovery
     /// </summary>
     public interface IBleScanner
     {
-        /// <value>
+        /// <summary>
         /// Contains all the discovered devices since the scan has been started.
-        /// </value>
+        /// </summary>
         IReadOnlyCollection<ICosmedBleAdvertisedDevice> AllDiscoveredDevices { get; }
 
-        /// <value>
+        /// <summary>
         /// Contains the recently discovered devices since the scan has been started.
-        /// </value>
+        /// </summary>
         IReadOnlyCollection<ICosmedBleAdvertisedDevice> RecentlyDiscoveredDevices { get; }
 
-        /// <value>
-        /// Contains the recently discovered devices since the scan has been started.
-        /// </value>
+        /// <summary>
+        /// Contains the last discovered devices since the scan has been started.
+        /// </summary>
         IReadOnlyCollection<ICosmedBleAdvertisedDevice> LastDiscoveredDevices { get; }
+
+        /// <summary>
+        /// then amount of time after which a device in RecentlyDiscoveredDevices can be updated.
+        /// The default value is 10 seconds.
+        /// <remarks>Time is expressed in seconds</remarks>
+        /// </summary>
+        double TimeoutSeconds { get; set; }
+
+        /// <summary>
+        /// Check if the filter is active. Filter is active if is has been set to true.
+        /// Default value is false.
+        /// </summary>
+        bool IsFilteringActive { get; }
+
+
+        /// <summary>
+        /// The actual scanning mode. It can be active, passive or none.
+        /// </summary>
+        BluetoothLEScanningMode ScanningMode { get; } 
+
 
         /// <summary>
         ///Fired when a new device is discovered
@@ -93,6 +113,13 @@ namespace CosmedBleLib.DeviceDiscovery
         /// Remove the filter from the watcher, starting an unfiltered scan
         /// </summary>
         void RemoveFilter();
+
+        /// <summary>
+        /// gets the actual state of the watcher
+        /// </summary>
+        StateMachine status { get; }
+
+       
     }
 
 

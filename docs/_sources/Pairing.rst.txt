@@ -1,0 +1,191 @@
+
+Pairing and unpairing
+=====================
+
+Pairing
+-------
+
+
+The first step, once an advertising device has been selected for further communication, is to create a CosmedBleDevice from the advertising address.
+
+.. code-block:: csharp
+   :caption: Instantiate a CosmedBleDevice
+   
+    //gets a CosmedBleDevice. The device argument is an instance of ICosmedBleAdvertisedDevice
+    CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
+
+
+This object will give access to extra informations about the state of the connection with the device, its appearance if available and more.
+Pleare refer to the CosmedBleDevice class in the API documentation for all the details.
+
+.. figure:: /images/bledevice.png
+   :scale: 50%
+
+   *CosmedBleDevice accessible data and events*  
+   
+   
+For pairing, the ceremony and minimum protection level should be set:
+
+.. code-block:: csharp
+
+    /*
+    * This settings allows all the possible options. The operating system will then choose 
+    * the more secure options compatible to both devices. 
+    * To guarantee a certain security level, stricter options should be set.
+    * If the options are not satisfied from both devices pairing will fail.
+    */
+    DevicePairingKinds ceremonySelection =  DevicePairingKinds.None |
+                                            DevicePairingKinds.ConfirmOnly |
+                                            DevicePairingKinds.ConfirmPinMatch |
+                                            DevicePairingKinds.DisplayPin |
+                                            DevicePairingKinds.ProvidePasswordCredential |
+                                            DevicePairingKinds.ProvidePin;
+
+    DevicePairingProtectionLevel minProtectionLevel =  DevicePairingProtectionLevel.None |
+                                                       DevicePairingProtectionLevel.Default |
+                                                       DevicePairingProtectionLevel.Encryption |
+                                                       DevicePairingProtectionLevel.EncryptionAndAuthentication;
+
+	
+When the most permissive options can be used, then two static pre-set parameters are available for use:
+
+.. code-block:: csharp
+
+    DevicePairingKinds ceremonySelection = PairingService.CeremonySelection;
+    DevicePairingProtectionLevel minProtectionLevel = PairingService.MinProtectionLevel;
+	
+	
+After the pairing options have been set, the following static method should be called:
+
+.. code-block:: csharp
+
+    //pairing. it´s possible to call an overload with custom event handler. This call will use the default one
+    //which uses the console to ask for pairing confirmation
+    PairingResult pairedDevice = await PairingService.PairDevice(connectionDevice, ceremonySelection, minProtectionLevel);
+
+
+
+The PairingResult will contain the following information about the pairing process:
+
+.. figure:: /images/pairingresult.png
+   :scale: 50%
+
+For detailed informations see:
+ * `DevicePairingResultStatus <https://docs.microsoft.com/en-us/uwp/api/windows.devices.enumeration.devicepairingresultstatus?view=winrt-22000>`_
+ * `DevicePairingProtectionLevel <https://docs.microsoft.com/en-us/uwp/api/windows.devices.enumeration.devicepairingprotectionlevel?view=winrt-22000>`_
+
+To handle the pairing process the user should pass it´s own implemented handler to personalize it or to not use the console. 
+The following PairDevice() method can accept an event handler to offer a custom pairing handle:
+
+.. code-block:: csharp
+
+   public static async Task<PairingResult> PairDevice(ICosmedBleDevice device, 
+                                                   DevicePairingKinds ceremonySelection, 
+                                                   DevicePairingProtectionLevel minProtectionLevel, 
+                                                   TypedEventHandler<DeviceInformationCustomPairing, DevicePairingRequestedEventArgs> eventHandler
+                                                   )
+
+
+This is the implementation of default handler available for pairing, which will be used when PairDevice() is invoked without the eventHandler parameter:
+
+.. code-block:: csharp
+
+        //this method, used as default handler to manage the pairing process should be implemented by the user and passed 
+        //to the GetPairedDevice method that accept an event as argument
+        private static void PairingRequestedHandler(DeviceInformationCustomPairing sender, DevicePairingRequestedEventArgs args)
+        {
+            switch (args.PairingKind)
+            {
+                case DevicePairingKinds.ConfirmOnly:
+                    // Windows itself will pop the confirmation dialog as part of "consent" if this is running on Desktop or Mobile
+                    // If this is an App for 'Windows IoT Core' where there is no Windows Consent UX, you may want to provide your own confirmation.
+                    Console.WriteLine("ok presse enter to accept pairing");
+                    Console.ReadLine();
+                    args.Accept();
+                    break;
+
+                case DevicePairingKinds.DisplayPin:
+                    // We just show the PIN on this side. The ceremony is actually completed when the user enters the PIN
+                    // on the target device. We automatically accept here since we can't really "cancel" the operation
+                    // from this side.
+                    Console.WriteLine("ok presse enter to accept pin " + args.Pin);
+                    Console.ReadLine();
+                    args.Accept();
+
+                    // No need for a deferral since we don't need any decision from the user
+                    Console.WriteLine("Please enter this PIN on the device you are pairing with: " + args.Pin, args.PairingKind);
+                    Console.ReadLine();
+                    break;
+
+                case DevicePairingKinds.ProvidePin:
+                    // A PIN may be shown on the target device and the user needs to enter the matching PIN on
+                    // this Windows device. Get a deferral so we can perform the async request to the user.
+                    var collectPinDeferral = args.GetDeferral();
+
+                    Console.WriteLine("Please enter the PIN shown on the device you're pairing with");
+                    string pin = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(pin))
+                    {
+                        args.Accept(pin);
+                    }
+
+                    collectPinDeferral.Complete();
+
+                    break;
+
+                case DevicePairingKinds.ProvidePasswordCredential:
+
+                    var collectCredentialDeferral = args.GetDeferral();
+                    Console.WriteLine("insert username");
+                    string username = Console.ReadLine();
+                    Console.WriteLine("insert password");
+                    string password = Console.ReadLine();
+                    var credential = new PasswordCredential() { UserName = username, Password = password };
+                    if (credential != null)
+                    {
+                        args.AcceptWithPasswordCredential(credential);
+                    }
+                    collectCredentialDeferral.Complete();
+
+                    break;
+
+                case DevicePairingKinds.ConfirmPinMatch:
+                    // We show the PIN here and the user responds with whether the PIN matches what they see
+                    // on the target device. Response comes back and we set it on the PinComparePairingRequestedData
+                    // then complete the deferral.
+                    var displayMessageDeferral = args.GetDeferral();
+                    Console.WriteLine("pin: " + args.Pin);
+                    Console.WriteLine("does the pin matches? Y/N");
+                    string answer = Console.ReadLine();
+                    while (!answer.ToLower().Equals("y") && !answer.ToLower().Equals("n"))
+                    {
+                        Console.WriteLine("please answer y or n");
+                        answer = Console.ReadLine();
+                    }
+                    if (answer.ToLower().Equals("y"))
+                    {
+                        args.Accept();
+                    }
+  
+
+                    displayMessageDeferral.Complete();
+                    break;
+            }
+            
+        }
+
+
+
+Unpairing
+---------
+
+To unpair, call the PairingService.Unpair(ICosmedBleDevice) method:
+
+.. code-block:: csharp
+
+    CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
+
+    PairingResult pairedDevice = await PairingService.PairDevice(connectionDevice, ceremonySelection, minProtectionLevel);
+	
+    //unpair
+    DeviceUnpairingResult result = await PairingService.Unpair(connectionDevice);

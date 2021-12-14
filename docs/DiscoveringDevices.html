@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discovering devices &mdash; CosmedBleLib 1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Filtering advertising devices" href="Filter.html" />
+    <link rel="prev" title="QuickStart" href="QuickStart.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CosmedBleLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QuickStart.html">QuickStart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Discovering devices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#scanning-states">Scanning states</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#collect-and-retrieve-advertisement-data">Collect and retrieve advertisement data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#advertising-devices-collections">Advertising devices collections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advertising-device-objects">Advertising device objects</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#events">Events</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Filter.html">Filtering advertising devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pairing.html">Pairing and unpairing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GattDiscovery.html">Gatt Discovery Services</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GattCommunication.html">Gatt communication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HelperMethods.html">Helper Methods</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="./api/html/index.html#http://">Cosmed API Documentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.microsoft.com/en-us/windows/uwp/devices-sensors/bluetooth-low-energy-overview">Microsoft UWP Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CosmedBleLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Discovering devices</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/DiscoveringDevices.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="discovering-devices">
+<h1>Discovering devices<a class="headerlink" href="#discovering-devices" title="Permalink to this headline"></a></h1>
+<p>Discovering devices includes three main operations:</p>
+<ul class="simple">
+<li><p>scanning</p></li>
+<li><p>filtering</p></li>
+<li><p>exploring discovered devices</p></li>
+</ul>
+<section id="scanning-states">
+<h2>Scanning states<a class="headerlink" href="#scanning-states" title="Permalink to this headline"></a></h2>
+<p>Scanning is done by IBleScanner or equivalently by CosmedBluetoothLEAdvertisementWatcher objects.
+It has four possible states:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Stopped</p></li>
+<li><p>Started</p></li>
+<li><p>Aborted</p></li>
+<li><p>Paused</p></li>
+</ol>
+</div></blockquote>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="_images/scanStates.png"><img alt="Scan states" src="_images/scanStates.png" style="width: 804.8000000000001px; height: 509.6px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>Scan states</em></span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>A newly instantiated Watcher/scanner begins from the stopped state. To start scanning two scanning modes are available:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>passive scanning:</dt><dd><ul>
+<li><p>used to obtain advertising data from peer devices</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>active scanning:</dt><dd><ul>
+<li><p>used not only to obtain advertising data from peer devices but also their scan response data if available.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">Start scanning</span><a class="headerlink" href="#id2" title="Permalink to this code"></a></div>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span>     <span class="c1">//instantiates the scanner</span>
+     <span class="n">IBleScanner</span> <span class="n">scanner</span> <span class="p">=</span> <span class="k">new</span> <span class="n">CosmedBluetoothLEAdvertisementWatcher</span><span class="p">();</span>
+
+     <span class="c1">//starts a scanning in active mode</span>
+     <span class="n">scanner</span><span class="p">.</span><span class="n">StartActiveScanning</span><span class="p">();</span>
+
+     <span class="c1">//starts a scanning in passive mode</span>
+     <span class="n">scanner</span><span class="p">.</span><span class="n">StartPassiveScanning</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<p>The Started state is reached after one of these two methods has been called, initialisation terminated and the scan started. It’s possible to pass from a scan mode to another maintaining the Started state without stopping the scan.</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/scanMode.png"><img alt="Scan modes" src="_images/scanMode.png" style="width: 704.0px; height: 356.0px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>Scan modes</em></span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Starting a new scan from the Stopped state implies a re-initialisation of the adevertised data collection.
+This means that all the data collected during the previous scan, if present, will be lost.</p>
+<p>To avoid re-initialisation and maintain the previously collected data, the method PauseScanning() should be used.
+When ready to start the ResumeScanning() method will resume the scan from its last used mode (active or passive).</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Pause and resume scanning</span><a class="headerlink" href="#id4" title="Permalink to this code"></a></div>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span>     <span class="c1">//pauses the running scan</span>
+     <span class="n">scanner</span><span class="p">.</span><span class="n">PauseScanning</span><span class="p">();</span>
+
+     <span class="c1">//resumes the paused scan</span>
+     <span class="n">scanner</span><span class="p">.</span><span class="n">ResumeScanning</span><span class="p">();</span>
+
+     <span class="c1">//stops the scan</span>
+     <span class="n">scanner</span><span class="p">.</span><span class="n">StopScanning</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<p>When an error occurs during the scanning process the scan will be interrupted and the watcher will enter the Aborted state. The scan can be normally restarted, if the problem has been resolved, using the start methods.</p>
+</section>
+<section id="collect-and-retrieve-advertisement-data">
+<h2>Collect and retrieve advertisement data<a class="headerlink" href="#collect-and-retrieve-advertisement-data" title="Permalink to this headline"></a></h2>
+<section id="advertising-devices-collections">
+<h3>Advertising devices collections<a class="headerlink" href="#advertising-devices-collections" title="Permalink to this headline"></a></h3>
+<p>During the scan, advertising devices are discovered and saved by the watcher. This happens through the advertisement packets that the remote devices are broadcasting on reserved channels.
+Advertising data is stored by the watcher as ICosmedBleAdvertisedDevice objects into a private collection. The data can be obtained with three properties:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>AllDiscoveredDevices:</dt><dd><ul>
+<li><p>devices discovered since the scan has been started</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>RecentlyDiscoveredDevices:</dt><dd><ul>
+<li><p>devices discovered since a settable lapse of time and since the scan has been started</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>LastDiscoveredDevices:</dt><dd><ul>
+<li><p>devices discovered since the last access to the collection and since the scan has been started</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="literal-block-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">Get advertising devices collections</span><a class="headerlink" href="#id5" title="Permalink to this code"></a></div>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span>     <span class="c1">//gets all the devices discovered since the scan has been started</span>
+     <span class="n">IReadOnlyCollection</span><span class="p">&lt;</span><span class="n">ICosmedBleAdvertisedDevice</span><span class="p">&gt;</span> <span class="n">allDevices</span> <span class="p">=</span> <span class="n">scanner</span><span class="p">.</span><span class="n">AllDiscoveredDevices</span>
+
+     <span class="c1">//gets the devices discovered since a settable lapse of time</span>
+     <span class="n">IReadOnlyCollection</span><span class="p">&lt;</span><span class="n">ICosmedBleAdvertisedDevice</span><span class="p">&gt;</span> <span class="n">recentDevices</span> <span class="p">=</span> <span class="n">scanner</span><span class="p">.</span><span class="n">RecentlyDiscoveredDevices</span>
+
+     <span class="c1">//a timeout can be set for the RecentlyDiscoveredDevices. The default value is 10 seconds</span>
+     <span class="n">scanner</span><span class="p">.</span><span class="n">TimeoutSeconds</span> <span class="p">=</span> <span class="m">20</span><span class="p">;</span>
+
+ <span class="c1">//gets the devices discovered since the last access to the collection</span>
+     <span class="n">IReadOnlyCollection</span><span class="p">&lt;</span><span class="n">ICosmedBleAdvertisedDevice</span><span class="p">&gt;</span> <span class="n">lastDevices</span> <span class="p">=</span> <span class="n">scanner</span><span class="p">.</span><span class="n">LastDiscoveredDevices</span>
+</pre></div>
+</div>
+</div>
+<p>The result collections are updated at every get request.
+When more than 128 devices have been collected during the same scan session, the main collection gets cleaned by the watcher and only the last 20 discovered devices are maintained.</p>
+</section>
+<section id="advertising-device-objects">
+<h3>Advertising device objects<a class="headerlink" href="#advertising-device-objects" title="Permalink to this headline"></a></h3>
+<p>For every new discovered device an ICosmedBleAdvertisedDevice is created and saved into a collection. When new advertisings from the same device are received, the correspondent object in the collection is updated.
+During the active scan mode if a scan response is received, it also gets added to the ICosmedBleAdvertisedDevice object. If a device changes its address is seen as a new device by the watcher and saved as a new object.</p>
+<p>An advertised device allows the access to various informations about the remote device, depending on what kind of data has been transmitted.
+Informations obtained from advertisement packets and scan response packets respectively are stored in two distinct objects. They can be get with the properties GetAdvertisementContent and GetScanResponseAdvertisementContent, if available.</p>
+<p>Other informations that can be obtained are the device name, device address, manufacturer data, rssi, advertisement flags, etc.
+For more information please see the CosmedBleAdvertisedDevice in the API documentation.</p>
+<figure class="align-default" id="id6">
+<a class="reference internal image-reference" href="_images/advdevice.png"><img alt="ICosmedBleAdvertisedDevice accessible data structure" src="_images/advdevice.png" style="width: 553.5px; height: 363.5px;" /></a>
+<figcaption>
+<p><span class="caption-text"><em>ICosmedBleAdvertisedDevice accessible data structure</em></span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The ScanResponseReceived event informs the user, for every ICosmedBleAdvertisedDevice object, when a scan response packet has been received.</p>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">Subscribe to scan response notifications</span><a class="headerlink" href="#id7" title="Permalink to this code"></a></div>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span> <span class="c1">//iterate through all the discovered devices</span>
+ <span class="k">foreach</span><span class="p">(</span><span class="kt">var</span> <span class="n">advDevice</span> <span class="k">in</span> <span class="n">allDevices</span><span class="p">)</span>
+ <span class="p">{</span>
+     <span class="c1">//subscribe to notification event, an example</span>
+     <span class="n">advDevice</span><span class="p">.</span><span class="n">ScanResponseReceived</span> <span class="p">+=</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;scan response received from device &quot;</span> <span class="p">+</span> <span class="n">a</span><span class="p">.</span><span class="n">DeviceAddress</span><span class="p">)</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="events">
+<h2>Events<a class="headerlink" href="#events" title="Permalink to this headline"></a></h2>
+<p>The watcher public events send notifications about the state of the scanner.</p>
+<dl class="simple">
+<dt>The events are:</dt><dd><ul class="simple">
+<li><p>NewDeviceDiscovered</p></li>
+<li><p>ScanStopped</p></li>
+<li><p>ScanInterrupted</p></li>
+<li><p>StartedListening</p></li>
+<li><p>ScanModeChanged</p></li>
+</ul>
+</dd>
+</dl>
+<p>For more informations please see IBleScanner and CosmedBluetoothLEAdvertisementWatcher in the API documentation.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="QuickStart.html" class="btn btn-neutral float-left" title="QuickStart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Filter.html" class="btn btn-neutral float-right" title="Filtering advertising devices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Stefano Urani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
