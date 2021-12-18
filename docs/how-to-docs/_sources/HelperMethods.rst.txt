@@ -1,0 +1,139 @@
+
+Helper Methods
+==============
+
+The library offers some utilities to convert data in the desired format.
+
+Two main groups of helper methods are offered:
+
+* :ref:`Read and write buffer data`
+* :ref:`Convert Bluetooth Assigned Numbers`
+
+
+Read and write buffer data
+--------------------------
+
+
+Read buffer data
+________________
+
+Helper methods to convert buffer data into various data types.
+They are accessible from the static class CosmedBleLib.Helpers.ClientBufferReader. They all take an IBuffer as argument, and return a value of the type indicated in the method signatures:
+
+* public static string ToUTF8String(IBuffer buffer)
+* public static string ToUTF16String(IBuffer buffer)
+* public static Int16 ToInt16(IBuffer buffer)
+* public static int ToInt32(IBuffer buffer)
+* public static Int64 ToInt64(IBuffer buffer)
+* public static Single ToSingle(IBuffer buffer)
+* public static Double ToDouble(IBuffer buffer)
+* public static UInt16 ToUInt16(IBuffer buffer)
+* public static UInt32 ToUInt32(IBuffer buffer)
+* public static UInt64 ToUInt64(IBuffer buffer)
+* public static byte[] ToByteArray(IBuffer buffer)
+* public static string ToHexString(IBuffer buffer)
+
+This method adds a padding of zeros in the front of a byte array:
+
+* private static byte[] PadBytes(byte[] input, int length)
+
+
+.. figure:: /images/clientbufferreader.png
+   :scale: 60%
+
+
+Write buffer data
+_________________
+
+Helper methods to write various data formats into an IBuffer, as indicated in the argument types.
+They are accessible from the static class CosmedBleLib.Helpers.BufferWriter:
+
+* public static IBuffer ConvertValueToBuffer(byte byteValue)
+* public static IBuffer ConvertValueToBuffer(byte byteValue1, byte byteValue2)
+* public static IBuffer ConvertValueToBuffer(DateTime time)
+* public static IBuffer ToIBufferFromHexString(string data)
+* public static IBuffer ToIBuffer(bool data)
+* public static IBuffer ToIBuffer(byte data)
+* public static IBuffer ToIBuffer(byte[] data)
+* public static IBuffer ToIBuffer(double data)
+* public static IBuffer ToIBuffer(Int16 data)
+* public static IBuffer ToIBuffer(Int32 data)
+* public static IBuffer ToIBuffer(Int64 data)
+* public static IBuffer ToIBuffer(Single data)
+* public static IBuffer ToIBuffer(UInt16 data)
+* public static IBuffer ToIBuffer(UInt32 data)
+* public static IBuffer ToIBuffer(UInt64 data)
+* public static IBuffer ToIBuffer(string data)
+
+.. figure:: /images/bufferwriter.png
+   :scale: 60%
+
+Specific buffer readers
+_______________________
+
+This classes allows to convert data from specific buffers into string format:
+
+* public class ManufacturerDataReader
+* public class CharacteristicReader
+* public class DataSectionReader
+
+For more detailed information, please see the Cosmed API Documentation.
+
+
+
+Convert Bluetooth Assigned Numbers
+----------------------------------
+
+These public static classes and methods allow to convert values into their assigned string value:
+
+* class GattServiceUuidHelper
+   * string ConvertUuidToName(Guid uuid) --> Converts a 16 or 128 bit Gatt Primary Service UUID to its name if registered.
+   * see the Cosmed API Documentation
+   * `see GattDeviceService Uuid <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattdeviceservice.uuid?view=winrt-22000>`_
+
+* class GattCharacteristicUuidHelper
+   * string ConvertUuidToName(Guid uuid) --> Converts a registered 16 or 128 bit Characteristic UUID to its name if registered.
+   * see the Cosmed API Documentation
+   * `see GattCharacteristic Uuid <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattcharacteristic.uuid?view=winrt-22000#Windows_Devices_Bluetooth_GenericAttributeProfile_GattCharacteristic_Uuid>`_
+
+* class GattDeclarationHelper
+   * string ConvertUuidToName(Guid uuid) --> Converts a registered 16 or 128 bit GattDeclaration UUID to a name if registered.
+   * see the Cosmed API Documentation
+   
+* class GattDescriptorUuidHelper
+   * string ConvertUuidToName(Guid uuid) --> Converts a registered 16 or 128 bit Gatt Descriptor UUID to a name if registered.
+   * see the Cosmed API Documentation
+   * `see GattDescriptor <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattdescriptor?view=winrt-22000>`_
+  
+* class AdvertisementDataTypeHelper
+   * string ConvertAdvertisementDataTypeToString(byte dataType) --> Converts a registered dataType value to a name
+   * see the Cosmed API Documentation
+   * `see BluetoothLEAdvertisementDataTypes <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.advertisement.bluetoothleadvertisementdatatypes?view=winrt-22000>`_
+  
+* class AppearenceDataTypeHelper
+   * string ConvertAppearenceTypeToString(ushort dataType) --> Converts an Appearance data type to a name
+   * see the Cosmed API Documentation
+   * `see BluetoothLEAppearance <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.bluetoothleappearance?view=winrt-22000>`_
+     
+* class PresentationFormatUnitsHelper
+   * string ConvertUnitTypeToString(ushort unitType) --> Converts a registered Presentation Format Unit value to a name  
+   * see the Cosmed API Documentation
+   * `see GattPresentationFormat Unit <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattpresentationformat.unit?view=winrt-22000#Windows_Devices_Bluetooth_GenericAttributeProfile_GattPresentationFormat_Unit>`_
+
+* class PresentationFormatTypeHelper
+   * string ConvertFormatTypeToString(byte formatType) --> Converts a registered Presentation Format type value to a name        
+   * see the Cosmed API Documentation
+   * `see GattPresentationFormat FormatType <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattpresentationformat.formattype?view=winrt-22000#Windows_Devices_Bluetooth_GenericAttributeProfile_GattPresentationFormat_FormatType>`_
+
+* class NamespaceTypeHelper
+   * string ConvertNamespaceTypeToString(byte namespaceType) --> Converts a Namespace type to a name
+   * see the Cosmed API Documentation
+   * `see GattPresentationFormat Namespace <https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattpresentationformat.namespace?view=winrt-22000#Windows_Devices_Bluetooth_GenericAttributeProfile_GattPresentationFormat_Namespace>`_
+
+* class ValueConverter
+   * string ConvertGattCharacteristicValueToString(GattCharacteristic characteristic, IBuffer value) --> Converts GattCharacteristic value to a string based on the presentation format
+   * string ConvertValueBufferToString(IBuffer value, GattPresentationFormat format = null) --> Converts GattCharacteristic value to a string based on the presentation format
+
+For more information about the Bluetooth Assigned Numbers see:
+
+* `Bluetooth Assigned Numbers <https://www.bluetooth.com/specifications/assigned-numbers/>`_

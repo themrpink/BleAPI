@@ -25,7 +25,7 @@ namespace CosmedBleConsole
         public static bool goon = false;
         public static bool check = true;
         public static IReadOnlyCollection<CosmedBleAdvertisedDevice> dev;
-        
+        public static int conta = 1;
         public static DevicePairingKinds ceremonySelection =    DevicePairingKinds.None |
                                                                 DevicePairingKinds.ConfirmOnly |
                                                                 DevicePairingKinds.ConfirmPinMatch |
@@ -81,7 +81,7 @@ namespace CosmedBleConsole
             //start scanning
             await scanner.StartActiveScanning();
             //scan.StartPassiveScanning();
-            ErrorFoundClass.ErrorFound += (a, s) => Console.WriteLine("?????????????????error ???????????????");
+            ErrorFoundClass.ErrorFound += (a, s) => Console.WriteLine("?????????????????error ???????????????"+ conta++);
             
             while (scanner.status != StateMachine.Stopped)
             {
@@ -118,7 +118,7 @@ namespace CosmedBleConsole
                                     GattCharacteristicsResult characteristics;
                                     
                                     characteristics = await service.GetCharacteristicsAsync().ToTask();
-                                    ErrorFoundClass.ErrorFound += (a, s) => Console.WriteLine("error");
+                                    //ErrorFoundClass.ErrorFound += (a, s) => Console.WriteLine("error");
                                     foreach (var characteristic in characteristics.Characteristics)
                                     {
                                         

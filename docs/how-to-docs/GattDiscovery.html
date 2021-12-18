@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gatt Discovery Services &mdash; CosmedBleLib 1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Gatt communication" href="GattCommunication.html" />
+    <link rel="prev" title="Pairing and unpairing" href="Pairing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> CosmedBleLib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="QuickStart.html">QuickStart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="DiscoveringDevices.html">Discovering devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Filter.html">Filtering advertising devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pairing.html">Pairing and unpairing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Gatt Discovery Services</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#gatt-discovery">Gatt discovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reliable-write">Reliable write</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#clear-services">Clear Services</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="GattCommunication.html">Gatt communication</a></li>
+<li class="toctree-l1"><a class="reference internal" href="HelperMethods.html">Helper Methods</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="../api_documentation/html/index.html#http://">Cosmed API Documentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://docs.microsoft.com/en-us/windows/uwp/devices-sensors/bluetooth-low-energy-overview">Microsoft UWP BLE Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">CosmedBleLib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Gatt Discovery Services</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GattDiscovery.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gatt-discovery-services">
+<h1>Gatt Discovery Services<a class="headerlink" href="#gatt-discovery-services" title="Permalink to this headline"></a></h1>
+<p>After selecting a discovered device and paired with it, the next step is to discover the Services and Characteristics available on the remote device.
+An IGattDiscoveryService obejct will serve this purpose. It can be instatiated with the statit CreateAsync(ICosmedBleDevice device) method:</p>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="c1">//connectionDevice is an instance of CosmebBleDevice, which implements the ICosmedBleDevice interface</span>
+<span class="n">IGattDiscoveryService</span> <span class="n">discoveryService</span> <span class="p">=</span> <span class="k">await</span> <span class="n">GattDiscoveryService</span><span class="p">.</span><span class="n">CreateAsync</span><span class="p">(</span><span class="n">connectionDevice</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>An IGattDiscoveryService ojbect exposes some properties and events of the GattSession and about the connection.</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/gattdiscovery.png"><img alt="_images/gattdiscovery.png" src="_images/gattdiscovery.png" style="width: 598.5px; height: 336.5px;" /></a>
+</figure>
+<p>Please see the IGattDiscoveryService interface in the Cosmed API documentation for more info.</p>
+<dl class="simple">
+<dt>Also see:</dt><dd><ul class="simple">
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattsession?view=winrt-22000">GattSession</a></p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattsessionstatus?view=winrt-22000">GattSessionStatus</a></p></li>
+<li><p><a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.enumeration.deviceaccessstatus?view=winrt-22000">DeviceAccessStatus</a></p></li>
+</ul>
+</dd>
+</dl>
+<section id="gatt-discovery">
+<h2>Gatt discovery<a class="headerlink" href="#gatt-discovery" title="Permalink to this headline"></a></h2>
+<p>Once the IGattDiscoveryService object instatiated, there are four methods available to discover Services and Characteristics, plus one method to realise reliable writes
+and one to clear the Services.</p>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/gattdiscovery2.png"><img alt="_images/gattdiscovery2.png" src="_images/gattdiscovery2.png" style="width: 618.0px; height: 249.5px;" /></a>
+</figure>
+<p>All the discovery methods take an optional cacheMode parameter. The default value is Uncached, which means that the Services or Characteristics will be directly requested to the remote device.
+If Cached is choosen, the operating system will first search for the Services and Characteristics in its cache, and only if they are not available it will send a request to the device.</p>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="c1">//gets all the services of the remote device, possibly from the cache</span>
+<span class="n">GattDeviceServicesResult</span> <span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="n">discoveryService</span><span class="p">.</span><span class="n">GetAllGattServicesAsync</span><span class="p">(</span><span class="n">BluetoothCacheMode</span><span class="p">.</span><span class="n">Cached</span><span class="p">);</span>
+
+<span class="c1">//creates Guid object from DeviceName Characteristic 16 bit uuid</span>
+<span class="n">Guid</span> <span class="n">uuid</span> <span class="p">=</span> <span class="n">BluetoothUuidHelper</span><span class="p">.</span><span class="n">FromShortId</span><span class="p">(</span><span class="m">0</span><span class="n">x2A00</span><span class="p">);</span>
+
+<span class="c1">//the caracteristic</span>
+<span class="k">if</span><span class="p">(</span> <span class="n">result</span><span class="p">.</span><span class="n">Services</span> <span class="p">!=</span> <span class="k">null</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">foreach</span><span class="p">(</span><span class="kt">var</span> <span class="n">service</span> <span class="k">in</span> <span class="n">result</span><span class="p">.</span><span class="n">Services</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">//tries to get the requested, uncached, characteristics</span>
+        <span class="n">GattCharacteristicsResult</span> <span class="n">characteristics</span><span class="p">;</span>
+        <span class="n">characteristics</span> <span class="p">=</span> <span class="k">await</span> <span class="n">discoveryService</span><span class="p">.</span><span class="n">FindGattCharacteristicsByUuidAsync</span><span class="p">(</span><span class="n">service</span><span class="p">,</span> <span class="n">uuid</span><span class="p">);</span>
+
+        <span class="c1">//gets if available the requested caracteristic</span>
+        <span class="n">GattCharacteristic</span> <span class="n">characteristic</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">characteristics</span><span class="p">.</span><span class="n">Status</span> <span class="p">==</span> <span class="n">GattCommunicationStatus</span><span class="p">.</span><span class="n">Success</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">characteristic</span> <span class="p">=</span> <span class="n">characteristics</span><span class="p">.</span><span class="n">Characteristics</span><span class="p">[</span><span class="m">0</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For details about the four discovering methods please refer to the IGattDiscoveryService in the Cosmed API documentation.</p>
+</section>
+<section id="reliable-write">
+<h2>Reliable write<a class="headerlink" href="#reliable-write" title="Permalink to this headline"></a></h2>
+<p>The method StartReliableWriteTransaction() returns a <a class="reference external" href="https://docs.microsoft.com/en-us/uwp/api/windows.devices.bluetooth.genericattributeprofile.gattreliablewritetransaction?view=winrt-22000">GattReliableWriteTransaction</a>
+where writes can be queued and later processed all together. Characteristics can invoke the extention method AddCharacteristicToReliableWrite(AddCharacteristicToReliableWrite, IBuffer) to be added to the given transaction queue.</p>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="n">AddCharacteristicToReliableWrite</span> <span class="n">reliableWrite</span> <span class="p">=</span> <span class="n">discoveryService</span><span class="p">.</span><span class="n">StartReliableWriteTransaction</span><span class="p">();</span>
+
+<span class="c1">//prepares the buffer</span>
+<span class="n">IBuffer</span> <span class="k">value</span> <span class="p">=</span> <span class="n">BufferWriter</span><span class="p">.</span><span class="n">ToIBuffer</span><span class="p">(</span><span class="s">&quot;a string&quot;</span><span class="p">);</span>
+
+<span class="c1">//add a write request for a characteristic to the write queue</span>
+<span class="n">characteristic</span><span class="p">.</span><span class="n">AddCharacteristicToReliableWrite</span><span class="p">(</span><span class="n">reliableWrite</span><span class="p">,</span> <span class="k">value</span><span class="p">);</span>
+
+<span class="c1">//the same process can be done multiple times with different characteristics</span>
+<span class="c1">// ...</span>
+
+<span class="c1">//finally the write transaction can be executed (ToTask() method may be also necessary)</span>
+<span class="n">GattWriteResult</span> <span class="n">result</span> <span class="p">=</span> <span class="n">reliableWrite</span><span class="p">.</span><span class="n">CommitWithResultAsync</span><span class="p">().</span><span class="n">ToTask</span><span class="p">();</span>
+</pre></div>
+</div>
+</section>
+<section id="clear-services">
+<h2>Clear Services<a class="headerlink" href="#clear-services" title="Permalink to this headline"></a></h2>
+<p>This method disposes the GattSession and the Services retrieved:</p>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="n">discoveryService</span><span class="p">.</span><span class="n">ClearServices</span><span class="p">();</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Pairing.html" class="btn btn-neutral float-left" title="Pairing and unpairing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="GattCommunication.html" class="btn btn-neutral float-right" title="Gatt communication" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Stefano Urani.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -243,7 +243,7 @@ namespace CosmedBleLib.Extensions
                 return CosmedGattCommunicationStatus.OperationNotSupported;
             }
 
-            GattReadClientCharacteristicConfigurationDescriptorResult cccd;
+            //GattReadClientCharacteristicConfigurationDescriptorResult cccd;
 
             try
             {
@@ -332,35 +332,20 @@ namespace CosmedBleLib.Extensions
                 return CosmedGattCommunicationStatus.OperationNotSupported; 
             }
 
-            GattReadClientCharacteristicConfigurationDescriptorResult cccd;
+            //GattReadClientCharacteristicConfigurationDescriptorResult cccd;
             try
             {
                 Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
-                //cccd = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
-                
-                //if (cccd.Status != GattCommunicationStatus.Success)
-                //{
-                //    CosmedCharacteristicSubscriptionResult test = new CosmedCharacteristicSubscriptionResult(   characteristic.CharacteristicProperties, 
-                //                                                                                                cccd.Status.ConvertStatus(), 
-                //                                                                                                cccd.ClientCharacteristicConfigurationDescriptor, 
-                //                                                                                                cccd.ProtocolError
-                //                                                                                                );
-                //    Console.WriteLine("impossibile leggere cccd");
-                //    return CosmedGattCommunicationStatus.Unreachable;
-                //}
 
-                ////if not notifying yet, then subscribe
-                //if (cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.None)
-                //{
-                //    return CosmedGattCommunicationStatus.OperationNotRegistered;
-                //}
-
+                //subscribes
                 GattCommunicationStatus status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate).AsTask().ConfigureAwait(false);
                 if (status == GattCommunicationStatus.Success)
                 {
                     if (valueChangedAction != null)
                     {
                         characteristic.ValueChanged += valueChangedAction;
+
+                        //if another event handler is present for the characteristic, it unsubscribes it
                         if (GattCharacteristicEventsCollector.CharacteristicsChangedSubscriptions.ContainsKey(characteristic))
                         {
                             TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> oldEventHandler;
@@ -386,6 +371,7 @@ namespace CosmedBleLib.Extensions
                 var args = new CosmedGattErrorFoundEventArgs(e, GattCharacteristicProperties.Indicate);
                 if (errorAction != null)
                 {
+                    //uses the given error handler and then unsubscribes
                     GattCharacteristicExtensions.ErrorFoundCustom += errorAction;
                     GattCharacteristicExtensions.ErrorFoundCustom.Invoke(characteristic, args);
                     GattCharacteristicExtensions.ErrorFoundCustom -= errorAction;
@@ -416,29 +402,8 @@ namespace CosmedBleLib.Extensions
                 return CosmedGattCommunicationStatus.OperationNotSupported;
             }
 
-            GattReadClientCharacteristicConfigurationDescriptorResult cccd = null;
-
             try
             {
-                //cccd = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
-
-                //if (cccd.Status != GattCommunicationStatus.Success)
-                //{
-                //    CosmedCharacteristicSubscriptionResult test = new CosmedCharacteristicSubscriptionResult(characteristic.CharacteristicProperties,
-                //                                                                                                cccd.Status.ConvertStatus(),
-                //                                                                                                cccd.ClientCharacteristicConfigurationDescriptor,
-                //                                                                                                cccd.ProtocolError
-                //                                                                                                );
-                //    Console.WriteLine("impossibile leggere cccd");
-                //    return CosmedGattCommunicationStatus.Unreachable;
-                //}
-
-                ////if not notifying yet, then subscribe
-                //if (cccd.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.None)
-                //{
-                //    return CosmedGattCommunicationStatus.OperationNotRegistered;
-                //}
-
                 Console.WriteLine(" unsubscribe from characteristec UUID: " + characteristic.Uuid.ToString());
 
                 var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None).AsTask().ConfigureAwait(false);
@@ -449,13 +414,7 @@ namespace CosmedBleLib.Extensions
                 {
                     characteristic.ValueChanged -= oldEventHandler;
                 }
-                //if (status == GattCommunicationStatus.Success)
-                //{
-                //    //adrebbe tolta la giusta action
-                //    characteristic.ValueChanged -= (sender, args) => response(sender, args);
 
-                //}
-                //gives the last status
                 return status.ConvertStatus();
 
                 }

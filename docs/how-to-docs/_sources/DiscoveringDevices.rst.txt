@@ -1,0 +1,180 @@
+Discovering devices
+===================
+
+Discovering devices includes three main operations:
+
+* scanning
+* filtering
+* exploring discovered devices
+
+
+Scanning states
+---------------
+
+Scanning is done by IBleScanner or equivalently by CosmedBluetoothLEAdvertisementWatcher objects.
+It has four possible states:
+
+      1.   Stopped
+      2.   Started
+      3.   Aborted
+      4.   Paused
+
+.. figure:: /images/scanStates.png
+   :alt: Scan states
+   :scale: 80%
+
+   *Scan states*
+	
+A newly instantiated Watcher/scanner begins from the stopped state. To start scanning two scanning modes are available:
+
+* passive scanning:
+   * used to obtain advertising data from peer devices
+   
+* active scanning:
+   * used not only to obtain advertising data from peer devices but also their scan response data if available.
+
+.. code-block:: csharp
+   :caption: Start scanning
+
+	//instantiates the scanner
+	IBleScanner scanner = new CosmedBluetoothLEAdvertisementWatcher();
+	
+	//starts a scanning in active mode
+	scanner.StartActiveScanning();
+
+	//starts a scanning in passive mode
+	scanner.StartPassiveScanning();
+
+
+The Started state is reached after one of these two methods has been called, initialisation terminated and the scan started. It's possible to pass from a scan mode to another maintaining the Started state without stopping the scan.
+
+
+.. figure:: /images/scanMode.png
+   :alt: Scan modes
+   :scale: 80%
+   
+   *Scan modes*
+
+
+
+Starting a new scan from the Stopped state implies a re-initialisation of the adevertised data collection. 
+This means that all the data collected during the previous scan, if present, will be lost.
+
+
+
+
+To avoid re-initialisation and maintain the previously collected data, the method PauseScanning() should be used.
+When ready to start the ResumeScanning() method will resume the scan from its last used mode (active or passive).
+
+.. code-block:: csharp
+   :caption: Pause and resume scanning
+   
+	//pauses the running scan
+	scanner.PauseScanning();
+
+	//resumes the paused scan
+	scanner.ResumeScanning();
+
+	//stops the scan
+	scanner.StopScanning();
+
+
+When an error occurs during the scanning process the scan will be interrupted and the watcher will enter the Aborted state. The scan can be normally restarted, if the problem has been resolved, using the start methods.
+
+
+
+
+
+Collect and retrieve advertisement data
+---------------------------------------
+
+
+Advertising devices collections
+_______________________________
+
+
+During the scan, advertising devices are discovered and saved by the watcher. This happens through the advertisement packets that the remote devices are broadcasting on reserved channels.
+Advertising data is stored by the watcher as ICosmedBleAdvertisedDevice objects into a private collection. The data can be obtained with three properties:
+
+* AllDiscoveredDevices:
+	* devices discovered since the scan has been started
+	
+* RecentlyDiscoveredDevices:
+	* devices discovered since a settable lapse of time and since the scan has been started
+	
+* LastDiscoveredDevices:
+	* devices discovered since the last access to the collection and since the scan has been started
+
+
+.. code-block:: csharp
+   :caption: Get advertising devices collections
+
+    //gets all the devices discovered since the scan has been started
+    IReadOnlyCollection<ICosmedBleAdvertisedDevice> allDevices = scanner.AllDiscoveredDevices
+	
+    //gets the devices discovered since a settable lapse of time
+    IReadOnlyCollection<ICosmedBleAdvertisedDevice> recentDevices = scanner.RecentlyDiscoveredDevices
+	
+    //a timeout can be set for the RecentlyDiscoveredDevices. The default value is 10 seconds
+    scanner.TimeoutSeconds = 20;
+	
+    //gets the devices discovered since the last access to the collection
+    IReadOnlyCollection<ICosmedBleAdvertisedDevice> lastDevices = scanner.LastDiscoveredDevices
+
+
+The result collections are updated at every get request. 
+When more than 128 devices have been collected during the same scan session, the main collection gets cleaned by the watcher and only the last 20 discovered devices are maintained.
+
+
+
+Advertising device objects
+__________________________
+
+
+For every new discovered device an ICosmedBleAdvertisedDevice is created and saved into a collection. When new advertisings from the same device are received, the correspondent object in the collection is updated. 
+During the active scan mode if a scan response is received, it also gets added to the ICosmedBleAdvertisedDevice object. If a device changes its address is seen as a new device by the watcher and saved as a new object.
+
+An advertised device allows the access to various informations about the remote device, depending on what kind of data has been transmitted.
+Informations obtained from advertisement packets and scan response packets respectively are stored in two distinct objects. They can be get with the properties GetAdvertisementContent and GetScanResponseAdvertisementContent, if available.
+
+	
+Other informations that can be obtained are the device name, device address, manufacturer data, rssi, advertisement flags, etc.
+For more information please see the CosmedBleAdvertisedDevice in the Cosmed API documentation.
+
+
+.. figure:: /images/advdevice.png
+   :alt: ICosmedBleAdvertisedDevice accessible data structure
+   :scale: 50%
+
+   *ICosmedBleAdvertisedDevice accessible data structure*  
+   
+   
+The ScanResponseReceived event informs the user, for every ICosmedBleAdvertisedDevice object, when a scan response packet has been received.
+
+.. code-block:: csharp
+   :caption: Subscribe to scan response notifications
+   
+    //iterate through all the discovered devices
+    foreach(var advDevice in allDevices)
+    {
+        //subscribe to notification event, an example
+        var scanResponseHandler = (s,a) => Console.WriteLine("scan response received from device " + s.DeviceAddress)
+        advDevice.ScanResponseReceived += scanResponseHandler;
+   
+
+        //when stopping the scan
+        advDevice.ScanResponseReceived -= scanResponseHandler;
+   
+Events
+------
+
+The watcher public events send notifications about the state of the scanner.
+
+The events are:
+	* NewDeviceDiscovered
+	* ScanStopped
+	* ScanInterrupted
+	* StartedListening
+	* ScanModeChanged
+
+For more informations please see IBleScanner and CosmedBluetoothLEAdvertisementWatcher in the Cosmed API documentation.

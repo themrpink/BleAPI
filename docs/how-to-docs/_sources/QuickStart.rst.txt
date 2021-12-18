@@ -1,0 +1,208 @@
+QuickStart
+==========
+
+
+The library functionalities are straigthforward to use.
+We will see the sequential steps to follow to accomplish the followings results:
+
+1) discover and filter advertising devices
+2) pair with a device
+3) discover services and characteristics
+4) communicate with the device
+5) unpair
+
+
+
+Pre-requisites
+--------------
+
+In order to use the library, access to the Windows 10 Apis must be granted. To do so, from Visual Studio, go to the Solution Explorer window of the working project and follow the following steps:
+
+1. Right click on References. Select “Add Reference…” from the context menu. On the left of the Reference Manager, choose Browse and find the following file: C:Program Files (x86)Windows Kits10UnionMetadatawinmd. Add it to your project as a reference. Note: You will need to change the filter to “All Files”.
+2. Right click on References. Select “Add Reference…” from the context menu. On the left of the Reference Manager, go to Browse and find the directory “C:Program Files (x86)Reference AssembliesMicrosoftFramework.NETCorev4.5”. Add System.Runtime.WindowsRuntime.dll to your project.
+
+.. figure:: /images/gestione_riferimenti.png
+   :alt: Pre-requisites
+   :scale: 50%
+   
+   *These files should be added to the VS project references*
+   
+   
+Discover and filter advertising devices
+---------------------------------------
+
+#. We need to build a filter. For doing that a FilterBuilder is available. In this example we will filter by LocalName property. For a complete list of filtering options please see ...filter link...
+
+#. We need to instatiate the Watcher that will scan for advertising devices. To apply the desired filtering, the Watcher can be instatiated with the created filter, otherwise is possible to add and remove a filter later.
+
+#. The scan can be started. BLE offers two kind of scanning: Active and Passive. The difference is that with Active scanning will ask for ScanResponse packets to the discovered devices where available, giving the opportunity of obtaining more data about the advertising devices. In this example we will use the Active scan option.
+
+#. We can now start checking the results. If an advertising device with the filtered properties exists, it will accessible as a ICosmedBleAdvertisedDevice object from the following data collections:
+	* AllDiscoveredDevice : includes all the devices discovered since the beginning of the actual scan. 
+	* RecentlyDiscoveredDevices: includes only the recently advertising device. The timeout con be set (insert link). It's default value is 10 seconds.
+	* LastDiscoveredDevices: includes only the devices that have advertised since the last access to the collection.
+
+
+.. code-block:: csharp
+   :caption: Discovery and filtering example
+   
+    //Step 1: creates a filter for devices called "HeartRateDevice"
+    IFilter filter = FilterBuilder.Init().SetLocalName("HeartRateDevice").BuildFilter();
+
+    //Step 2: creates a scanner with the given filter
+    IBleScanner scanner = new CosmedBluetoothLEAdvertisementWatcher(filter);
+
+    //Step 3: starts an active scan
+    await scanner.StartActiveScanning();
+   
+    //Step 4: checking the results until the scanner is stopped
+    while(scanner.status != StateMachine.Stopped)
+    {				
+        //waits some time to discover new devices
+        Thread.Sleep(2000);
+		
+        //this collection will be updated at every cycle of the while loop
+        var discoveredDevices = scanner.AllDiscoveredDevices;
+
+        //scannig can be paused
+        scanner.PauseScanning();
+		
+        //iteration over the discovered devices
+        foreach(var device in discoveredDevices)
+        {
+            //we are only interested in connectable devices for further Gatt communication
+            if (device.IsConnectable)
+            {				  
+                //  ... see code snippet in the next section ...
+            }
+        }
+		
+        //scan can be restarted, or stopped to end the while loop
+        scanner.ResumeScanning();
+    }
+   
+Iterating through the requested collection allows access to all the information transmitted by the filtered advertising devices. The desired advertising device can be selected reading this data.
+
+.. note:: 
+
+   Stopping and restarting a scan implies that the collections will be cleared. To maintain the data pause/resume options should be used.
+
+
+
+Pair with a device
+------------------
+
+Once the remote device has been selected it must be instantiated as a new CosmedBleDevice. This will start a comunication with the remote device to obtain addictional data (vedere nel protocollo cosa succede)
+Then the pairing process can start. Minumum pairing security options should be specified, then Windows will apply the most secure pairing process shared by the pairing devices.
+To pair a function that manage the pairing process should be passed. Otherwise the default can be used, which will use the console for confirming pairing options on the client side.
+
+
+
+Discover services and characteristics
+-------------------------------------
+
+The gatt discovery service offers the methods to discover services and characteristics.
+We are going to use the method that allows direct discovery of a specific service, given it's uuid.
+The obtained service can be iterated to explore its characteristics.
+
+
+
+Communicate with the device
+---------------------------
+
+In this example we see how to subscribe to notifications.
+For each characteristic we check if it accepts subscription to notification.
+If so we request. We can pass a custom function for the value changed event and errorFound event,
+where the state of the communication will be updated.
+
+
+.. code-block:: csharp
+   :caption: Pairing, discovering services and characteristics, unpairing and disconnect example
+
+    try
+    {
+        //creates an instance of the remote device
+        CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
+		
+        //sets all the possible ceremony options. Windows will choose the most secure option 
+        //compatible with both devices
+        DevicePairingKinds ceremonySelection = DevicePairingKinds.None |
+                                                DevicePairingKinds.ConfirmOnly |
+                                                DevicePairingKinds.ConfirmPinMatch |
+                                                DevicePairingKinds.DisplayPin |
+                                                DevicePairingKinds.ProvidePasswordCredential |
+                                                DevicePairingKinds.ProvidePin;
+		
+        //sets all the possible protecton levels. Windows will choose the most secure option 
+        //compatible with both devices
+        DevicePairingProtectionLevel minProtectionLevel = DevicePairingProtectionLevel.None |
+                                                          DevicePairingProtectionLevel.Default |
+                                                          DevicePairingProtectionLevel.Encryption |
+                                                          DevicePairingProtectionLevel.EncryptionAndAuthentication;
+
+        //starts the pairing process. It´s possible to call an overload with custom event handler, but
+        //since no pairing handle has been passed, the default one will be used
+        PairingResult pairedDevice = await PairingService.PairDevice(connectionDevice, ceremonySelection, minProtectionLevel);
+
+        //creates the discovery service
+        IGattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
+
+        //creates Guid object from Heart Rate Service`s 16 bit uuid
+        Guid uuid = BluetoothUuidHelper.FromShortId(0x180D);
+
+
+        //requests all the Services from the remote device
+        GattDeviceServicesResult gattResult = await discoveryService.GetAllGattServicesAsync();
+
+        //iterates over the resulted services
+        foreach (var service in gattResult.Services)
+        {
+            //obtains the characteristics of the service
+            GattCharacteristicsResult characteristics;
+            characteristics = await service.GetCharacteristicsAsync().ToTask();
+
+            //iterates over the resulted characteristics
+            foreach (var characteristic in characteristics.Characteristics)
+            {
+                //subscribes to all notifing characteristics, if supported
+                var notifyResult = await characteristic.SubscribeToNotification
+                                    (
+                                        // passes an action to handle the notification events
+                                        (s, a) =>	
+                                        {
+                                            Console.WriteLine("notification:");
+                                            Console.WriteLine(a.Timestamp.ToString());
+                                            IBuffer CharacteristicValue = a.CharacteristicValue;
+                                            string val = ClientBufferReader.ToUTF8String(CharacteristicValue);
+                                            Console.WriteLine("buffer content: " + val);
+                                        },
+                                        //passes an action to handle exceptions raised during the subscription 
+                                        (s, e) => Console.WriteLine("error")
+                                    );
+									
+				//to unsubscribe from notifications
+				var unsubResult = await characteristic.UnSubscribe();
+            }
+        }
+		
+        //when finished: clear, unpair and disconnect
+        discoveryService.ClearServices();
+        var unpairResult = await PairingService.Unpair(connectionDevice);
+        connectionDevice.ClearBluetoothLEDevice();
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e.Message);
+    } 
+	
+	
+Unpairing and disconnect
+-------------------------------------
+
+First all the services that have been discovered should be cleared. They are saved into the GattDiscoveryService, and the ClearServices method can be called to clear them.
+To unpair the Unpair method of the PairingService class should be called, passing the instance of the remote device to unpair.
+Finally the remote device shoud be cleared calling the method ClearBluetoothLEDevice.
+
+
+
+
