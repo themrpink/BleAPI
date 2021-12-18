@@ -37,7 +37,16 @@ namespace CosmedBleConsole
                                                                          DevicePairingProtectionLevel.Default |
                                                                          DevicePairingProtectionLevel.Encryption |
                                                                          DevicePairingProtectionLevel.EncryptionAndAuthentication;
+
         public async static Task Main(String[] args)
+        {
+            //await UseCaseTests.GattDiscovery();
+            //await UseCaseTests.QuickStart();
+            await GeneralTest();
+        }
+
+
+        public static async Task GeneralTest()
         {
             FilterBuilder cfb = FilterBuilder.Init(true);
             IFilter f = cfb.ClearAdvertisementFilter().BuildFilter();
@@ -46,7 +55,7 @@ namespace CosmedBleConsole
             IFilter filter = FilterBuilder.Init().SetLocalName("BLE Peripheral").BuildFilter();//.SetFlags(BluetoothLEAdvertisementFlags.GeneralDiscoverableMode |   BluetoothLEAdvertisementFlags.LimitedDiscoverableMode |BluetoothLEAdvertisementFlags.ClassicNotSupported).BuildFilter();
 
             //create a scanner with the given filter
-            IBleScanner scanner =  new CosmedBluetoothLEAdvertisementWatcher(filter);
+            IBleScanner scanner = new CosmedBluetoothLEAdvertisementWatcher();
 
             //starts an active scan
             await scanner.StartActiveScanning();
@@ -70,16 +79,17 @@ namespace CosmedBleConsole
             Console.WriteLine("_______________________scanning____________________");
 
             //start scanning
-            scanner.StartActiveScanning();
+            await scanner.StartActiveScanning();
             //scan.StartPassiveScanning();
-
+            ErrorFoundClass.ErrorFound += (a, s) => Console.WriteLine("?????????????????error ???????????????");
+            
             while (scanner.status != StateMachine.Stopped)
             {
-                
+
                 foreach (var device in scanner.AllDiscoveredDevices)
                 {
-                     if (device.IsConnectable)
-                     {
+                    if (device.IsConnectable)
+                    {
                         ((CosmedBleAdvertisedDevice)device).PrintAdvertisement();
 
                         if (device.IsConnectable)// && device.DeviceName.Equals("myname"))
@@ -89,16 +99,16 @@ namespace CosmedBleConsole
                             {
                                 //get device. it´s possible to set some event handler
                                 CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
-                                
+
                                 //pairing. it´s possible to call an overload with custom event handler
-                                PairingResult pairedDevice = await PairingService.PairDevice(connectionDevice, ceremonySelection, minProtectionLevel);
+                                //PairingResult pairedDevice = await PairingService.PairDevice(connectionDevice, ceremonySelection, minProtectionLevel);
 
                                 //it´s possible to set some event handler
                                 IGattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
-
+                                var rw = discoveryService.StartReliableWriteTransaction();
                                 //request the gatt result (collection of services)
                                 GattDeviceServicesResult gattResult = await discoveryService.GetAllGattServicesAsync();
-
+                                
                                 Console.WriteLine("stampa dal gatt results");
                                 foreach (var service in gattResult.Services)
                                 {
@@ -106,21 +116,25 @@ namespace CosmedBleConsole
                                     service.Print();
 
                                     GattCharacteristicsResult characteristics;
-
-                                    characteristics = await service.GetCharacteristicsAsync().ToTask();
                                     
+                                    characteristics = await service.GetCharacteristicsAsync().ToTask();
+                                    ErrorFoundClass.ErrorFound += (a, s) => Console.WriteLine("error");
                                     foreach (var characteristic in characteristics.Characteristics)
                                     {
+                                        
                                         Console.WriteLine("__characteristic__");
                                         characteristic.Print();
                                         var read = await characteristic.Read();
-                                        Console.WriteLine("read result hex: " + read.HexValue);           
+                                        Console.WriteLine("read result hex: " + read.HexValue);
                                         Console.WriteLine("read result utf8: " + read.UTF8Value);
-                                        
+
                                         byte[] value = { 0x001 };
-                                        
+                                        var buff = BufferWriter.ToIBuffer(value);
+                                        characteristic.AddCharacteristicToReliableWrite(rw, buff);
+
                                         var write = await characteristic.WriteWithResult(value, GattWriteOption.WriteWithResponse);
-                                        
+                                        var write2 = await characteristic.WriteWithResult(value, GattWriteOption.WriteWithoutResponse);
+
                                         var notify = await characteristic.SubscribeToNotification(
                                                                                                     (s, a) =>
 
@@ -131,27 +145,31 @@ namespace CosmedBleConsole
                                                                                                         string val = ClientBufferReader.ToUTF8String(CharacteristicValue);
                                                                                                         Console.WriteLine("buffer content: " + val);
 
-                                                                                                    },
-                                                                                                    (s, e) => Console.WriteLine("error")
+                                                                                                    }
+                                                                                                   // (s, e) => Console.WriteLine("error")
                                                                                                   );
-                                        
+                                        if (notify == CosmedGattCommunicationStatus.Success)
+                                            Thread.Sleep(1000);
+                                        var unsub = await characteristic.UnSubscribe();
                                         var indicate = await characteristic.SubscribeToIndication(
                                                                                                     (s, a) =>
 
-                                                                                                               {
-                                                                                                                   Console.WriteLine("indication:");
-                                                                                                                   Console.WriteLine(a.Timestamp.ToString());
-                                                                                                                   IBuffer CharacteristicValue = a.CharacteristicValue;
-                                                                                                                   string val = ClientBufferReader.ToUTF8String(CharacteristicValue);
-                                                                                                                   Console.WriteLine("buffer content: " + val);
+                                                                                                    {
+                                                                                                        Console.WriteLine("indication:");
+                                                                                                        Console.WriteLine(a.Timestamp.ToString());
+                                                                                                        IBuffer CharacteristicValue = a.CharacteristicValue;
+                                                                                                        string val = ClientBufferReader.ToUTF8String(CharacteristicValue);
+                                                                                                        Console.WriteLine("buffer content: " + val);
 
-                                                                                                               },
-                                                                                                    (s, e) => Console.WriteLine("error")
+                                                                                                    }
+                                                                                                    //(s, e) => Console.WriteLine("error")
                                                                                                   );
-                                        var unsub = await characteristic.UnSubscribe();
+                                        if (indicate == CosmedGattCommunicationStatus.Success)
+                                            Thread.Sleep(1000);
+                                        var unsub2 = await characteristic.UnSubscribe();
                                     }
                                 }
-
+                               // var rwr = await rw.CommitWithResultAsync().ToTask();
                                 discoveryService.ClearServices();
                                 var r = await PairingService.Unpair(connectionDevice);
                                 connectionDevice.ClearBluetoothLEDevice();
@@ -160,16 +178,18 @@ namespace CosmedBleConsole
                             {
                                 Console.WriteLine(e.Message);
                                 //throw new GattCommunicationException("impossible to access the Service " + service.Uuid.ToString(), e);
-                            }                                                      
-                         
+                            }
+
                         }
                     }
                 }
-                
+
                 scanner.ResumeScanning();
                 Thread.Sleep(3000);
             }
         }
+        
+   
 
 
 
@@ -202,6 +222,7 @@ namespace CosmedBleConsole
         }
 
     }
+
 
     //var guid = BluetoothUuidHelper.FromShortId(0x1800);
     //BluetoothLEDevice bleDevice = await BluetoothLEDevice.FromIdAsync(pairedDevice.BluetoothDeviceId.Id).AsTask();

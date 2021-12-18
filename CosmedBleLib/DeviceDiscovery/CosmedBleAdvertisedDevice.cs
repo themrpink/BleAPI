@@ -4,7 +4,7 @@ using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using CosmedBleLib.Helpers;
 using CosmedBleLib.Collections;
-
+using Windows.Foundation;
 
 namespace CosmedBleLib.DeviceDiscovery
 {
@@ -201,8 +201,8 @@ namespace CosmedBleLib.DeviceDiscovery
         /// <summary>
         /// Fired when a scan response is received
         /// </summary>
-        public event Action<CosmedBleAdvertisedDevice> ScanResponseReceived;
-
+        //public event Action<CosmedBleAdvertisedDevice> ScanResponseReceived;
+        public event TypedEventHandler<CosmedBleAdvertisedDevice, AdvertisementContent> ScanResponseReceived;
         #endregion
 
 
@@ -282,9 +282,8 @@ namespace CosmedBleLib.DeviceDiscovery
                 scanResponseAdvertisementContent.Advertisement = args.Advertisement;
                 scanResponseAdvertisementContent.AdvertisementType = args.AdvertisementType;
                 HasScanResponse = true;
-
                 //rise the event
-                ScanResponseReceived?.Invoke(this);
+                ScanResponseReceived?.Invoke(this, scanResponseAdvertisementContent);
             }
             //if the advertisement is normal advertisement saves it as such
             else
@@ -344,7 +343,7 @@ namespace CosmedBleLib.DeviceDiscovery
             }
 
             Console.WriteLine();
-
+            
             foreach (DataSectionReader m in DataSections)
             {
                 Console.WriteLine(advType + " data type: " + m.DataType);

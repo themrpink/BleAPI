@@ -662,6 +662,7 @@ namespace CosmedBleLib.DeviceDiscovery
                 lock (devicesThreadLock)
                 {
                     bool newDevice = !discoveredDevices.ContainsKey(args.BluetoothAddress);
+                    
                     if (newDevice)
                     {
                         if (discoveredDevices.Count >= maxScanResults)
@@ -669,6 +670,7 @@ namespace CosmedBleLib.DeviceDiscovery
                             CleanOlderDiscoveredDevices(discoveredDevices);
                         }
                         device = new CosmedBleAdvertisedDevice(args);
+
                         discoveredDevices[args.BluetoothAddress] = device;
                     }
                     else
@@ -683,6 +685,8 @@ namespace CosmedBleLib.DeviceDiscovery
 
                     lastDiscoveredDevices[args.BluetoothAddress] = discoveredDevices[args.BluetoothAddress];
                     device = discoveredDevices[args.BluetoothAddress];
+                    var d = (CosmedBleAdvertisedDevice)device;
+                    d.PrintAdvertisement();
                 }
                 Task.Run(() => { NewDeviceDiscovered?.Invoke(this, device); }).ConfigureAwait(false);
             }

@@ -20,7 +20,7 @@ namespace CosmedBleLib.GattCommunication
     public interface IGattDiscoveryService
     {
         /// <summary>
-        /// Finds the Services by the desired Uuid.
+        /// Finds Services by the desired Uuid.
         /// </summary>
         /// <param name="requestedUuid">The requested Uuid.</param>
         /// <param name="cacheMode">The cache mode. Default value is "uncached". If "cached mode" is requested,
@@ -30,7 +30,7 @@ namespace CosmedBleLib.GattCommunication
         Task<GattDeviceServicesResult> FindGattServicesByUuidAsync(Guid requestedUuid, BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached);
 
         /// <summary>
-        /// Finds from a specific Service the Characteristics with the desired Uuid.
+        /// Finds a specific the Characteristics with the desired Uuid from a Service.
         /// </summary>
         /// <param name="service">The service from which extract the characteristics</param>
         /// <param name="requestedUuid">The requested Uuid.</param>
@@ -41,7 +41,7 @@ namespace CosmedBleLib.GattCommunication
         Task<GattCharacteristicsResult> FindGattCharacteristicsByUuidAsync(GattDeviceService service, Guid requestedUuid, BluetoothCacheMode cacheMode = BluetoothCacheMode.Uncached);
 
         /// <summary>
-        /// Gets all the Characteristics from the remote device.
+        /// Gets all the Services from the remote device.
         /// </summary>
         /// <param name="bluetoothCacheMode">The cache mode. Default value is "uncached". If "cached mode" is requested,
         /// the system attemps first to find the cached values for the requested service. If not available in the cache 
@@ -264,7 +264,7 @@ namespace CosmedBleLib.GattCommunication
         #region Operations
 
         /// <summary>
-        /// Finds the Services by the desired Uuid.
+        /// Finds Services by the desired Uuid.
         /// </summary>
         /// <param name="requestedUuid">The requested Uuid.</param>
         /// <param name="cacheMode">The cache mode. Default value is "uncached". If "cached mode" is requested,
@@ -290,7 +290,7 @@ namespace CosmedBleLib.GattCommunication
 
 
         /// <summary>
-        /// Finds from a specific Service the Characteristics with the desired Uuid.
+        /// Finds a specific Characteristic with the desired Uuid from a Service.
         /// </summary>
         /// <param name="service">The service from which extract the characteristics</param>
         /// <param name="requestedUuid">The requested Uuid.</param>
@@ -391,7 +391,7 @@ namespace CosmedBleLib.GattCommunication
 
 
         /// <summary>
-        /// Gets all the Characteristics from the remote device.
+        /// Gets all the Services from the remote device.
         /// </summary>
         /// <param name="bluetoothCacheMode">The cache mode. Default value is "uncached". If "cached mode" is requested,
         /// the system attemps first to find the cached values for the requested service. If not available in the cache 
@@ -412,8 +412,8 @@ namespace CosmedBleLib.GattCommunication
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("ERROR: " + e.Message + " --- device name: " + Device.BluetoothLeDevice.Name);
-                    //throw new GattCommunicationException("impossible to retrieve the services", e);
+                    //Console.WriteLine("ERROR: " + e.Message + " --- device name: " + Device.BluetoothLeDevice.Name);
+                    throw new GattCommunicationException("impossible to retrieve the services", e);
                 }
             }
             return null;

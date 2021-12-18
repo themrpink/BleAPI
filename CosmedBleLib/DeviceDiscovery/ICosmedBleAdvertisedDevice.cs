@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
+using Windows.Foundation;
 
 namespace CosmedBleLib.DeviceDiscovery
 {
@@ -30,7 +31,7 @@ namespace CosmedBleLib.DeviceDiscovery
         DateTimeOffset Timestamp { get; set; }
         short? TransmitPowerLevelInDBm { get; }
 
-        event Action<CosmedBleAdvertisedDevice> ScanResponseReceived;
+        event TypedEventHandler<CosmedBleAdvertisedDevice, AdvertisementContent> ScanResponseReceived;
 
         CosmedBleAdvertisedDevice SetAdvertisement(BluetoothLEAdvertisementReceivedEventArgs args);
     }
