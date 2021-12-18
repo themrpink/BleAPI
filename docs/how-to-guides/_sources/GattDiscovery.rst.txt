@@ -27,7 +27,7 @@ Also see:
 Gatt discovery
 --------------
 
-Once the IGattDiscoveryService object instatiated, there are four methods available to discover Services and Characteristics, plus one method to realise reliable writes
+Once the IGattDiscoveryService object instatiated, there are four methods available to discover Services and Characteristics, plus one method to realize reliable writes
 and one to clear the Services.
 
 .. figure:: /images/gattdiscovery2.png

@@ -403,7 +403,6 @@ namespace CosmedBleLib.ConnectionServices
             {
                 case DevicePairingKinds.ConfirmOnly:
                     // Windows itself will pop the confirmation dialog as part of "consent" if this is running on Desktop or Mobile
-                    // If this is an App for 'Windows IoT Core' where there is no Windows Consent UX, you may want to provide your own confirmation.
                     Console.WriteLine("ok presse enter to accept pairing");
                     Console.ReadLine();
                     args.Accept();
@@ -456,8 +455,7 @@ namespace CosmedBleLib.ConnectionServices
 
                 case DevicePairingKinds.ConfirmPinMatch:
                     // We show the PIN here and the user responds with whether the PIN matches what they see
-                    // on the target device. Response comes back and we set it on the PinComparePairingRequestedData
-                    // then complete the deferral.
+                    // on the target device. 
                     var displayMessageDeferral = args.GetDeferral();
                     Console.WriteLine("pin: " + args.Pin);
                     Console.WriteLine("does the pin matches? Y/N");

@@ -115,18 +115,18 @@ We will see the sequential steps to follow to accomplish the followings results:
 </section>
 <section id="discover-and-filter-advertising-devices">
 <h2>Discover and filter advertising devices<a class="headerlink" href="#discover-and-filter-advertising-devices" title="Permalink to this headline"></a></h2>
-<ol class="arabic simple">
-<li><p>We need to build a filter. For doing that a FilterBuilder is available. In this example we will filter by LocalName property. For a complete list of filtering options please see …filter link…</p></li>
-<li><p>We need to instatiate the Watcher that will scan for advertising devices. To apply the desired filtering, the Watcher can be instatiated with the created filter, otherwise is possible to add and remove a filter later.</p></li>
+<ol class="arabic">
+<li><p>Build a filter if needed. For doing that a FilterBuilder is available.</p></li>
+<li><p>Instatiate a Watcher that will scan for advertising devices. To apply the desired filtering, the Watcher can be instatiated with the created filter, otherwise is possible to add and remove a filter later.</p></li>
 <li><p>The scan can be started. BLE offers two kind of scanning: Active and Passive. The difference is that with Active scanning will ask for ScanResponse packets to the discovered devices where available, giving the opportunity of obtaining more data about the advertising devices. In this example we will use the Active scan option.</p></li>
-<li><dl class="simple">
-<dt>We can now start checking the results. If an advertising device with the filtered properties exists, it will accessible as a ICosmedBleAdvertisedDevice object from the following data collections:</dt><dd><ul class="simple">
+<li><p>Once scanning has started is possible to check the results. If an advertising device with the filtered properties exists, it will accessible as a ICosmedBleAdvertisedDevice object from the following data collections:</p>
+<blockquote>
+<div><ul class="simple">
 <li><p>AllDiscoveredDevice : includes all the devices discovered since the beginning of the actual scan.</p></li>
-<li><p>RecentlyDiscoveredDevices: includes only the recently advertising device. The timeout con be set (insert link). It’s default value is 10 seconds.</p></li>
+<li><p>RecentlyDiscoveredDevices: includes only the recently advertising device. The timeout con be set. It’s default value is 10 seconds.</p></li>
 <li><p>LastDiscoveredDevices: includes only the devices that have advertised since the last access to the collection.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
 </li>
 </ol>
 <div class="literal-block-wrapper docutils container" id="id2">
@@ -176,22 +176,20 @@ We will see the sequential steps to follow to accomplish the followings results:
 </section>
 <section id="pair-with-a-device">
 <h2>Pair with a device<a class="headerlink" href="#pair-with-a-device" title="Permalink to this headline"></a></h2>
-<p>Once the remote device has been selected it must be instantiated as a new CosmedBleDevice. This will start a comunication with the remote device to obtain addictional data (vedere nel protocollo cosa succede)
-Then the pairing process can start. Minumum pairing security options should be specified, then Windows will apply the most secure pairing process shared by the pairing devices.
-To pair a function that manage the pairing process should be passed. Otherwise the default can be used, which will use the console for confirming pairing options on the client side.</p>
+<p>Once the remote device has been selected it must be instantiated as a new CosmedBleDevice. This will start a comunication with the remote device to obtain addictional data.
+Then the pairing process can start. Minumum pairing security options should be specified. Windows will then apply the most secure pairing process shared by the pairing devices.
+A function that manage the pairing process should be passed. Otherwise the default one can be used, which will use the console for confirming pairing options on client side.</p>
 </section>
 <section id="discover-services-and-characteristics">
 <h2>Discover services and characteristics<a class="headerlink" href="#discover-services-and-characteristics" title="Permalink to this headline"></a></h2>
 <p>The gatt discovery service offers the methods to discover services and characteristics.
-We are going to use the method that allows direct discovery of a specific service, given it’s uuid.
-The obtained service can be iterated to explore its characteristics.</p>
+The obtained services can be iterated to explore its characteristics.</p>
 </section>
 <section id="communicate-with-the-device">
 <h2>Communicate with the device<a class="headerlink" href="#communicate-with-the-device" title="Permalink to this headline"></a></h2>
 <p>In this example we see how to subscribe to notifications.
-For each characteristic we check if it accepts subscription to notification.
-If so we request. We can pass a custom function for the value changed event and errorFound event,
-where the state of the communication will be updated.</p>
+For each characteristic a check if it accepts subscription to notification will be automatically done by the subscription method.
+To receive notifications and to handle errors during subscription custom functions will be passed to the subscription method.</p>
 <div class="literal-block-wrapper docutils container" id="id3">
 <div class="code-block-caption"><span class="caption-text">Pairing, discovering services and characteristics, unpairing and disconnect example</span><a class="headerlink" href="#id3" title="Permalink to this code"></a></div>
 <div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span> <span class="k">try</span>
@@ -278,6 +276,14 @@ where the state of the communication will be updated.</p>
 <p>First all the services that have been discovered should be cleared. They are saved into the GattDiscoveryService, and the ClearServices method can be called to clear them.
 To unpair the Unpair method of the PairingService class should be called, passing the instance of the remote device to unpair.
 Finally the remote device shoud be cleared calling the method ClearBluetoothLEDevice.</p>
+<div class="literal-block-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">Unpair and disconnect</span><a class="headerlink" href="#id4" title="Permalink to this code"></a></div>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span> <span class="n">discoveryService</span><span class="p">.</span><span class="n">ClearServices</span><span class="p">();</span>
+ <span class="kt">var</span> <span class="n">unpairResult</span> <span class="p">=</span> <span class="k">await</span> <span class="n">PairingService</span><span class="p">.</span><span class="n">Unpair</span><span class="p">(</span><span class="n">connectionDevice</span><span class="p">);</span>
+ <span class="n">connectionDevice</span><span class="p">.</span><span class="n">ClearBluetoothLEDevice</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
 </section>
 </section>
 

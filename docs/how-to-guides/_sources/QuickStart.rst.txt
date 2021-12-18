@@ -31,15 +31,16 @@ In order to use the library, access to the Windows 10 Apis must be granted. To d
 Discover and filter advertising devices
 ---------------------------------------
 
-#. We need to build a filter. For doing that a FilterBuilder is available. In this example we will filter by LocalName property. For a complete list of filtering options please see ...filter link...
+#. Build a filter if needed. For doing that a FilterBuilder is available.  
 
-#. We need to instatiate the Watcher that will scan for advertising devices. To apply the desired filtering, the Watcher can be instatiated with the created filter, otherwise is possible to add and remove a filter later.
+#. Instatiate a Watcher that will scan for advertising devices. To apply the desired filtering, the Watcher can be instatiated with the created filter, otherwise is possible to add and remove a filter later.
 
 #. The scan can be started. BLE offers two kind of scanning: Active and Passive. The difference is that with Active scanning will ask for ScanResponse packets to the discovered devices where available, giving the opportunity of obtaining more data about the advertising devices. In this example we will use the Active scan option.
 
-#. We can now start checking the results. If an advertising device with the filtered properties exists, it will accessible as a ICosmedBleAdvertisedDevice object from the following data collections:
+#. Once scanning has started is possible to check the results. If an advertising device with the filtered properties exists, it will accessible as a ICosmedBleAdvertisedDevice object from the following data collections:
+	
 	* AllDiscoveredDevice : includes all the devices discovered since the beginning of the actual scan. 
-	* RecentlyDiscoveredDevices: includes only the recently advertising device. The timeout con be set (insert link). It's default value is 10 seconds.
+	* RecentlyDiscoveredDevices: includes only the recently advertising device. The timeout con be set. It's default value is 10 seconds.
 	* LastDiscoveredDevices: includes only the devices that have advertised since the last access to the collection.
 
 
@@ -92,9 +93,9 @@ Iterating through the requested collection allows access to all the information 
 Pair with a device
 ------------------
 
-Once the remote device has been selected it must be instantiated as a new CosmedBleDevice. This will start a comunication with the remote device to obtain addictional data (vedere nel protocollo cosa succede)
-Then the pairing process can start. Minumum pairing security options should be specified, then Windows will apply the most secure pairing process shared by the pairing devices.
-To pair a function that manage the pairing process should be passed. Otherwise the default can be used, which will use the console for confirming pairing options on the client side.
+Once the remote device has been selected it must be instantiated as a new CosmedBleDevice. This will start a comunication with the remote device to obtain addictional data.
+Then the pairing process can start. Minumum pairing security options should be specified. Windows will then apply the most secure pairing process shared by the pairing devices.
+A function that manage the pairing process should be passed. Otherwise the default one can be used, which will use the console for confirming pairing options on client side.
 
 
 
@@ -102,8 +103,7 @@ Discover services and characteristics
 -------------------------------------
 
 The gatt discovery service offers the methods to discover services and characteristics.
-We are going to use the method that allows direct discovery of a specific service, given it's uuid.
-The obtained service can be iterated to explore its characteristics.
+The obtained services can be iterated to explore its characteristics.
 
 
 
@@ -111,10 +111,8 @@ Communicate with the device
 ---------------------------
 
 In this example we see how to subscribe to notifications.
-For each characteristic we check if it accepts subscription to notification.
-If so we request. We can pass a custom function for the value changed event and errorFound event,
-where the state of the communication will be updated.
-
+For each characteristic a check if it accepts subscription to notification will be automatically done by the subscription method.
+To receive notifications and to handle errors during subscription custom functions will be passed to the subscription method.
 
 .. code-block:: csharp
    :caption: Pairing, discovering services and characteristics, unpairing and disconnect example
@@ -205,4 +203,9 @@ Finally the remote device shoud be cleared calling the method ClearBluetoothLEDe
 
 
 
-
+.. code-block:: csharp
+   :caption: Unpair and disconnect
+   
+    discoveryService.ClearServices();
+    var unpairResult = await PairingService.Unpair(connectionDevice);
+    connectionDevice.ClearBluetoothLEDevice();

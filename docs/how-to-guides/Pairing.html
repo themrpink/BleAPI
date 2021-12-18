@@ -164,7 +164,6 @@ The following PairDevice() method can accept an event handler to offer a custom 
     <span class="p">{</span>
         <span class="k">case</span> <span class="n">DevicePairingKinds</span><span class="p">.</span><span class="n">ConfirmOnly</span><span class="p">:</span>
             <span class="c1">// Windows itself will pop the confirmation dialog as part of &quot;consent&quot; if this is running on Desktop or Mobile</span>
-            <span class="c1">// If this is an App for &#39;Windows IoT Core&#39; where there is no Windows Consent UX, you may want to provide your own confirmation.</span>
             <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;ok presse enter to accept pairing&quot;</span><span class="p">);</span>
             <span class="n">Console</span><span class="p">.</span><span class="n">ReadLine</span><span class="p">();</span>
             <span class="n">args</span><span class="p">.</span><span class="n">Accept</span><span class="p">();</span>
@@ -217,8 +216,7 @@ The following PairDevice() method can accept an event handler to offer a custom 
 
         <span class="k">case</span> <span class="n">DevicePairingKinds</span><span class="p">.</span><span class="n">ConfirmPinMatch</span><span class="p">:</span>
             <span class="c1">// We show the PIN here and the user responds with whether the PIN matches what they see</span>
-            <span class="c1">// on the target device. Response comes back and we set it on the PinComparePairingRequestedData</span>
-            <span class="c1">// then complete the deferral.</span>
+            <span class="c1">// on the target device. .</span>
             <span class="kt">var</span> <span class="n">displayMessageDeferral</span> <span class="p">=</span> <span class="n">args</span><span class="p">.</span><span class="n">GetDeferral</span><span class="p">();</span>
             <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;pin: &quot;</span> <span class="p">+</span> <span class="n">args</span><span class="p">.</span><span class="n">Pin</span><span class="p">);</span>
             <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;does the pin matches? Y/N&quot;</span><span class="p">);</span>
@@ -232,7 +230,6 @@ The following PairDevice() method can accept an event handler to offer a custom 
             <span class="p">{</span>
                 <span class="n">args</span><span class="p">.</span><span class="n">Accept</span><span class="p">();</span>
             <span class="p">}</span>
-
 
             <span class="n">displayMessageDeferral</span><span class="p">.</span><span class="n">Complete</span><span class="p">();</span>
             <span class="k">break</span><span class="p">;</span>

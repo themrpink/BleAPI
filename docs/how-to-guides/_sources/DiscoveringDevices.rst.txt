@@ -46,7 +46,7 @@ A newly instantiated Watcher/scanner begins from the stopped state. To start sca
 	scanner.StartPassiveScanning();
 
 
-The Started state is reached after one of these two methods has been called, initialisation terminated and the scan started. It's possible to pass from a scan mode to another maintaining the Started state without stopping the scan.
+The Started state is reached after one of these two methods has been called, the initialisation terminated and the scan started. It's possible to pass from a scan mode to another maintaining the Started state without stopping the scan.
 
 
 .. figure:: /images/scanMode.png
