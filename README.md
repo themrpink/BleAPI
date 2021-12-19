@@ -1,5 +1,6 @@
 # BleAPI
 
-please check the documentation for:
+please check the documentation (docs folder) for:
 
-API documentation, quick start, how-to guide, troubleshooting
+- complete API documentation
+- quick start, how-to guide, troubleshooting
