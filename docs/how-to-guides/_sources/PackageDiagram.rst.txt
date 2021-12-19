@@ -1,0 +1,7 @@
+Package Diagram
+===============
+
+The diagram represents the complete structure of the library. Download the image for full size and resolution.
+
+.. figure:: /images/Package_Diagram.png
+   :scale: 20%

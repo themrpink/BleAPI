@@ -40,6 +40,7 @@
               <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="QuickStart.html">QuickStart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PackageDiagram.html">Package Diagram</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">How-to guides</span></p>
 <ul class="current">
@@ -152,6 +153,16 @@
 </dl>
 </li>
 </ul>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="c1">//prepares the value to write</span>
+<span class="kt">byte</span><span class="p">[]</span> <span class="k">value</span> <span class="p">=</span> <span class="p">{</span> <span class="m">0</span><span class="n">x001</span> <span class="p">};</span>
+
+<span class="c1">//write with response</span>
+<span class="n">CosmedCharacteristicWriteResult</span> <span class="n">write</span> <span class="p">=</span> <span class="k">await</span> <span class="n">characteristic</span><span class="p">.</span><span class="n">WriteWithResult</span><span class="p">(</span><span class="k">value</span><span class="p">,</span> <span class="n">GattWriteOption</span><span class="p">.</span><span class="n">WriteWithResponse</span><span class="p">);</span>
+
+<span class="c1">//write without response</span>
+<span class="n">CosmedCharacteristicWriteResult</span> <span class="n">write2</span> <span class="p">=</span> <span class="k">await</span> <span class="n">characteristic</span><span class="p">.</span><span class="n">WriteWithResult</span><span class="p">(</span><span class="k">value</span><span class="p">,</span> <span class="n">GattWriteOption</span><span class="p">.</span><span class="n">WriteWithoutResponse</span><span class="p">);</span>
+</pre></div>
+</div>
 </section>
 <section id="read">
 <h2>Read<a class="headerlink" href="#read" title="Permalink to this headline"></a></h2>
@@ -170,6 +181,9 @@
 </dl>
 </li>
 </ul>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="n">CosmedCharacteristicReadResult</span> <span class="n">read</span> <span class="p">=</span> <span class="k">await</span> <span class="n">characteristic</span><span class="p">.</span><span class="n">Read</span><span class="p">();</span>
+</pre></div>
+</div>
 </section>
 <section id="subscribetonotification">
 <h2>SubscribeToNotification<a class="headerlink" href="#subscribetonotification" title="Permalink to this headline"></a></h2>
@@ -195,6 +209,17 @@
 </dl>
 </li>
 </ul>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="n">CosmedGattCommunicationStatus</span> <span class="n">ntfSubResult</span> <span class="p">=</span> <span class="k">await</span> <span class="n">characteristic</span><span class="p">.</span><span class="n">SubscribeToNotification</span><span class="p">(</span>
+<span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;notification:&quot;</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">Timestamp</span><span class="p">.</span><span class="n">ToString</span><span class="p">());</span>
+            <span class="n">IBuffer</span> <span class="n">CharacteristicValue</span> <span class="p">=</span> <span class="n">a</span><span class="p">.</span><span class="n">CharacteristicValue</span><span class="p">;</span>
+            <span class="kt">string</span> <span class="n">val</span> <span class="p">=</span> <span class="n">ClientBufferReader</span><span class="p">.</span><span class="n">ToUTF8String</span><span class="p">(</span><span class="n">CharacteristicValue</span><span class="p">);</span>
+            <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;buffer content: &quot;</span> <span class="p">+</span> <span class="n">val</span><span class="p">);</span>
+          <span class="p">}</span>
+<span class="p">);</span>
+</pre></div>
+</div>
 </section>
 <section id="subscribetoindication">
 <h2>SubscribeToIndication<a class="headerlink" href="#subscribetoindication" title="Permalink to this headline"></a></h2>
@@ -220,12 +245,22 @@
 </dl>
 </li>
 </ul>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="n">CosmedGattCommunicationStatus</span> <span class="n">indSubResult</span> <span class="p">=</span> <span class="k">await</span> <span class="n">characteristic</span><span class="p">.</span><span class="n">SubscribeToIndication</span><span class="p">(</span>
+ <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+             <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;indication:&quot;</span><span class="p">);</span>
+             <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">Timestamp</span><span class="p">.</span><span class="n">ToString</span><span class="p">());</span>
+             <span class="n">IBuffer</span> <span class="n">CharacteristicValue</span> <span class="p">=</span> <span class="n">a</span><span class="p">.</span><span class="n">CharacteristicValue</span><span class="p">;</span>
+             <span class="kt">string</span> <span class="n">val</span> <span class="p">=</span> <span class="n">ClientBufferReader</span><span class="p">.</span><span class="n">ToUTF8String</span><span class="p">(</span><span class="n">CharacteristicValue</span><span class="p">);</span>
+             <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;buffer content: &quot;</span> <span class="p">+</span> <span class="n">val</span><span class="p">);</span>
+           <span class="p">}</span>
+ <span class="p">);</span>
+</pre></div>
+</div>
 </section>
 <section id="unsubscribe">
 <h2>Unsubscribe<a class="headerlink" href="#unsubscribe" title="Permalink to this headline"></a></h2>
 <p>This method unsubscribes from notifications and indications from the calling Characteristic object, if Notify or Indicate operation is allowed. The method checks that and will eventually specify it in the returned result, but it’s also possible to verify before calling the method:</p>
-<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="c1">//Checks if Notify operation is allowed for the calling Characteristic</span>
-<span class="kt">bool</span> <span class="n">result</span> <span class="p">=</span> <span class="n">characteristic</span><span class="p">.</span><span class="n">IsWriteAllowed</span><span class="p">();</span>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="n">CosmedGattCommunicationStatus</span> <span class="n">unsubResult</span> <span class="p">=</span> <span class="n">characteristic</span><span class="p">.</span><span class="n">UnSubscribe</span><span class="p">();</span>
 </pre></div>
 </div>
 <p>The SubscribeToNotifications method takes the following parameters:</p>
@@ -259,17 +294,17 @@ but the exception will still be silently catched ánd the result of the operatio
 <span class="n">Action</span><span class="p">&lt;</span><span class="n">GattCharacteristic</span><span class="p">,</span> <span class="n">CosmedGattErrorFoundEventArgs</span><span class="p">&gt;</span> <span class="n">ErrorHandler</span> <span class="p">=</span>
      <span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">a</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;exception catched from communication with characteristic &quot;</span> <span class="p">+</span> <span class="n">s</span><span class="p">.</span><span class="n">Uuid</span><span class="p">);</span>
 
-<span class="c1">//subscribe to the static event</span>
+<span class="c1">//subscribe to the static event, just once for all the operation on the same session</span>
 <span class="n">ErrorFoundClass</span><span class="p">.</span><span class="n">ErrorFound</span> <span class="p">+=</span> <span class="n">ErrorHandler</span><span class="p">;</span>
 
-<span class="c1">//if an excetion occur the ErrorHandler will be invoked</span>
+<span class="c1">//if an excetion occurs the ErrorHandler will be invoked</span>
 <span class="n">characteristic</span><span class="p">.</span><span class="n">Read</span><span class="p">();</span>
 
 <span class="c1">//before closing the session, unsubscribe</span>
 <span class="n">ErrorFoundClass</span><span class="p">.</span><span class="n">ErrorFound</span> <span class="p">-=</span> <span class="n">ErrorHandler</span><span class="p">;</span>
 
 <span class="c1">// option 2:</span>
-<span class="c1">//use of a handler as parameter</span>
+<span class="c1">//use of a handler as parameter for each operation that should have a specific temporary handler</span>
 <span class="n">Action</span><span class="p">&lt;</span><span class="n">GattCharacteristic</span><span class="p">,</span> <span class="n">CosmedGattErrorFoundEventArgs</span><span class="p">&gt;</span> <span class="n">TemporaryErrorHandler</span> <span class="p">=</span>
      <span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">a</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">&quot;exception catched from communication with characteristic &quot;</span> <span class="p">+</span> <span class="n">s</span><span class="p">.</span><span class="n">Uuid</span><span class="p">);</span>
 

@@ -14,7 +14,7 @@
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-	<BuildDocFx Condition=" '$(Configuration)'=='Debug' ">false</BuildDocFx>
+    <BuildDocFx Condition=" '$(Configuration)'=='Debug' ">false</BuildDocFx>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,7 +65,7 @@
     <Compile Include="DeviceDiscovery\IBleScanner.cs" />
     <Compile Include="DeviceDiscovery\ICosmedBleAdvertisedDevice.cs" />
     <Compile Include="Extensions\Extensions.cs" />
-    <Compile Include="GattCommunication\GattDiscovery.cs" />
+    <Compile Include="GattDiscovery\GattDiscovery.cs" />
     <Compile Include="GattCommunication\CosmedGattCharacteristic.cs" />
     <Compile Include="GattCommunication\ICommunicationResult.cs" />
     <Compile Include="Helpers\CosmedBleData.cs" />

@@ -713,9 +713,7 @@ namespace CosmedBleLib.DeviceDiscovery
                 //Console.WriteLine("Stopping scan");
                 //Console.WriteLine(args.Error.ToString());
             }
-
         }
-
 
         // only for test purposes, the user should implements his own event hanlder
         private void OnScanInterrupted(CosmedBluetoothLEAdvertisementWatcher sender, Exception arg)

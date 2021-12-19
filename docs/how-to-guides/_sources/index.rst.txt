@@ -13,6 +13,7 @@ It's written in C# for .NET Framework 4.8.
    :name: mastertoc
    
    QuickStart.rst
+   PackageDiagram.rst
    
 .. toctree::
    :maxdepth: 4

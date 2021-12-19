@@ -124,7 +124,7 @@ namespace CosmedBleConsole
                                         
                                         Console.WriteLine("__characteristic__");
                                         characteristic.Print();
-                                        var read = await characteristic.Read();
+                                        CosmedCharacteristicReadResult read = await characteristic.Read();
                                         Console.WriteLine("read result hex: " + read.HexValue);
                                         Console.WriteLine("read result utf8: " + read.UTF8Value);
 

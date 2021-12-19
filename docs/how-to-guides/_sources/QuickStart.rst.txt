@@ -16,13 +16,24 @@ We will see the sequential steps to follow to accomplish the followings results:
 Pre-requisites
 --------------
 
-In order to use the library, access to the Windows 10 Apis must be granted. To do so, from Visual Studio, go to the Solution Explorer window of the working project and follow the following steps:
+Use the library
+_______________
 
-1. Right click on References. Select “Add Reference…” from the context menu. On the left of the Reference Manager, choose Browse and find the following file: C:Program Files (x86)Windows Kits10UnionMetadatawinmd. Add it to your project as a reference. Note: You will need to change the filter to “All Files”.
-2. Right click on References. Select “Add Reference…” from the context menu. On the left of the Reference Manager, go to Browse and find the directory “C:Program Files (x86)Reference AssembliesMicrosoftFramework.NETCorev4.5”. Add System.Runtime.WindowsRuntime.dll to your project.
+To use the library, add the namespace to the Visual Studio project references. Right click on References. Select “Add Reference…” from the context menu and add the CosmedBleLib.dll file.
+
+.. figure:: /images/reference.png
+   :scale: 50%
+  
+  
+Modify the library
+__________________
+
+In order to modify the library source code, access to the underlying WinRT Apis must be granted. To do so, from Visual Studio, go to the Solution Explorer window of the working project and follow the following steps:
+
+1. Right click on References. Select “Add Reference…” from the context menu. On the left of the Reference Manager, choose Browse and find the following file: C:\\Program Files (x86)\\Windows Kits\\10\\UnionMetadata\\...\\Windows.winmd. Add it to your project as a reference. Note: You will need to change the filter to “All Files”.
+2. Right click on References. Select “Add Reference…” from the context menu. On the left of the Reference Manager, go to Browse and find the directory C:\\Program Files (x86)\\Reference Assemblies\\Microsoft\\Framework\\.NETCore\\v4.5\\. Add System.Runtime.WindowsRuntime.dll to your project.
 
 .. figure:: /images/gestione_riferimenti.png
-   :alt: Pre-requisites
    :scale: 50%
    
    *These files should be added to the VS project references*
@@ -30,6 +41,8 @@ In order to use the library, access to the Windows 10 Apis must be granted. To d
    
 Discover and filter advertising devices
 ---------------------------------------
+
+Four steps are sufficient to discover and filter:
 
 #. Build a filter if needed. For doing that a FilterBuilder is available.  
 
@@ -65,7 +78,7 @@ Discover and filter advertising devices
         //this collection will be updated at every cycle of the while loop
         var discoveredDevices = scanner.AllDiscoveredDevices;
 
-        //scannig can be paused
+        //scanning can be paused
         scanner.PauseScanning();
 		
         //iteration over the discovered devices
@@ -80,6 +93,7 @@ Discover and filter advertising devices
 		
         //scan can be restarted, or stopped to end the while loop
         scanner.ResumeScanning();
+        //scanner.StopScanning();
     }
    
 Iterating through the requested collection allows access to all the information transmitted by the filtered advertising devices. The desired advertising device can be selected reading this data.

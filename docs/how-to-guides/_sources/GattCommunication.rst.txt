@@ -58,6 +58,17 @@ The WriteWithResult method takes the following parameters:
 * Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null:
    * optional parameter, see :ref:`ErrorFoundClass<ErrorFoundClass>`
 
+.. code-block:: csharp
+	
+    //prepares the value to write
+    byte[] value = { 0x001 };
+	
+    //write with response
+    CosmedCharacteristicWriteResult write = await characteristic.WriteWithResult(value, GattWriteOption.WriteWithResponse);
+	
+    //write without response
+    CosmedCharacteristicWriteResult write2 = await characteristic.WriteWithResult(value, GattWriteOption.WriteWithoutResponse);
+
 
 
 Read
@@ -76,7 +87,10 @@ The Read method takes the following parameter:
    
 * Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null:
    * optional parameter, see :ref:`ErrorFoundClass<ErrorFoundClass>`
+
+.. code-block:: csharp
    
+   CosmedCharacteristicReadResult read = await characteristic.Read();
    
    
 SubscribeToNotification
@@ -99,6 +113,17 @@ The SubscribeToNotifications method takes the following parameters:
 * Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null:
    * optional parameter, see :ref:`ErrorFoundClass<ErrorFoundClass>`
    
+.. code-block:: csharp
+
+    CosmedGattCommunicationStatus ntfSubResult = await characteristic.SubscribeToNotification(
+    (s, a) => {
+                Console.WriteLine("notification:");
+                Console.WriteLine(a.Timestamp.ToString());
+                IBuffer CharacteristicValue = a.CharacteristicValue;
+                string val = ClientBufferReader.ToUTF8String(CharacteristicValue);
+                Console.WriteLine("buffer content: " + val);
+              }
+    ); 
    
    
 SubscribeToIndication
@@ -121,8 +146,18 @@ The SubscribeToIndications method takes the following parameters:
 * Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null:
    * optional parameter, see :ref:`ErrorFoundClass<ErrorFoundClass>`
    
-   
-   
+.. code-block:: csharp 
+
+   CosmedGattCommunicationStatus indSubResult = await characteristic.SubscribeToIndication(
+    (s, a) => {
+                Console.WriteLine("indication:");
+                Console.WriteLine(a.Timestamp.ToString());
+                IBuffer CharacteristicValue = a.CharacteristicValue;
+                string val = ClientBufferReader.ToUTF8String(CharacteristicValue);
+                Console.WriteLine("buffer content: " + val);
+              }
+    ); 
+	
 Unsubscribe
 -----------
 
@@ -131,8 +166,7 @@ This method unsubscribes from notifications and indications from the calling Cha
   
 .. code-block:: csharp
 
-   //Checks if Notify operation is allowed for the calling Characteristic
-   bool result = characteristic.IsWriteAllowed();
+   CosmedGattCommunicationStatus unsubResult = characteristic.UnSubscribe();
    
 
 The SubscribeToNotifications method takes the following parameters:
@@ -171,17 +205,17 @@ but the exception will still be silently catched ánd the result of the operatio
    Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> ErrorHandler = 
 	(s,a) => Console.WriteLine("exception catched from communication with characteristic " + s.Uuid);
 				
-   //subscribe to the static event
+   //subscribe to the static event, just once for all the operation on the same session
    ErrorFoundClass.ErrorFound += ErrorHandler;
 
-   //if an excetion occur the ErrorHandler will be invoked
+   //if an excetion occurs the ErrorHandler will be invoked
    characteristic.Read();
 
    //before closing the session, unsubscribe
    ErrorFoundClass.ErrorFound -= ErrorHandler;
    
    // option 2:  
-   //use of a handler as parameter
+   //use of a handler as parameter for each operation that should have a specific temporary handler
    Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> TemporaryErrorHandler = 
 	(s,a) => Console.WriteLine("exception catched from communication with characteristic " + s.Uuid);  
 
