@@ -546,7 +546,7 @@ namespace CosmedBleLib.DeviceDiscovery
             {
                 CosmedBluetoothLEAdapter adapter = await CosmedBluetoothLEAdapter.CreateAsync();
                 string str = adapter.HexAddress;
-                Console.WriteLine(str);
+                //Console.WriteLine(str);
 
                 if (!adapter.IsLowEnergySupported)
                 {
@@ -656,7 +656,7 @@ namespace CosmedBleLib.DeviceDiscovery
         private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
         {
             ICosmedBleAdvertisedDevice device;
-            Console.WriteLine("adv received +++++++++++++++");
+            //Console.WriteLine("adv received +++++++++++++++");
             if (sender == watcher && args != null && status == StateMachine.Started)
             {
                 lock (devicesThreadLock)
@@ -685,8 +685,8 @@ namespace CosmedBleLib.DeviceDiscovery
 
                     lastDiscoveredDevices[args.BluetoothAddress] = discoveredDevices[args.BluetoothAddress];
                     device = discoveredDevices[args.BluetoothAddress];
-                    var d = (CosmedBleAdvertisedDevice)device;
-                    d.PrintAdvertisement();
+                    //var d = (CosmedBleAdvertisedDevice)device;
+                    //d.PrintAdvertisement();
                 }
                 Task.Run(() => { NewDeviceDiscovered?.Invoke(this, device); }).ConfigureAwait(false);
             }
@@ -710,8 +710,8 @@ namespace CosmedBleLib.DeviceDiscovery
             else
             {
                 Task.Run(() => ScanStopped?.Invoke(this, args)).ConfigureAwait(false);
-                Console.WriteLine("Stopping scan");
-                Console.WriteLine(args.Error.ToString());
+                //Console.WriteLine("Stopping scan");
+                //Console.WriteLine(args.Error.ToString());
             }
 
         }
@@ -726,12 +726,6 @@ namespace CosmedBleLib.DeviceDiscovery
             CheckBleStatus();
         }
 
-
-        //private void OnScanTimeout()
-        //{
-        //    Task.Delay(ScanTimeout * 1000);
-        //    StopScanning();
-        //}
         #endregion
 
     }

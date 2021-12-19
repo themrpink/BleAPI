@@ -1,0 +1,25 @@
+Known issues
+============
+
+CosmedBleDevice is null
+-----------------------
+
+When a CosmedBleDevice cannot be instatiated, and a null ojbect is repeatedly obtained instead, then stopping and restarting advertising on the remote device may solve the issue.
+
+
+Error HRESULT: 0x80650003 from Service Changed characteristic operations
+------------------------------------------------------------------------
+
+Although subscribable to indications, in the tests the following attribute produces an error when trying to subscribe to it: 
+2a05  (00002a05-0000-1000-8000-00805f9b34fb) (Service Changed characteristic) error read: Impossibile scrivere l'attributo. (Eccezione da HRESULT: 0x80650003)
+the error is given: when trying to subscrite to indications or unsubscribe(whish is flagged as possible) 
+this is the uwp method causing the exception:
+WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Indicate)
+
+
+
+Windows pairing
+---------------
+
+pairing: sometimes windows pairing window will appear asking to confirm a pin, but will usually fail pairing. 
+If pairing fails without prompting then removing the remote device from the cached bluetooth devices may solve the issue.

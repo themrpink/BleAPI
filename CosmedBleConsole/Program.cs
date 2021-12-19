@@ -101,7 +101,7 @@ namespace CosmedBleConsole
                                 CosmedBleDevice connectionDevice = await CosmedBleDevice.CreateAsync(device);
 
                                 //pairing. it´s possible to call an overload with custom event handler
-                                //PairingResult pairedDevice = await PairingService.PairDevice(connectionDevice, ceremonySelection, minProtectionLevel);
+                                PairingResult pairedDevice = await PairingService.PairDevice(connectionDevice, ceremonySelection, minProtectionLevel);
 
                                 //it´s possible to set some event handler
                                 IGattDiscoveryService discoveryService = await GattDiscoveryService.CreateAsync(connectionDevice);
@@ -130,7 +130,14 @@ namespace CosmedBleConsole
 
                                         byte[] value = { 0x001 };
                                         var buff = BufferWriter.ToIBuffer(value);
-                                        characteristic.AddCharacteristicToReliableWrite(rw, buff);
+
+                                        var qqq = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync().ToTask();
+                                        
+                                        var b = characteristic.AddCharacteristicToReliableWrite(rw, buff);
+                                        
+                                        GattWriteResult gwr;
+                                        if(b)
+                                            gwr = await rw.CommitWithResultAsync().ToTask();
 
                                         var write = await characteristic.WriteWithResult(value, GattWriteOption.WriteWithResponse);
                                         var write2 = await characteristic.WriteWithResult(value, GattWriteOption.WriteWithoutResponse);

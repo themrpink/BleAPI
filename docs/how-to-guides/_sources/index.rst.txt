@@ -27,6 +27,12 @@ It's written in C# for .NET Framework 4.8.
    
 .. toctree::
    :maxdepth: 2
+   :caption: Troubleshooting
+   
+   issues.rst
+   
+.. toctree::
+   :maxdepth: 2
    :caption: API Documentation
 
    Cosmed API Documentation <../api_documentation/html/index.html#http://>

@@ -92,12 +92,7 @@ namespace CosmedBleLib.Extensions
 
         private static event Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> ErrorFoundCustom;
 
-        //public static async Task<GattDescriptorsResult> GetDescriptorValue(this GattCharacteristic characteristic)
-        //{
-        //    var result = await characteristic.GetDescriptorsAsync().AsTask();
-        //    return result;
 
-        //}
 
         //allows from each characteristic to add a value to a reliable write instance
         /// <summary>
@@ -106,12 +101,15 @@ namespace CosmedBleLib.Extensions
         /// <param name="characteristic">The extended characteristic</param>
         /// <param name="reliableWriteTransaction">the reliable write instance to which append the value</param>
         /// <param name="value">Value to be written</param>
-        public static void AddCharacteristicToReliableWrite(this GattCharacteristic characteristic, GattReliableWriteTransaction reliableWriteTransaction, IBuffer value)
+        /// <returns>True if reliable write is permitted, false otherwise </returns>
+        public static bool AddCharacteristicToReliableWrite(this GattCharacteristic characteristic, GattReliableWriteTransaction reliableWriteTransaction, IBuffer value)
         {
-            if (characteristic.IsWriteAllowed())
+            if (characteristic.IsReliableWriteAllowed())
             {
                 reliableWriteTransaction.WriteValue(characteristic, value);
-            }         
+                return true;
+            }
+            return false;
         }
 
 
@@ -194,7 +192,7 @@ namespace CosmedBleLib.Extensions
         {
             GattCharacteristicProperties properties = characteristic.CharacteristicProperties;
 
-            if (properties.HasFlag(GattCharacteristicProperties.Read))
+            if (characteristic.IsReadAllowed())
             {
                 try 
                 { 
@@ -238,7 +236,7 @@ namespace CosmedBleLib.Extensions
         /// <returns>The subscription result</returns>
         public static async Task<CosmedGattCommunicationStatus> SubscribeToNotification(this GattCharacteristic characteristic, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> valueChangedAction, Action<GattCharacteristic, CosmedGattErrorFoundEventArgs> errorAction = null)
         {
-            if (!characteristic.IsNotificationAllowed() && !characteristic.IsIndicationAllowed())
+            if (!characteristic.IsNotificationAllowed())
             {
                 return CosmedGattCommunicationStatus.OperationNotSupported;
             }
@@ -332,7 +330,6 @@ namespace CosmedBleLib.Extensions
                 return CosmedGattCommunicationStatus.OperationNotSupported; 
             }
 
-            //GattReadClientCharacteristicConfigurationDescriptorResult cccd;
             try
             {
                 Console.WriteLine("characteristec UUID: " + characteristic.Uuid.ToString());
@@ -574,6 +571,18 @@ namespace CosmedBleLib.Extensions
         }
 
         /// <summary>
+        /// Checks if reliable write is allowed.
+        /// </summary>
+        /// <param name="characteristic">The extended characteristic.</param>
+        /// <returns>Boolean result.</returns>
+        private static bool IsReliableWriteAllowed(this GattCharacteristic characteristic)
+        {
+            return characteristic.CharacteristicProperties.HasFlag(GattCharacteristicProperties.ReliableWrites);
+        }
+
+
+
+        /// <summary>
         /// Checks if read is allowed.
         /// </summary>
         /// <param name="characteristic">The extended characteristic.</param>
@@ -704,10 +713,6 @@ namespace CosmedBleLib.Extensions
             return tsc.Task;
         }
 
-        public static void AddDevice(this CosmedBluetoothLEAdvertisementWatcher watcher, CosmedBleAdvertisedDevice device)
-        {
-
-        }
     }
 
 
