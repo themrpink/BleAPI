@@ -656,7 +656,10 @@ namespace CosmedBleLib.DeviceDiscovery
         private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher sender, BluetoothLEAdvertisementReceivedEventArgs args)
         {
             ICosmedBleAdvertisedDevice device;
+#if DEBUG
             Console.WriteLine("adv received +++++++++++++++");
+#endif
+
             if (sender == watcher && args != null && status == StateMachine.Started)
             {
                 lock (devicesThreadLock)
@@ -685,8 +688,12 @@ namespace CosmedBleLib.DeviceDiscovery
 
                     lastDiscoveredDevices[args.BluetoothAddress] = discoveredDevices[args.BluetoothAddress];
                     device = discoveredDevices[args.BluetoothAddress];
+
+#if DEBUG
                     var d = (CosmedBleAdvertisedDevice)device;
                     d.PrintAdvertisement();
+#endif
+
                 }
                 Task.Run(() => { NewDeviceDiscovered?.Invoke(this, device); }).ConfigureAwait(false);
             }

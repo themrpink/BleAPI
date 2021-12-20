@@ -195,7 +195,10 @@ namespace CosmedBleLib.ConnectionServices
             bluetoothLeDevice.NameChanged += NameChangedHandler;
 
             //this is for test purpose, the user can implement his own method
+#if DEBUG
             setHandlers();
+#endif
+
 
         }
 
