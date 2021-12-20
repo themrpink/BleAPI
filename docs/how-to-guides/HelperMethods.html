@@ -57,6 +57,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#convert-bluetooth-assigned-numbers">Convert Bluetooth Assigned Numbers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#print-methods">Print Methods</a></li>
 </ul>
 </li>
 </ul>
@@ -264,6 +265,23 @@ They are accessible from the static class CosmedBleLib.Helpers.BufferWriter:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://www.bluetooth.com/specifications/assigned-numbers/">Bluetooth Assigned Numbers</a></p></li>
 </ul>
+</section>
+<section id="print-methods">
+<h2>Print Methods<a class="headerlink" href="#print-methods" title="Permalink to this headline"></a></h2>
+<p>To help visualize the results of scanning and communication, some printing methods are available:</p>
+<div class="highlight-csharp notranslate"><div class="highlight"><pre><span></span><span class="c1">//prints to screen the content of an Advertising Device</span>
+<span class="k">foreach</span><span class="p">(</span><span class="n">ICosmedBleAdvertisedDevice</span> <span class="n">device</span> <span class="k">in</span> <span class="n">scanner</span><span class="p">.</span><span class="n">AllDiscoveredDevices</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">(</span><span class="n">CosmedBleAdvertisedDevice</span><span class="p">)</span><span class="n">device</span><span class="p">.</span><span class="n">PrintAdvertisement</span><span class="p">();</span>
+<span class="p">}</span>
+
+    <span class="c1">//prints the values of a GattDeviceService object (extension method of the class)</span>
+<span class="n">service</span><span class="p">.</span><span class="n">Print</span><span class="p">();</span>
+
+<span class="c1">//prints the values of a GattCharacteristic object (extension method of the class)</span>
+<span class="n">characteristic</span><span class="p">.</span><span class="n">Print</span><span class="p">();</span>
+</pre></div>
+</div>
 </section>
 </section>
 

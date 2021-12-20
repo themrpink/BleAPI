@@ -137,3 +137,23 @@ These public static classes and methods allow to convert values into their assig
 For more information about the Bluetooth Assigned Numbers see:
 
 * `Bluetooth Assigned Numbers <https://www.bluetooth.com/specifications/assigned-numbers/>`_
+
+
+Print Methods
+-------------
+
+To help visualize the results of scanning and communication, some printing methods are available:
+
+.. code-block:: csharp
+
+    //prints to screen the content of an Advertising Device
+    foreach(ICosmedBleAdvertisedDevice device in scanner.AllDiscoveredDevices)
+    {
+        (CosmedBleAdvertisedDevice)device.PrintAdvertisement();
+    }
+	
+	//prints the values of a GattDeviceService object (extension method of the class)
+    service.Print();
+	
+    //prints the values of a GattCharacteristic object (extension method of the class)
+    characteristic.Print();	
