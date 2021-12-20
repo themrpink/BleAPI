@@ -209,7 +209,7 @@ To receive notifications and to handle errors during subscription custom functio
 	
 	
 Unpairing and disconnect
--------------------------------------
+------------------------
 
 First all the services that have been discovered should be cleared. They are saved into the GattDiscoveryService, and the ClearServices method can be called to clear them.
 To unpair the Unpair method of the PairingService class should be called, passing the instance of the remote device to unpair.
@@ -223,3 +223,11 @@ Finally the remote device shoud be cleared calling the method ClearBluetoothLEDe
     discoveryService.ClearServices();
     var unpairResult = await PairingService.Unpair(connectionDevice);
     connectionDevice.ClearBluetoothLEDevice();
+	
+	
+	
+Flowchart
+---------
+
+.. figure:: /images/flowchart_application.png
+   :scale: 40%
